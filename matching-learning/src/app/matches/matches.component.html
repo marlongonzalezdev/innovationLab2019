@@ -1,6 +1,6 @@
 <h2>Matches</h2>
 <li *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onSelect(user)">
-    <span class="badge">Id:{{user.id}}</span>Name: {{user.name}} {{user.lastName}} Match: {{user.matchPercent}}
+    <span class="badge">Id:{{user.id}} </span>Name: {{user.name}} {{user.lastName}} Match: {{user.matchPercent}}
 </li>
 
 <app-user-details [user]="selectedUser"></app-user-details>

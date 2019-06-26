@@ -1,0 +1,19 @@
+
+<!-- <h4>Select skills to apply</h4> -->
+<mat-form-field>
+  <mat-label>Select skills</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let skill of skillList" [value]="skill.value" (click)="onSelect(skill)">
+      {{skill.viewValue}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button mat-button (click)="add(selectedSkill); selectedSkill=''">Add</button>
+
+
+<ul class="skills">
+  <li *ngFor="let skill of skills">
+    <span class="badge">{{skill.viewValue}}</span>
+    <!-- <button class="delete" title="delete hero" (click)="delete(skill)">x</button> -->
+  </li>
+</ul>
