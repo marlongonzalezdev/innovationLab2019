@@ -35,7 +35,9 @@ export class SkillsComponent implements OnInit {
   add(skill: Skill): void {
     // name = name.trim();
     if (!skill) { return; }
-    this.skills.push(skill);
+    if (!this.skills.find(s => s === skill)) {
+      this.skills.push(skill);
+    }
   }
 
   delete(name: string): void {
