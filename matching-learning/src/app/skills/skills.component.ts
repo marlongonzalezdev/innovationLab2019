@@ -20,7 +20,7 @@ export class SkillsComponent implements OnInit {
     { value: '2', viewValue: 'SQL' },
     { value: '3', viewValue: 'Java' },
     { value: '3', viewValue: 'Elastic Search' },
-    { value: '3', viewValue: 'Khotlin' },
+    { value: '3', viewValue: 'Kotlin' },
     { value: '3', viewValue: 'Angular' },
     { value: '3', viewValue: 'React' },
     { value: '3', viewValue: 'Javascript' },

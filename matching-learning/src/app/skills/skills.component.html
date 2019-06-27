@@ -8,12 +8,16 @@
     </mat-option>
   </mat-select>
 </mat-form-field>
-<button mat-button (click)="add(selectedSkill); selectedSkill=''">Add</button>
+<button mat-button (click)="add(selectedSkill); selectedSkill=''">
+    <mat-icon>add</mat-icon>   
+</button>
+
 
 
 <ul class="skills">
   <li *ngFor="let skill of skills">
     <span class="badge">{{skill.viewValue}}</span>
+    <mat-icon>check</mat-icon>   
     <!-- <button class="delete" title="delete hero" (click)="delete(skill)">x</button> -->
   </li>
 </ul>

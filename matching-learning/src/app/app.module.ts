@@ -8,10 +8,8 @@ import { MatchesComponent } from './matches/matches.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { SkillsComponent } from './skills/skills.component';
-import {MatSelectModule} from '@angular/material/select';
-import {MatButtonModule} from '@angular/material/button';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule} from '@angular/material';
+
 
 @NgModule({
   declarations: [
@@ -29,7 +27,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatButtonModule,
     HttpClientModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,9 +4,10 @@
     <app-skills></app-skills>
 </div>
 
-<div>
-  <button (click)="processData()">Procesar</button>
-</div>
+<button mat-button (click)="processData()">
+    <mat-icon>cached</mat-icon>  
+    Get matches
+</button>
 
 <div class="spinner-container">
     <mat-spinner *ngIf="loading"></mat-spinner>
