@@ -18,7 +18,12 @@ export class SkillsComponent implements OnInit {
   skillList: Skill[] = [
     { value: '1', viewValue: 'C#' },
     { value: '2', viewValue: 'SQL' },
-    { value: '3', viewValue: 'Docker' }
+    { value: '3', viewValue: 'Java' },
+    { value: '3', viewValue: 'Elastic Search' },
+    { value: '3', viewValue: 'Khotlin' },
+    { value: '3', viewValue: 'Angular' },
+    { value: '3', viewValue: 'React' },
+    { value: '3', viewValue: 'Javascript' },
   ];
 
   selectedSkill: Skill;

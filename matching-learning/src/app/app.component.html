@@ -1,7 +1,19 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <!-- <h1>Main Page</h1> -->
-<app-skills></app-skills>
+<div class="skills-container">
+    <app-skills></app-skills>
+</div>
 
+<div>
+  <button (click)="processData()">Procesar</button>
+</div>
 
-<app-matches></app-matches>
+<div class="spinner-container">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+</div>
+
+<div class="matches-container" *ngIf="showContent">
+  <app-matches></app-matches>
+</div>
+
 <router-outlet></router-outlet>
