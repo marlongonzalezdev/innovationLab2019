@@ -1,10 +1,29 @@
 <div *ngIf="user">
 
-    <h2>{{user.name | uppercase}} Details</h2>
+    <!-- <h2>{{user.name | uppercase}} Details</h2>
     <div><span>id: </span>{{user.id}}</div>
     <div>
         <label>name:
             <input [(ngModel)]="user.name" placeholder="name" />
         </label>
-    </div>
+    </div> -->
+    <mat-card class="example-card">
+            <mat-card-header>
+              <!-- <div mat-card-avatar class="example-header-image"></div> -->
+              <mat-card-title>{{user.name}} {{user.lastName}}</mat-card-title>
+              <mat-card-subtitle>{{user.role}}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="{{user.photo}}" alt="Photo of a Shiba Inu">
+            <mat-card-content>
+              <!-- <p>
+                The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+                A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+                bred for hunting.
+              </p> -->
+            </mat-card-content>
+            <!-- <mat-card-actions>
+              <button mat-button>LIKE</button>
+              <button mat-button>SHARE</button>
+            </mat-card-actions> -->
+          </mat-card>
 </div>

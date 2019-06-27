@@ -8,8 +8,7 @@ import { MatchesComponent } from './matches/matches.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { SkillsComponent } from './skills/skills.component';
-import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule} from '@angular/material';
-
+import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule, MatCardModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -27,7 +26,8 @@ import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModul
     MatButtonModule,
     HttpClientModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

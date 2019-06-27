@@ -4,5 +4,6 @@ export class User {
     lastName: string;
     age: number;
     role: string;
-    matchPercent: string
+    matchPercent: string;
+    photo: string;
   }
