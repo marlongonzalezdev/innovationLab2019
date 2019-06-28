@@ -28,10 +28,6 @@ export class SkillsComponent implements OnInit {
 
   selectedSkill: Skill;
 
-  onSelect(skill: Skill): void {
-    this.selectedSkill = skill;
-  }
-
   constructor() { }
 
   ngOnInit() {
@@ -42,6 +38,7 @@ export class SkillsComponent implements OnInit {
     if (!skill) { return; }
     if (!this.skills.find(s => s === skill)) {
       this.skills.push(skill);
+      this.selectedSkill = undefined;
     }
   }
 
