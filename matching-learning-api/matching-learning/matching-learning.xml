@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>matching-learning</name>
+    </assembly>
+    <members>
+        <member name="M:matching_learning.Controllers.ProjectController.#ctor(matching_learning.ml.IProjectAnalyzer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:matching_learning.Controllers.ProjectController"/> class.
+            </summary>
+            <param name="analyzer">The analyzer.</param>
+        </member>
+        <member name="M:matching_learning.Controllers.ProjectController.Candidates(matching_learning.Models.ProjectCandidatesModel)">
+            <summary>
+            Retrieves the candidates that match the given project skill requirements.
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="T:matching_learning.Models.CandidateModel">
+            <summary>
+            A model to represent a Candidate
+            </summary>
+        </member>
+        <member name="P:matching_learning.Models.CandidateModel.UserName">
+            <summary>
+            Gets or sets the name of the user.
+            </summary>
+            <value>
+            The name of the user.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.CandidateModel.PhotoUrl">
+            <summary>
+            Gets or sets the photo URL.
+            </summary>
+            <value>
+            The photo URL.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.CandidateModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>
+            The name.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.CandidateModel.LastName">
+            <summary>
+            Gets or sets the last name.
+            </summary>
+            <value>
+            The last name.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.CandidateModel.MatchingScore">
+            <summary>
+            Gets or sets the matching score.
+            </summary>
+            <value>
+            The matching score.
+            </value>
+        </member>
+        <member name="T:matching_learning.Models.ProjectCandidatesModel">
+            <summary>
+            A model class to represent a Request to get Candidate recommendations for a given Project.
+            </summary>
+        </member>
+        <member name="P:matching_learning.Models.ProjectCandidatesModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>
+            The name.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.ProjectCandidatesModel.Skills">
+            <summary>
+            Gets or sets the skills.
+            </summary>
+            <value>
+            The skills.
+            </value>
+        </member>
+        <member name="M:matching_learning.Models.ProjectCandidatesModel.ToRecommendationRequest">
+            <summary>
+            Converts to recommendation request.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:matching_learning.Models.ProjectRecommendationsModel">
+            <summary>
+            A model to represent the recommendations for a given project.
+            </summary>
+        </member>
+        <member name="P:matching_learning.Models.ProjectRecommendationsModel.Matches">
+            <summary>
+            Gets or sets the matches.
+            </summary>
+            <value>
+            The matches.
+            </value>
+        </member>
+        <member name="T:matching_learning.Models.SkillModel">
+            <summary>
+            A model class to represent a skill.
+            </summary>
+        </member>
+        <member name="P:matching_learning.Models.SkillModel.Tag">
+            <summary>
+            Gets or sets the tag.
+            </summary>
+            <value>
+            The tag.
+            </value>
+        </member>
+        <member name="P:matching_learning.Models.SkillModel.Weight">
+            <summary>
+            Gets or sets the weight.
+            </summary>
+            <value>
+            The weight.
+            </value>
+        </member>
+        <member name="T:matching_learning.Startup">
+            <summary>
+            The application bootstrapper.
+            </summary>
+        </member>
+    </members>
+</doc>
