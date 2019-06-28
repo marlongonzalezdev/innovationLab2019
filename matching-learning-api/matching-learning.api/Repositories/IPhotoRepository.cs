@@ -1,4 +1,4 @@
-﻿namespace matching_learning.Repositories
+﻿namespace matching_learning.api.Repositories
 {
     /// <summary>
     /// A repo contract for user photos.

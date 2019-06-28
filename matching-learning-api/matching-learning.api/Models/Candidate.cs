@@ -1,6 +1,6 @@
 ﻿using matching_learning.ml.Domain;
 
-namespace matching_learning.Models
+namespace matching_learning.api.Models
 {
     /// <summary>
     /// A model to represent a Candidate

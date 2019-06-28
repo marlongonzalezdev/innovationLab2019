@@ -1,11 +1,11 @@
 ﻿using System.IO;
 
-namespace matching_learning.Repositories
+namespace matching_learning.api.Repositories
 {
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="matching_learning.Repositories.IPhotoRepository" />
+    /// <seealso cref="IPhotoRepository" />
     public class FileSystemPhotoRepository : IPhotoRepository
     {
         private readonly string _photosPath;

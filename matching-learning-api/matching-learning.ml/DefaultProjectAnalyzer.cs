@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using matching_learning.ml.Domain;
 
@@ -15,9 +16,7 @@ namespace matching_learning.ml
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
         {
-            return Task.FromResult(new RecommendationResponse
-            {
-                Matches = new List<Candidate>
+            var candidates = new List<Candidate>
                 {
                     new Candidate
                     {
@@ -55,6 +54,11 @@ namespace matching_learning.ml
                         Score = _random.NextDouble()
                     }
                 }
+                .OrderByDescending(x => x.Score);
+
+            return Task.FromResult(new RecommendationResponse
+            {
+                Matches = candidates
             });
         }
     }

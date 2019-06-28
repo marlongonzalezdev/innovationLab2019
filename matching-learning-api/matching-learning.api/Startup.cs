@@ -1,27 +1,25 @@
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
+using matching_learning.api.Repositories;
 using matching_learning.ml;
-using matching_learning.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
-namespace matching_learning
+namespace matching_learning.api
 {
-    /// <summary>
-    /// The application bootstrapper.
-    /// </summary>
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
+        private readonly IHostingEnvironment _env;
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, 
+            IHostingEnvironment env)
         {
-            _env = env;
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -29,21 +27,20 @@ namespace matching_learning
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddControllers()
-                .AddNewtonsoftJson();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v1", new Info
                 {
                     Title = "Matching Learning API",
                     Version = "v1",
                     Description = "The API for Matching Learning @Endava Innovation Lab 2019."
                 });
 
-                c.IncludeXmlComments(Path.Combine(_env.ContentRootPath, "matching-learning.xml"));
+                c.IncludeXmlComments(Path.Combine(_env.ContentRootPath, "matching-learning.api.xml"));
             });
+
 
             services.AddHttpContextAccessor();
             services.AddScoped<IProjectAnalyzer, DefaultProjectAnalyzer>();
@@ -52,7 +49,7 @@ namespace matching_learning
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -82,14 +79,8 @@ namespace matching_learning
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Matching Learning API"));
 
-            app.UseRouting();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseMvc();
         }
     }
 }

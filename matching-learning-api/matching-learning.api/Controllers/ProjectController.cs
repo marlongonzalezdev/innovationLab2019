@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
+using matching_learning.api.Models;
 using matching_learning.ml;
-using matching_learning.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace matching_learning.Controllers
+namespace matching_learning.api.Controllers
 {
     /// <summary>
     /// A controller for the projects
