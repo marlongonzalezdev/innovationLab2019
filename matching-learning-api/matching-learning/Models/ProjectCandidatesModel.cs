@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using matching_learning.ml.Domain;
+using matching_learning.Repositories;
 
 namespace matching_learning.Models
 {

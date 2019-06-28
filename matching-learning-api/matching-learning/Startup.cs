@@ -1,5 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
+using matching_learning.ml;
+using matching_learning.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +33,6 @@ namespace matching_learning
                 .AddControllers()
                 .AddNewtonsoftJson();
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -41,23 +42,13 @@ namespace matching_learning
                     Description = "The API for Matching Learning @Endava Innovation Lab 2019."
                 });
 
-                //// Swagger 2.+ support
-                //var security = new Dictionary<string, IEnumerable<string>>
-                //{
-                //    {"Bearer", new string[] { }},
-                //};
-                //c.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                //{
-                //    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                //    Name = "Authorization",
-                //    In = "header",
-                //    Type = "apiKey"
-                //});
-                //c.AddSecurityRequirement(security);
-
-                //c.DocumentFilter<RegisterAdditionalTypesDocumentFilter>();
                 c.IncludeXmlComments(Path.Combine(_env.ContentRootPath, "matching-learning.xml"));
             });
+
+            services.AddHttpContextAccessor();
+            services.AddScoped<IProjectAnalyzer, DefaultProjectAnalyzer>();
+            var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
+            services.AddSingleton<IPhotoRepository>(photosRepo);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,5 @@
-﻿using matching_learning.ml.Domain;
+﻿using System.Threading.Tasks;
+using matching_learning.ml.Domain;
 
 namespace matching_learning.ml
 {
@@ -7,6 +8,6 @@ namespace matching_learning.ml
     /// </summary>
     public interface IProjectAnalyzer
     {
-        RecommendationResponse GetRecommendations(RecommendationRequest recommendationRequest);
+        Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest);
     }
 }
