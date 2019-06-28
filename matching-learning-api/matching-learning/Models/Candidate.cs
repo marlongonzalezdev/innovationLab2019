@@ -1,4 +1,6 @@
-﻿namespace matching_learning.Models
+﻿using matching_learning.ml.Domain;
+
+namespace matching_learning.Models
 {
     /// <summary>
     /// A model to represent a Candidate
@@ -44,5 +46,21 @@
         /// The matching score.
         /// </value>
         public double MatchingScore { get; set; }
+
+        /// <summary>
+        /// Returns a CandidateModel from the given Domain candidate entity.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <returns></returns>
+        public static CandidateModel FromCandidate(Candidate candidate)
+        {
+            return new CandidateModel
+            {
+                Name = candidate.Name,
+                LastName = candidate.LastName,
+                UserName = candidate.UserId,
+                MatchingScore = candidate.Score
+            };
+        }
     }
 }
