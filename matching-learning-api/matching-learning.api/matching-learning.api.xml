@@ -1,54 +1,54 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>matching-learning</name>
+        <name>matching-learning.api</name>
     </assembly>
     <members>
-        <member name="T:matching_learning.Controllers.PhotoController">
+        <member name="T:matching_learning.api.Controllers.PhotoController">
             <summary>
             The controller for the user photos.
             </summary>
             <seealso cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
         </member>
-        <member name="M:matching_learning.Controllers.PhotoController.#ctor(matching_learning.Repositories.IPhotoRepository)">
+        <member name="M:matching_learning.api.Controllers.PhotoController.#ctor(matching_learning.api.Repositories.IPhotoRepository)">
             <summary>
-            Initializes a new instance of the <see cref="T:matching_learning.Controllers.PhotoController"/> class.
+            Initializes a new instance of the <see cref="T:matching_learning.api.Controllers.PhotoController"/> class.
             </summary>
             <param name="photoRepo">The photo repo.</param>
         </member>
-        <member name="M:matching_learning.Controllers.PhotoController.Get(System.String)">
+        <member name="M:matching_learning.api.Controllers.PhotoController.Get(System.String)">
             <summary>
             Gets the photo with the specified identifier.
             </summary>
             <param name="id">The identifier.</param>
             <returns></returns>
         </member>
-        <member name="T:matching_learning.Controllers.ProjectController">
+        <member name="T:matching_learning.api.Controllers.ProjectController">
             <summary>
             A controller for the projects
             </summary>
             <seealso cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
         </member>
-        <member name="M:matching_learning.Controllers.ProjectController.#ctor(matching_learning.ml.IProjectAnalyzer,Microsoft.AspNetCore.Routing.LinkGenerator,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+        <member name="M:matching_learning.api.Controllers.ProjectController.#ctor(matching_learning.ml.IProjectAnalyzer,Microsoft.AspNetCore.Routing.LinkGenerator,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
             <summary>
-            Initializes a new instance of the <see cref="T:matching_learning.Controllers.ProjectController" /> class.
+            Initializes a new instance of the <see cref="T:matching_learning.api.Controllers.ProjectController" /> class.
             </summary>
             <param name="analyzer">The analyzer.</param>
             <param name="linkGenerator">The link generator.</param>
             <param name="httpContextAccessor">The HTTP context accessor.</param>
         </member>
-        <member name="M:matching_learning.Controllers.ProjectController.Candidates(matching_learning.Models.ProjectCandidatesModel)">
+        <member name="M:matching_learning.api.Controllers.ProjectController.Candidates(matching_learning.api.Models.ProjectCandidatesModel)">
             <summary>
             Retrieves the candidates that match the given project skill requirements.
             </summary>
             <param name="model"></param>
         </member>
-        <member name="T:matching_learning.Models.CandidateModel">
+        <member name="T:matching_learning.api.Models.CandidateModel">
             <summary>
             A model to represent a Candidate
             </summary>
         </member>
-        <member name="P:matching_learning.Models.CandidateModel.UserName">
+        <member name="P:matching_learning.api.Models.CandidateModel.UserName">
             <summary>
             Gets or sets the name of the user.
             </summary>
@@ -56,7 +56,7 @@
             The name of the user.
             </value>
         </member>
-        <member name="P:matching_learning.Models.CandidateModel.PhotoUrl">
+        <member name="P:matching_learning.api.Models.CandidateModel.PhotoUrl">
             <summary>
             Gets or sets the photo URL.
             </summary>
@@ -64,7 +64,7 @@
             The photo URL.
             </value>
         </member>
-        <member name="P:matching_learning.Models.CandidateModel.Name">
+        <member name="P:matching_learning.api.Models.CandidateModel.Name">
             <summary>
             Gets or sets the name.
             </summary>
@@ -72,7 +72,7 @@
             The name.
             </value>
         </member>
-        <member name="P:matching_learning.Models.CandidateModel.LastName">
+        <member name="P:matching_learning.api.Models.CandidateModel.LastName">
             <summary>
             Gets or sets the last name.
             </summary>
@@ -80,7 +80,7 @@
             The last name.
             </value>
         </member>
-        <member name="P:matching_learning.Models.CandidateModel.MatchingScore">
+        <member name="P:matching_learning.api.Models.CandidateModel.MatchingScore">
             <summary>
             Gets or sets the matching score.
             </summary>
@@ -88,19 +88,19 @@
             The matching score.
             </value>
         </member>
-        <member name="M:matching_learning.Models.CandidateModel.FromCandidate(matching_learning.ml.Domain.Candidate)">
+        <member name="M:matching_learning.api.Models.CandidateModel.FromCandidate(matching_learning.ml.Domain.Candidate)">
             <summary>
             Returns a CandidateModel from the given Domain candidate entity.
             </summary>
             <param name="candidate">The candidate.</param>
             <returns></returns>
         </member>
-        <member name="T:matching_learning.Models.ProjectCandidatesModel">
+        <member name="T:matching_learning.api.Models.ProjectCandidatesModel">
             <summary>
             A model class to represent a Request to get Candidate recommendations for a given Project.
             </summary>
         </member>
-        <member name="P:matching_learning.Models.ProjectCandidatesModel.Name">
+        <member name="P:matching_learning.api.Models.ProjectCandidatesModel.Name">
             <summary>
             Gets or sets the name.
             </summary>
@@ -108,7 +108,7 @@
             The name.
             </value>
         </member>
-        <member name="P:matching_learning.Models.ProjectCandidatesModel.Skills">
+        <member name="P:matching_learning.api.Models.ProjectCandidatesModel.Skills">
             <summary>
             Gets or sets the skills.
             </summary>
@@ -116,18 +116,18 @@
             The skills.
             </value>
         </member>
-        <member name="M:matching_learning.Models.ProjectCandidatesModel.ToRecommendationRequest">
+        <member name="M:matching_learning.api.Models.ProjectCandidatesModel.ToRecommendationRequest">
             <summary>
             Converts to recommendation request.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:matching_learning.Models.ProjectRecommendationsModel">
+        <member name="T:matching_learning.api.Models.ProjectRecommendationsModel">
             <summary>
             A model to represent the recommendations for a given project.
             </summary>
         </member>
-        <member name="P:matching_learning.Models.ProjectRecommendationsModel.Matches">
+        <member name="P:matching_learning.api.Models.ProjectRecommendationsModel.Matches">
             <summary>
             Gets or sets the matches.
             </summary>
@@ -135,7 +135,7 @@
             The matches.
             </value>
         </member>
-        <member name="M:matching_learning.Models.ProjectRecommendationsModel.FromRecommendationResponse(matching_learning.ml.Domain.RecommendationResponse,Microsoft.AspNetCore.Routing.LinkGenerator,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+        <member name="M:matching_learning.api.Models.ProjectRecommendationsModel.FromRecommendationResponse(matching_learning.ml.Domain.RecommendationResponse,Microsoft.AspNetCore.Routing.LinkGenerator,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
             <summary>
             Returns a recommendation model from the given domain recommendation response.
             </summary>
@@ -144,12 +144,12 @@
             <param name="httpContextAccessor">The HTTP context accessor.</param>
             <returns></returns>
         </member>
-        <member name="T:matching_learning.Models.SkillModel">
+        <member name="T:matching_learning.api.Models.SkillModel">
             <summary>
             A model class to represent a skill.
             </summary>
         </member>
-        <member name="P:matching_learning.Models.SkillModel.Tag">
+        <member name="P:matching_learning.api.Models.SkillModel.Tag">
             <summary>
             Gets or sets the tag.
             </summary>
@@ -157,7 +157,7 @@
             The tag.
             </value>
         </member>
-        <member name="P:matching_learning.Models.SkillModel.Weight">
+        <member name="P:matching_learning.api.Models.SkillModel.Weight">
             <summary>
             Gets or sets the weight.
             </summary>
@@ -165,37 +165,32 @@
             The weight.
             </value>
         </member>
-        <member name="T:matching_learning.Repositories.FileSystemPhotoRepository">
+        <member name="T:matching_learning.api.Repositories.FileSystemPhotoRepository">
             <summary>
             
             </summary>
-            <seealso cref="T:matching_learning.Repositories.IPhotoRepository" />
+            <seealso cref="T:matching_learning.api.Repositories.IPhotoRepository" />
         </member>
-        <member name="M:matching_learning.Repositories.FileSystemPhotoRepository.#ctor(System.String)">
+        <member name="M:matching_learning.api.Repositories.FileSystemPhotoRepository.#ctor(System.String)">
             <summary>
-            Initializes a new instance of the <see cref="T:matching_learning.Repositories.FileSystemPhotoRepository"/> class.
+            Initializes a new instance of the <see cref="T:matching_learning.api.Repositories.FileSystemPhotoRepository"/> class.
             </summary>
             <param name="photosPath">The photos path.</param>
         </member>
-        <member name="M:matching_learning.Repositories.FileSystemPhotoRepository.ResolvePhoto(System.String)">
+        <member name="M:matching_learning.api.Repositories.FileSystemPhotoRepository.ResolvePhoto(System.String)">
             <inheritdoc />
         </member>
-        <member name="T:matching_learning.Repositories.IPhotoRepository">
+        <member name="T:matching_learning.api.Repositories.IPhotoRepository">
             <summary>
             A repo contract for user photos.
             </summary>
         </member>
-        <member name="M:matching_learning.Repositories.IPhotoRepository.ResolvePhoto(System.String)">
+        <member name="M:matching_learning.api.Repositories.IPhotoRepository.ResolvePhoto(System.String)">
             <summary>
             Resolves the photo.
             </summary>
             <param name="userId">The user identifier.</param>
             <returns></returns>
-        </member>
-        <member name="T:matching_learning.Startup">
-            <summary>
-            The application bootstrapper.
-            </summary>
         </member>
     </members>
 </doc>

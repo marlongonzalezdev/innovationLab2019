@@ -12,9 +12,7 @@ The API is a dotnet core 3.0 web api inside *matching-learning-api* directory.
 
 ### If you want to work with the API follow the below steps:
 
-  1. Ensure you have the latest [dotnet core 3 - skd](https://dotnet.microsoft.com/download/dotnet-core/3.0) installed.
-  (This is InnovationLab right? We're innovating, don't you dare questionning why we're using a preview version of net core for this.)
+  1. Ensure you have at least [dotnet core 2.2.300 skd](https://dotnet.microsoft.com/download/dotnet-core/2.2) installed.
   2. Open the solution file - `matching-learning-api.sln` - in VS 2019.
   3. Add code, build and debug normally.
   4. Postman is recommended to test the API, but you could also use Swagger UI.
-  

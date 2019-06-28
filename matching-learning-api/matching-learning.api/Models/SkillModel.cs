@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using matching_learning.ml.Domain;
 
-namespace matching_learning.Models
+namespace matching_learning.api.Models
 {
     /// <summary>
     /// A model class to represent a skill.

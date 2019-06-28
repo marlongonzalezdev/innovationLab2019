@@ -2,9 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using matching_learning.ml.Domain;
-using matching_learning.Repositories;
 
-namespace matching_learning.Models
+namespace matching_learning.api.Models
 {
     /// <summary>
     /// A model class to represent a Request to get Candidate recommendations for a given Project.

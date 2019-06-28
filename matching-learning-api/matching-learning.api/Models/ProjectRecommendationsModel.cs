@@ -3,7 +3,7 @@ using matching_learning.ml.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace matching_learning.Models
+namespace matching_learning.api.Models
 {
     /// <summary>
     /// A model to represent the recommendations for a given project.
