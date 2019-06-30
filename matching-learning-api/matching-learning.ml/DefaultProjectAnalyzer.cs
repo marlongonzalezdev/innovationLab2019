@@ -22,9 +22,7 @@ namespace matching_learning.ml
     {
         private readonly Random _random = new Random(Environment.TickCount);
         private MLContext MLContext { get; set; }
-        private IDataView Predictions { get; set; }
-        private ITransformer TrainedModel { get; set; }
-
+        
         public DefaultProjectAnalyzer()
         {
             MLContext = new MLContext();
@@ -32,7 +30,6 @@ namespace matching_learning.ml
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
         {
-            RecommendationModelTraining();
             var candidates = new List<Candidate>
                 {
                     new Candidate
@@ -79,7 +76,7 @@ namespace matching_learning.ml
             });
         }
 
-        private void RecommendationModelTraining()
+        public void RecommendationModelTraining()
         {
             string inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
             var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
@@ -91,7 +88,7 @@ namespace matching_learning.ml
                 var trainDataView = MLContext.Data.LoadFromTextFile("inputPath", 
                     columns: new[]
                     {
-                        new TextLoader.Column("Features", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
+                        new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
                         new TextLoader.Column(nameof(Candidate.UserId), DataKind.String, 0)
                     },
                     hasHeader: true,
@@ -107,15 +104,15 @@ namespace matching_learning.ml
 
                 //Train the model fitting to the pivotDataView
                 Console.WriteLine("=============== Training the model ===============");
-                TrainedModel = trainingPipeline.Fit(trainDataView);
+                var trainedModel = trainingPipeline.Fit(trainDataView);
 
                 //STEP 5: Evaluate the model and show accuracy stats
                 Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
-                Predictions = TrainedModel.Transform(trainDataView);
-                var metrics = MLContext.Clustering.Evaluate(Predictions, scoreColumnName: "Score", featureColumnName: "Skills");
+                var predictions = trainedModel.Transform(trainDataView);
+                var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Skills");
 
                 // Save/persist the trained model to a .ZIP file
-                MLContext.Model.Save(TrainedModel, trainDataView.Schema, modelPath);
+                MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
 
                 Console.WriteLine("The model is saved to {0}", modelPath);
             }
@@ -127,20 +124,20 @@ namespace matching_learning.ml
         }
         private List<Candidate> PredictModel(RecommendationRequest recommendationRequest)
         {
-            var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(TrainedModel);
-            var prediction = predictor.Predict((ExpandoObject)recommendationRequest);
-            Console.WriteLine($"Cluster: {prediction.SelectedClusterId}");
-            Console.WriteLine($"Distances: {string.Join(" ", prediction.Distance)}");
-            //string csvLocation = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages-output.csv");
-            //string plotLocation = Path.Combine(Environment.CurrentDirectory, "Data");
-            //var clusters = MLContext.Data.CreateEnumerable<ClusteringPrediction>(Predictions, false)
-            //               .ToArray();
-            ////Generate data files with customer data grouped by clusters
-            //SaveCustomerSegmentationCSV(clusters, csvLocation);
+            //var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(TrainedModel);
+            //var prediction = predictor.Predict((ExpandoObject)recommendationRequest);
+            //Console.WriteLine($"Cluster: {prediction.SelectedClusterId}");
+            //Console.WriteLine($"Distances: {string.Join(" ", prediction.Distance)}");
+            string csvLocation = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
+            string plotLocation = Path.Combine(Environment.CurrentDirectory, "Data");
+            var clusters = MLContext.Data.CreateEnumerable<ClusteringPrediction>(Predictions, false)
+                           .ToArray();
+            //Generate data files with customer data grouped by clusters
+            SaveCustomerSegmentationCSV(clusters, csvLocation);
 
-            ////Plot/paint the clusters in a chart and open it with the by-default image-tool in Windows
-            //SaveCustomerSegmentationPlotChart(clusters, plotLocation);
-            // OpenChartInDefaultWindow(_plotLocation);
+            //Plot/paint the clusters in a chart and open it with the by-default image-tool in Windows
+            SaveCustomerSegmentationPlotChart(clusters, plotLocation);
+            OpenChartInDefaultWindow(_plotLocation);
             return null;
         }
 
