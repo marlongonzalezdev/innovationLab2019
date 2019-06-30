@@ -18,6 +18,12 @@ namespace matching_learning.ml
     public class DefaultProjectAnalyzer : IProjectAnalyzer
     {
         private readonly Random _random = new Random(Environment.TickCount);
+        private MLContext MLContext { get; set; }
+
+        public DefaultProjectAnalyzer()
+        {
+            MLContext = new MLContext();
+        }
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
         {
@@ -75,10 +81,9 @@ namespace matching_learning.ml
 
             try
             {
-                var mLContext = new MLContext();
                 //training data, loading data from csv file data file in memory
 
-                var trainDataView = mLContext.Data.LoadFromTextFile("inputPath", 
+                var trainDataView = MLContext.Data.LoadFromTextFile("inputPath", 
                     columns: new[]
                     {
                         new TextLoader.Column("Features", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
@@ -88,11 +93,11 @@ namespace matching_learning.ml
                     separatorChar: ',');
 
                 //Configure data transformations in pipeline
-                var dataProcessPipeline = mLContext.Transforms.ProjectToPrincipalComponents(outputColumnName: "Score", inputColumnName: "Features", rank: 2)
-                    .Append(mLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "UserId", inputColumnName: nameof(Candidate.UserId), OneHotEncodingEstimator.OutputKind.Indicator));
+                var dataProcessPipeline = MLContext.Transforms.ProjectToPrincipalComponents(outputColumnName: "Score", inputColumnName: "Features", rank: 2)
+                    .Append(MLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "UserId", inputColumnName: nameof(Candidate.UserId), OneHotEncodingEstimator.OutputKind.Indicator));
 
                 //Create the training pipeline
-                var trainer = mLContext.Clustering.Trainers.KMeans(featureColumnName: "Features", numberOfClusters: 3);
+                var trainer = MLContext.Clustering.Trainers.KMeans(featureColumnName: "Features", numberOfClusters: 3);
                 var trainingPipeline = dataProcessPipeline.Append(trainer);
 
                 //Train the model fitting to the pivotDataView
@@ -102,10 +107,10 @@ namespace matching_learning.ml
                 //STEP 5: Evaluate the model and show accuracy stats
                 Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
                 var predictions = trainedModel.Transform(trainDataView);
-                var metrics = mLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Features");
+                var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Features");
 
                 // Save/persist the trained model to a .ZIP file
-                mLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
+                MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
 
                 Console.WriteLine("The model is saved to {0}", modelPath);
             }
