@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using matching_learning.ml.Domain;
 
 namespace matching_learning.ml.Domain
@@ -20,5 +22,10 @@ namespace matching_learning.ml.Domain
         /// The project skills.
         /// </value>
         public IList<Skill> ProjectSkills { get; set; }
+
+        public static explicit operator ExpandoObject(RecommendationRequest v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
