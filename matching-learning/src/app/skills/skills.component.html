@@ -1,20 +1,32 @@
 
+<form class="example-form">
+  <mat-form-field>
+    <mat-label>Select skills:</mat-label>
+    <mat-select [(value)]="selectedSkill">
+      <mat-option *ngFor="let skill of skillList" [value]="skill">
+        {{skill.viewValue}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="expectedScore-container">
+    <input matInput type="text" placeholder="Expected score:" [(ngModel)]="expectedScore" name="expectedScore">
+    <button mat-button *ngIf="expectedScore" matSuffix mat-icon-button aria-label="Clear" (click)="expectedScore=undefined">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button mat-button (click)="add(selectedSkill)">
+    <mat-icon>add</mat-icon>
+  </button>
+</form>
+
 <!-- <h4>Select skills to apply</h4> -->
-<mat-form-field>
-  <mat-label>Select skills</mat-label>
-  <mat-select [(value)]="selectedSkill">
-    <mat-option *ngFor="let skill of skillList" [value]="skill">
-      {{skill.viewValue}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<button mat-button (click)="add(selectedSkill)">
-    <mat-icon>add</mat-icon>   
-</button>
+
+
 
 <ul class="skills">
   <li *ngFor="let skill of skills">
-    <span class="badge">{{skill.viewValue}}</span>
+    <span class="badge">{{skill.viewValue}}</span> - {{skill.expectedScore}}/10
     <mat-icon>check</mat-icon>   
     <!-- <button class="delete" title="delete hero" (click)="delete(skill)">x</button> -->
   </li>
