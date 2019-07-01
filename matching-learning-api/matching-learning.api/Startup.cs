@@ -17,7 +17,7 @@ namespace matching_learning.api
     {
         private readonly IHostingEnvironment _env;
 
-        public Startup(IConfiguration configuration, 
+        public Startup(IConfiguration configuration,
             IHostingEnvironment env)
         {
             Configuration = configuration;
@@ -33,19 +33,13 @@ namespace matching_learning.api
 
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(new CorsPolicy
-                {
-                    //Allow all origins.
-                    IsOriginAllowed = s => true
-                });
-
-              options.AddPolicy("AnotherPolicy",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                options.AddPolicy("AnotherPolicy",
+                      builder =>
+                      {
+                          builder.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                      });
             });
 
             services.AddSwaggerGen(c =>
