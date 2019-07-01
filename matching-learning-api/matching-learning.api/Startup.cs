@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace matching_learning.api
@@ -60,7 +61,16 @@ namespace matching_learning.api
             });
 
             services.AddHttpContextAccessor();
-            services.AddScoped<IProjectAnalyzer, DefaultProjectAnalyzer>();
+
+            services.AddSingleton<IProjectAnalyzer, DefaultProjectAnalyzer>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultProjectAnalyzer>>();
+                DefaultProjectAnalyzer analyzer = new DefaultProjectAnalyzer(logger);
+                analyzer.TrainModelIfNotExists();
+
+                return analyzer;
+            });
+
             var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
             services.AddSingleton<IPhotoRepository>(photosRepo);
         }
@@ -77,6 +87,8 @@ namespace matching_learning.api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors("AnotherPolicy");
 
             app.UseHttpsRedirection();
 

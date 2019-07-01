@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using matching_learning.api.Models;
 using matching_learning.ml;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -42,7 +41,6 @@ namespace matching_learning.api.Controllers
         [HttpPost("candidates")]
         [ProducesResponseType(typeof(ProjectRecommendationsModel), 200)]
         [Consumes("application/json")]
-        [EnableCors("AnotherPolicy")]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Candidates([FromBody] ProjectCandidatesModel model)
         {

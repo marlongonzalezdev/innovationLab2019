@@ -3,11 +3,12 @@
 <div class="skills-container">
     <app-skills></app-skills>
 </div>
-
-<button mat-button (click)="processData()">
-    <mat-icon>cached</mat-icon>  
-    Get matches
-</button>
+<div class="get-matches">
+    <button mat-button (click)="processData()">
+        <mat-icon>cached</mat-icon>
+        Get matches
+    </button>
+</div>
 
 <div class="spinner-container">
     <mat-spinner *ngIf="loading"></mat-spinner>

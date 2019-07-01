@@ -1,5 +1,56 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.app {
+    width: fit-content;
+    margin: auto;
+    min-height: 60vh;
+}
+
+.header {
+    width: 80%;
+    height: 200px;
+    border-radius: 100px 0;
+    position: relative;
+    margin-left: 10%;
+    border: none;
+}
+
+footer {
+    padding: 30px;
+}
+
+.footer {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    font-size: 15px;
+    font-weight: lighter;
+    font-family: Roboto;
+}
+
+.copyright {
+    vertical-align: bottom;
+    padding-left: 50px;
+}
+
+.endava_footer {
+    width: 150px;
+    height: 50px;
+}
+
+.app {
+    width: 100%;
+    align-content: center;
+    margin: 30px 0;
+}
