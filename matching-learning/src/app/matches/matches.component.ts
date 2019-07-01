@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../user';
 import { MatchService } from '../match.service';
 import { Match } from '../match';
 import { Project } from '../project';
@@ -10,10 +9,7 @@ import { Skill } from '../skill';
   styleUrls: ['./matches.component.css']
 })
 export class MatchesComponent implements OnInit {
-  users: User[];
-  selectedUser: User;
-
-  
+   
   matches: Match[];
   selectedMatch: Match;
   
