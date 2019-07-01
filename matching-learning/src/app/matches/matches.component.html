@@ -1,14 +1,15 @@
 <h2>Matches</h2>
 <div class="matches__container">
     <ul class="list-group matches__items">
-        <li class="list-group-item" *ngFor="let user of users" [class.selected]="user === selectedUser"
-            (click)="onSelect(user)">
-            <span class="badge badge-secondary user_id">{{user.id}} </span>
-            <span class="badge user_name">{{user.name}} {{user.lastName}} </span>
-            <span class="badge badge-success user_percent">{{user.matchPercent}}</span>
+        <li class="list-group-item" *ngFor="let match of matches" [class.selected]="match === selectedMatch"
+            (click)="onSelect(match)">
+            <!-- <span class="badge badge-secondary user_id">{{user.id}} </span> -->
+            <span class="badge user_name">{{match.name}} {{match.lastName}} </span>
+            <span class="badge badge-success user_percent">{{match.matchingScore}}</span>
         </li>
     </ul>
     <div class="photo__container">
-        <app-user-details [user]="selectedUser"></app-user-details>
+        <app-user-details [user]="selectedMatch"></app-user-details>
     </div>
 </div>
+

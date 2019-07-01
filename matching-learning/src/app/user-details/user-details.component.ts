@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from '../user';
+import { Match } from '../match';
 
 @Component({
   selector: 'app-user-details',
@@ -7,7 +7,7 @@ import { User } from '../user';
   styleUrls: ['./user-details.component.css']
 })
 export class UserDetailsComponent implements OnInit {
-  @Input() user: User;
+  @Input() user: Match;
   constructor() { }
 
   ngOnInit() {

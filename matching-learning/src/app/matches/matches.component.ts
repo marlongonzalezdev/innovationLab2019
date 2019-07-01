@@ -11,12 +11,14 @@ import { Skill } from '../skill';
 })
 export class MatchesComponent implements OnInit {
   users: User[];
-
   selectedUser: User;
-  matches: Match[];
+
   
-  onSelect(user: User): void {
-    this.selectedUser = user;
+  matches: Match[];
+  selectedMatch: Match;
+  
+  onSelect(match: Match): void {
+    this.selectedMatch = match;
   }
   constructor(private matchService: MatchService) { }
 
@@ -39,6 +41,6 @@ export class MatchesComponent implements OnInit {
   getUsers(project: Project): void {
 
     this.matchService.getMatches(project)
-      .subscribe(matches => this.matches = matches);
+      .subscribe(response => this.matches = response.matches);
   }
 }
