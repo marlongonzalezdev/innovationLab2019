@@ -1,15 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Users } from './mock-users';
-import { User } from './user';
 import { Observable, of } from 'rxjs';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HandleError, HttpErrorHandler } from './http-error-handler.service';
+import { Project } from './project';
+import { Match } from './match';
+import { catchError } from 'rxjs/operators';
+
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json',
+    'Authorization': 'my-auth-token'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchService {
+  matchesUrl = 'https://localhost:44374/Project/candidates';  // URL to web api
+  private handleError: HandleError;
 
-  getMatches(): Observable<User[]> {
-    return of(Users);
+  constructor(
+    private http: HttpClient,
+    httpErrorHandler: HttpErrorHandler) {
+    this.handleError = httpErrorHandler.createHandleError('MatchService');
   }
-  constructor() { }
+
+  getMatches(project: Project): Observable<Match[]> {
+    return this.http.post<Match[]>(this.matchesUrl, project, httpOptions)
+    .pipe(
+      catchError(this.handleError<Match[]>('getMatches', []))
+    );    
+  }
+
+
+  // getMatches(): Observable<User[]> {
+  //   return of(Users);
+  // }
+ 
 }

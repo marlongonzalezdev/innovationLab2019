@@ -37,6 +37,14 @@ namespace matching_learning.api
                     //Allow all origins.
                     IsOriginAllowed = s => true
                 });
+
+              options.AddPolicy("AnotherPolicy",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
 
             services.AddSwaggerGen(c =>
