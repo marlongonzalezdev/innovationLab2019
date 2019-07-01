@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using matching_learning.api.Repositories;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,15 @@ namespace matching_learning.api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(new CorsPolicy
+                {
+                    //Allow all origins.
+                    IsOriginAllowed = s => true
+                });
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -40,7 +50,6 @@ namespace matching_learning.api
 
                 c.IncludeXmlComments(Path.Combine(_env.ContentRootPath, "matching-learning.api.xml"));
             });
-
 
             services.AddHttpContextAccessor();
             services.AddScoped<IProjectAnalyzer, DefaultProjectAnalyzer>();
@@ -63,6 +72,8 @@ namespace matching_learning.api
 
             app.UseHttpsRedirection();
 
+            app.UseCors();
+
             app.Use((context, next) =>
             {
                 // Redirect requests without a path to the default swagger UI page.
@@ -78,7 +89,6 @@ namespace matching_learning.api
             app.UseSwagger();
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Matching Learning API"));
-
 
             app.UseMvc();
         }
