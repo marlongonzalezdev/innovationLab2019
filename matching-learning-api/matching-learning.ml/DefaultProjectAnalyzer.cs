@@ -113,7 +113,8 @@ namespace matching_learning.ml
                 // Save/persist the trained model to a .ZIP file
                 MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
 
-                var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
+                // var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
+                var predictor = MLContext.Model.CreatePredictionEngine<Candidate, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
                 // trying to read prediction members (selected cluster id)
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
