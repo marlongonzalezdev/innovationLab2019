@@ -115,7 +115,7 @@ namespace matching_learning.ml
 
                 var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
-
+                // trying to read prediction members (selected cluster id)
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
                               
             }
