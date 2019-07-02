@@ -32,8 +32,12 @@
 
 <div class="selected-skills__container">
     <ul class="list-group skills__selected">
-        <li class="list-group-item" *ngFor="let skill of skills">
+        <li class="list-group-item" *ngFor="let skill of project.skills">
             <span class="badge">{{skill.tag}}</span> --- <span class="badge">{{skill.weight}} / 10</span>
         </li>
     </ul>
 </div>
+
+<div class="matches-container">
+    <app-matches [project]="project"></app-matches>
+  </div>

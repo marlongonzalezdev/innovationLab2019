@@ -1,5 +1,16 @@
+<div class="get-matches">
+    <button mat-button (click)="processData()">
+        <mat-icon>cached</mat-icon>
+        Get matches
+    </button>
+</div>
+
+<div class="spinner-container">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+</div>
+
 <h2>Matches</h2>
-<div class="matches__container">
+<div class="matches__container" *ngIf="showContent">
     <ul class="list-group matches__items">
         <li class="list-group-item" *ngFor="let match of matches" [class.selected]="match === selectedMatch"
             (click)="onSelect(match)">
@@ -12,4 +23,3 @@
         <app-user-details [user]="selectedMatch"></app-user-details>
     </div>
 </div>
-

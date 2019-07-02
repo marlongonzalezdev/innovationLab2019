@@ -1,15 +1,6 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
-.spinner-container {
-    margin: 20px
-}
-
 .skills-container {
     display: inline-block;
-
 }
 
-.get-matches {
-    display: inline-block;
-    padding-left: 30px;
-}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Skills} from '../mock-skills'
 import { Skill } from '../skill';
+import { Project } from '../project';
 
 @Component({
   selector: 'app-skills',
@@ -8,14 +9,18 @@ import { Skill } from '../skill';
   styleUrls: ['./skills.component.css']
 })
 export class SkillsComponent implements OnInit {
-  skills: Skill[] = [];
-
+  project: Project;
+  
   skillList = Skills;
 
   selectedSkill: Skill;
   expectedScore: number;
 
-  constructor() { }
+  constructor() { 
+    this.project = new Project();
+    this.project.name= "Example";
+    this.project.skills = [];
+  }
 
   ngOnInit() {
   }
@@ -23,16 +28,14 @@ export class SkillsComponent implements OnInit {
   add(skill: Skill): void {
 
     if (!skill || !this.expectedScore) { return; }
-    if (!this.skills.find(s => s === skill)) {
+    if (!this.project.skills.find(s => s === skill)) {
       skill.weight = this.expectedScore;
-      this.skills.push(skill);
+      this.project.skills.push(skill);
       this.selectedSkill = undefined;
       this.expectedScore = undefined;
     }
   }
 
   delete(name: string): void {
-
   }
-
 }

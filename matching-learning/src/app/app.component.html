@@ -4,19 +4,12 @@
     <app-skills></app-skills>
 </div>
 
-<div class="get-matches">
-    <button mat-button (click)="processData()">
-        <mat-icon>cached</mat-icon>
-        Get matches
-    </button>
-</div>
-
-<div class="spinner-container">
-    <mat-spinner *ngIf="loading"></mat-spinner>
-</div>
-
-<div class="matches-container" *ngIf="showContent">
+<!-- <div class="matches-container" *ngIf="showContent">
   <app-matches></app-matches>
-</div>
+</div> -->
+
+<!-- <div class="matches-container">
+    <app-matches [project]="project"></app-matches>
+  </div> -->
 
 <router-outlet></router-outlet>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { MatchService } from '../match.service';
 import { Match } from '../match';
 import { Project } from '../project';
@@ -13,6 +13,17 @@ export class MatchesComponent implements OnInit {
   matches: Match[];
   selectedMatch: Match;
   
+  loading: boolean;
+  showContent: boolean;
+
+  @Input() project: Project
+
+  processData() {
+    this.showContent = false;
+    this.loading = true;    
+    this.getUsers(this.project);  
+  }
+
   onSelect(match: Match): void {
     this.selectedMatch = match;
   }
@@ -20,23 +31,16 @@ export class MatchesComponent implements OnInit {
 
   ngOnInit() {
 
-    //project dummy initialization
-    let skills: Skill[] = [
-      new Skill("angular", 0.6),
-      new Skill("c#", 0.6),
-      new Skill("kotlin", 0.6),
-    ]
-    let project: Project = {
-      name: "test",
-      skills: skills
-    };
-
-    this.getUsers(project);
   }
 
   getUsers(project: Project): void {
 
     this.matchService.getMatches(project)
-      .subscribe(response => this.matches = response.matches);
+      .subscribe(response => 
+        {
+          this.matches = response.matches; 
+          this.loading = false;
+          this.showContent = true;
+        });
   }
 }

@@ -19,3 +19,12 @@
 .user_percent {
     float: right;
 }
+
+.get-matches {
+    display: inline-block;
+    padding-left: 30px;
+}
+
+.spinner-container {
+    margin: 20px
+}
