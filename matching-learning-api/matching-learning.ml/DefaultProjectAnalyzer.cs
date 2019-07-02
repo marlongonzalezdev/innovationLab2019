@@ -22,7 +22,7 @@ namespace matching_learning.ml
     {
         private readonly Random _random = new Random(Environment.TickCount);
         private MLContext MLContext { get; set; }
-        
+
         public DefaultProjectAnalyzer()
         {
             MLContext = new MLContext();
@@ -85,7 +85,7 @@ namespace matching_learning.ml
             {
                 //training data, loading data from csv file data file in memory
 
-                var trainDataView = MLContext.Data.LoadFromTextFile(inputPath, 
+                var trainDataView = MLContext.Data.LoadFromTextFile(inputPath,
                     columns: new[]
                     {
                         new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
@@ -105,43 +105,24 @@ namespace matching_learning.ml
                 //Train the model fitting to the pivotDataView
                 var trainedModel = trainingPipeline.Fit(trainDataView);
 
-                
+
                 //STEP 5: Evaluate the model and show accuracy stats
                 var predictions = trainedModel.Transform(trainDataView);
                 var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Skills");
 
                 // Save/persist the trained model to a .ZIP file
                 MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
-
-                // var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
+                // predict cluster for request
                 var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
                 // trying to read prediction members (selected cluster id)
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
-                              
+
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-        }
-        private List<Candidate> PredictModel(RecommendationRequest recommendationRequest)
-        {
-            //var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(TrainedModel);
-            //var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
-            //Console.WriteLine($"Cluster: {prediction.SelectedClusterId}");
-            //Console.WriteLine($"Distances: {string.Join(" ", prediction.Distance)}");
-            //string csvLocation = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-            //string plotLocation = Path.Combine(Environment.CurrentDirectory, "Data");
-            //var clusters = MLContext.Data.CreateEnumerable<ClusteringPrediction>(Predictions, false)
-            //               .ToArray();
-            ////Generate data files with customer data grouped by clusters
-            //SaveCustomerSegmentationCSV(clusters, csvLocation);
-
-            ////Plot/paint the clusters in a chart and open it with the by-default image-tool in Windows
-            //SaveCustomerSegmentationPlotChart(clusters, plotLocation);
-            //OpenChartInDefaultWindow(_plotLocation);
-            return null;
         }
 
         private SeedData ProcessRequest(RecommendationRequest recommendationRequest)
@@ -151,64 +132,9 @@ namespace matching_learning.ml
             {
                 var seedType = seedData.GetType().GetProperty(skill.Tag, System.Reflection.BindingFlags.Public);
                 seedType.SetValue(seedData, skill.Weight);
-            }            
+            }
             return seedData;
         }
 
-        private static void SaveCustomerSegmentationCSV(IEnumerable<ClusteringPrediction> predictions, string csvlocation)
-        {
-            Console.WriteLine("CSV Customer Segmentation");
-            using (var w = new System.IO.StreamWriter(csvlocation))
-            {
-                w.WriteLine($"LastName,SelectedClusterId");
-                w.Flush();
-                predictions.ToList().ForEach(prediction => {
-                    w.WriteLine($"{prediction.UserId},{prediction.SelectedClusterId}");
-                    w.Flush();
-                });
-            }
-
-            Console.WriteLine($"CSV location: {csvlocation}");
-        }
-
-        private static void SaveCustomerSegmentationPlotChart(IEnumerable<ClusteringPrediction> predictions, string plotLocation)
-        {
-            Console.WriteLine("Plot Customer Segmentation");
-
-            var plot = new PlotModel { Title = "Customer Segmentation", IsLegendVisible = true };
-
-            var clusters = predictions.Select(p => p.SelectedClusterId).Distinct().OrderBy(x => x);
-
-            foreach (var cluster in clusters)
-            {
-                var scatter = new ScatterSeries { MarkerType = MarkerType.Circle, MarkerStrokeThickness = 2, Title = $"Cluster: {cluster}", RenderInLegend = true };
-                var series = predictions
-                    .Where(p => p.SelectedClusterId == cluster)
-                    .Select(p => new ScatterPoint(p.Location[0], p.Location[1])).ToArray();
-                scatter.Points.AddRange(series);
-                plot.Series.Add(scatter);
-            }
-
-            plot.DefaultColors = OxyPalettes.HueDistinct(plot.Series.Count).Colors;
-
-            var exporter = new SvgExporter { Width = 600, Height = 400 };
-            using (var fs = new FileStream(plotLocation, FileMode.Create))
-            {
-                exporter.Export(plot, fs);
-            }
-
-            Console.WriteLine($"Plot location: {plotLocation}");
-        }
-
-        private static void OpenChartInDefaultWindow(string plotLocation)
-        {
-            Console.WriteLine("Showing chart...");
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(plotLocation)
-            {
-                UseShellExecute = true
-            };
-            p.Start();
-        }
     }
 }
