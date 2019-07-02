@@ -103,12 +103,10 @@ namespace matching_learning.ml
                 var trainingPipeline = dataProcessPipeline.Append(trainer);
 
                 //Train the model fitting to the pivotDataView
-                Console.WriteLine("=============== Training the model ===============");
                 var trainedModel = trainingPipeline.Fit(trainDataView);
 
                 
                 //STEP 5: Evaluate the model and show accuracy stats
-                Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
                 var predictions = trainedModel.Transform(trainDataView);
                 var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Skills");
 
@@ -119,12 +117,10 @@ namespace matching_learning.ml
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
 
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
-
-                Console.WriteLine("The model is saved to {0}", modelPath);
+                              
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }
