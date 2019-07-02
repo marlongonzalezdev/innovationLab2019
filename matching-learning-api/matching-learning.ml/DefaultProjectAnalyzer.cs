@@ -119,9 +119,9 @@ namespace matching_learning.ml
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
                               
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
         private List<Candidate> PredictModel(RecommendationRequest recommendationRequest)
