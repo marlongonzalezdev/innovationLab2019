@@ -69,14 +69,14 @@ namespace matching_learning.ml
                     }
                 }
                 .OrderByDescending(x => x.Score);
-            PredictModel(recommendationRequest);
+            RecommendationModelTraining(recommendationRequest);
             return Task.FromResult(new RecommendationResponse
             {
                 Matches = candidates
             });
         }
 
-        public void RecommendationModelTraining()
+        public void RecommendationModelTraining(RecommendationRequest recommendationRequest)
         {
             string inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
             var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
@@ -85,7 +85,7 @@ namespace matching_learning.ml
             {
                 //training data, loading data from csv file data file in memory
 
-                var trainDataView = MLContext.Data.LoadFromTextFile("inputPath", 
+                var trainDataView = MLContext.Data.LoadFromTextFile(inputPath, 
                     columns: new[]
                     {
                         new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
@@ -106,6 +106,7 @@ namespace matching_learning.ml
                 Console.WriteLine("=============== Training the model ===============");
                 var trainedModel = trainingPipeline.Fit(trainDataView);
 
+                
                 //STEP 5: Evaluate the model and show accuracy stats
                 Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
                 var predictions = trainedModel.Transform(trainDataView);
@@ -113,6 +114,11 @@ namespace matching_learning.ml
 
                 // Save/persist the trained model to a .ZIP file
                 MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
+
+                var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
+                var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
+
+                ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
 
                 Console.WriteLine("The model is saved to {0}", modelPath);
             }
@@ -125,20 +131,30 @@ namespace matching_learning.ml
         private List<Candidate> PredictModel(RecommendationRequest recommendationRequest)
         {
             //var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(TrainedModel);
-            //var prediction = predictor.Predict((ExpandoObject)recommendationRequest);
+            //var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
             //Console.WriteLine($"Cluster: {prediction.SelectedClusterId}");
             //Console.WriteLine($"Distances: {string.Join(" ", prediction.Distance)}");
-            string csvLocation = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-            string plotLocation = Path.Combine(Environment.CurrentDirectory, "Data");
-            var clusters = MLContext.Data.CreateEnumerable<ClusteringPrediction>(Predictions, false)
-                           .ToArray();
-            //Generate data files with customer data grouped by clusters
-            SaveCustomerSegmentationCSV(clusters, csvLocation);
+            //string csvLocation = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
+            //string plotLocation = Path.Combine(Environment.CurrentDirectory, "Data");
+            //var clusters = MLContext.Data.CreateEnumerable<ClusteringPrediction>(Predictions, false)
+            //               .ToArray();
+            ////Generate data files with customer data grouped by clusters
+            //SaveCustomerSegmentationCSV(clusters, csvLocation);
 
-            //Plot/paint the clusters in a chart and open it with the by-default image-tool in Windows
-            SaveCustomerSegmentationPlotChart(clusters, plotLocation);
-            OpenChartInDefaultWindow(_plotLocation);
+            ////Plot/paint the clusters in a chart and open it with the by-default image-tool in Windows
+            //SaveCustomerSegmentationPlotChart(clusters, plotLocation);
+            //OpenChartInDefaultWindow(_plotLocation);
             return null;
+        }
+
+        private ExpandoObject ProcessRequest(RecommendationRequest recommendationRequest)
+        {
+            var dictionary = new ExpandoObject() as IDictionary<string, Object>;
+            foreach (var skill in recommendationRequest.ProjectSkills)
+            {
+                dictionary.Add(skill.Tag, skill.Weight);
+            }
+            return (ExpandoObject)dictionary;
         }
 
         private static void SaveCustomerSegmentationCSV(IEnumerable<ClusteringPrediction> predictions, string csvlocation)
