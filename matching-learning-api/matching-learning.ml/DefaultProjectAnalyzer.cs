@@ -114,7 +114,7 @@ namespace matching_learning.ml
                 MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
 
                 // var predictor = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
-                var predictor = MLContext.Model.CreatePredictionEngine<Candidate, ClusteringPrediction>(trainedModel);
+                var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
                 // trying to read prediction members (selected cluster id)
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
@@ -144,14 +144,15 @@ namespace matching_learning.ml
             return null;
         }
 
-        private ExpandoObject ProcessRequest(RecommendationRequest recommendationRequest)
+        private SeedData ProcessRequest(RecommendationRequest recommendationRequest)
         {
-            var dictionary = new ExpandoObject() as IDictionary<string, Object>;
+            var seedData = new SeedData();
             foreach (var skill in recommendationRequest.ProjectSkills)
             {
-                dictionary.Add(skill.Tag, skill.Weight);
-            }
-            return (ExpandoObject)dictionary;
+                var seedType = seedData.GetType().GetProperty(skill.Tag, System.Reflection.BindingFlags.Public);
+                seedType.SetValue(seedData, skill.Weight);
+            }            
+            return seedData;
         }
 
         private static void SaveCustomerSegmentationCSV(IEnumerable<ClusteringPrediction> predictions, string csvlocation)
