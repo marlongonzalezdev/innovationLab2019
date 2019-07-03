@@ -16,7 +16,7 @@
             (click)="onSelect(match)">
             <!-- <span class="badge badge-secondary user_id">{{user.id}} </span> -->
             <span class="badge user_name">{{match.name}} {{match.lastName}} </span>
-            <span class="badge badge-success user_percent">{{match.matchingScore}}</span>
+            <span class="badge badge-success user_percent">{{match.matchingScore | number}}</span>
         </li>
     </ul>
     <div class="photo__container">
