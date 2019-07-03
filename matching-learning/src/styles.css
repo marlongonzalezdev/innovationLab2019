@@ -10,19 +10,38 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.app {
+.container {
     width: fit-content;
     margin: auto;
+}
+
+.logo {
+    max-width: 150px;
+    float: right;
+}
+
+.app {
     min-height: 60vh;
 }
 
-.header {
-    width: 80%;
-    height: 200px;
-    border-radius: 100px 0;
-    position: relative;
-    margin-left: 10%;
-    border: none;
+header {
+    background-image: linear-gradient(black, white);
+    overflow: auto;
+}
+
+.header__text {
+    /*width: 80%;*/
+    /*height: 200px;*/
+    /*border-radius: 100px 0;*/
+    /*position: relative;*/
+    /*margin-left: 10%;*/
+    /*border: none;*/
+    padding-right: 50px;
+    color: white;
+    /*color: #3985FB;*/
+    font-size: 72px;
+    font-family: "Lucida Console";
+    /*background-color: black;*/
 }
 
 footer {
