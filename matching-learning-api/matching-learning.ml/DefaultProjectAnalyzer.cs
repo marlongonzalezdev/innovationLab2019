@@ -79,45 +79,76 @@ namespace matching_learning.ml
         public void RecommendationModelTraining(RecommendationRequest recommendationRequest)
         {
             string inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
+            string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
 
             try
             {
                 //training data, loading data from csv file data file in memory
 
-                var trainDataView = MLContext.Data.LoadFromTextFile(inputPath,
-                    columns: new[]
-                    {
-                        new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
-                        new TextLoader.Column(nameof(Candidate.UserId), DataKind.String, 0)
-                    },
-                    hasHeader: true,
+                var trainingData = MLContext.Data.LoadFromTextFile<SeedData>(
+                    path: inputPath,
+                    hasHeader: false,
                     separatorChar: ',');
-
-                //Configure data transformations in pipeline
-                var dataProcessPipeline = MLContext.Transforms.ProjectToPrincipalComponents(outputColumnName: "Score", inputColumnName: "Skills", rank: 2)
-                    .Append(MLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "UserId", inputColumnName: nameof(Candidate.UserId), OneHotEncodingEstimator.OutputKind.Indicator));
-
-                //Create the training pipeline
-                var trainer = MLContext.Clustering.Trainers.KMeans(featureColumnName: "Skills", numberOfClusters: 3);
-                var trainingPipeline = dataProcessPipeline.Append(trainer);
-
-                //Train the model fitting to the pivotDataView
-                var trainedModel = trainingPipeline.Fit(trainDataView);
-
-
-                //STEP 5: Evaluate the model and show accuracy stats
-                var predictions = trainedModel.Transform(trainDataView);
-                var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Skills");
-
-                // Save/persist the trained model to a .ZIP file
-                MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
-                // predict cluster for request
+                var dataProcessPipeline = MLContext.Transforms.Concatenate("Skills",
+                        "assembly",
+                        "csharp",
+                        "c",
+                        "cpp",
+                        "css",
+                        "html",
+                        "go",
+                        "java",
+                        "javascript",
+                        "php",
+                        "powershell",
+                        "python",
+                        "ruby",
+                        "typescript",
+                        "algorithm",
+                        "android",
+                        "angular",
+                        "angularjs",
+                        "aws",
+                        "bitcoin",
+                        "bootstrap",
+                        "bootstrap4",
+                        "clean_architecture",
+                        "cloud",
+                        "collaboration",
+                        "cryptocurrency",
+                        "cryptography",
+                        "data_science",
+                        "database",
+                        "deep_learning",
+                        "design_patterns",
+                        "desktop",
+                        "dev_ops",
+                        "django",
+                        "docker",
+                        "dotnetcore",
+                        "elasticsearch",
+                        "frontend",
+                        "git",
+                        "graphql",
+                        "html5",
+                        "http2",
+                        "ionic",
+                        "ios",
+                        "jquery",
+                        "json",
+                        "linux",
+                        "mongodb",
+                        "mysql",
+                        "nodejs",
+                        "postgresql",
+                        "reactjs",
+                        "redis")
+                .Append(MLContext.Clustering.Trainers.KMeans("Skills", numberOfClusters: 3));
+                var trainedModel = dataProcessPipeline.Fit(trainingData);
                 var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
                 // trying to read prediction members (selected cluster id)
                 ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
-
             }
             catch (Exception ex)
             {
@@ -130,8 +161,8 @@ namespace matching_learning.ml
             var seedData = new SeedData();
             foreach (var skill in recommendationRequest.ProjectSkills)
             {
-                var seedType = seedData.GetType().GetProperty(skill.Tag, System.Reflection.BindingFlags.Public);
-                seedType.SetValue(seedData, skill.Weight);
+                var propertyInfo = seedData.GetType().GetProperty(skill.Tag);
+                propertyInfo.SetValue(seedData, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
             }
             return seedData;
         }
