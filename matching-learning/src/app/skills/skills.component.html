@@ -29,15 +29,15 @@
 
 </form>
 
-<!-- <h4>Select skills to apply</h4> -->
-
-
 <div class="matches-container">
 
     <div class="selected-skills__container">
         <ul class="list-group skills__selected">
             <li class="list-group-item" *ngFor="let skill of project.skills">
                 <span class="badge">{{skill.tag}}</span> --- <span class="badge">{{skill.weight}} / 10</span>
+                <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
+                  <mat-icon>delete</mat-icon>
+                </button>
             </li>
         </ul>
     </div>

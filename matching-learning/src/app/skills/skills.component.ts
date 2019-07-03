@@ -40,6 +40,10 @@ export class SkillsComponent implements OnInit {
         this.display = true;
     }
 
-    delete(name: string): void {
+    delete(skill: Skill): void {
+      const index = this.project.skills.indexOf(skill, 0);
+      if (index > -1) {
+        this.project.skills.splice(index, 1);
+      }
     }
 }
