@@ -9,8 +9,8 @@
     <mat-spinner *ngIf="loading"></mat-spinner>
 </div>
 
-<h2>Matches</h2>
 <div class="matches__container" *ngIf="showContent">
+    <h2>Matches</h2>
     <ul class="list-group matches__items">
         <li class="list-group-item" *ngFor="let match of matches" [class.selected]="match === selectedMatch"
             (click)="onSelect(match)">
