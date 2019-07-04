@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,24 +10,25 @@ using Microsoft.Extensions.Logging;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace matching_learning.ml
 {
     /// <summary>
     /// A dummy implementation of the IProjectAnalyzer whilst the actual one is implemented
     /// </summary>
-    /// <seealso cref="IProjectAnalyzer" />
+    /// <seealso cref="matching_learning.ml.IProjectAnalyzer" />
     public class DefaultProjectAnalyzer : IProjectAnalyzer
     {
         private readonly Random _random = new Random(Environment.TickCount);
-        private readonly ILogger<DefaultProjectAnalyzer> logger;
-
         private MLContext MLContext { get; set; }
+        private ILogger Logger { get; set; }
 
-        public DefaultProjectAnalyzer(ILogger<DefaultProjectAnalyzer> logger)
+        public DefaultProjectAnalyzer(ILogger logger)
         {
-            this.logger = logger;
             MLContext = new MLContext();
+            Logger = logger;
         }
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
@@ -69,64 +72,101 @@ namespace matching_learning.ml
                     }
                 }
                 .OrderByDescending(x => x.Score);
-
+            RecommendationModelTraining(recommendationRequest);
             return Task.FromResult(new RecommendationResponse
             {
                 Matches = candidates
             });
         }
 
-        public void TrainModelIfNotExists()
+        public void RecommendationModelTraining(RecommendationRequest recommendationRequest)
         {
+            string inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
+            string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
+
             try
             {
-                var inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-                if (File.Exists(inputPath))
-                {
-                    logger.LogInformation($"Trained model found at {inputPath}. Skipping training.");
-                    return;
-                }
-
-                //We must train the model if not found.
-                var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
-
                 //training data, loading data from csv file data file in memory
-                var trainDataView = MLContext.Data.LoadFromTextFile(inputPath,
-                    columns: new[]
-                    {
-                        new TextLoader.Column("Features", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
-                        new TextLoader.Column(nameof(Candidate.UserId), DataKind.String, 0)
-                    },
-                    hasHeader: true,
+
+                var trainingData = MLContext.Data.LoadFromTextFile<SeedData>(
+                    path: inputPath,
+                    hasHeader: false,
                     separatorChar: ',');
-
-                //Configure data transformations in pipeline
-                var dataProcessPipeline = MLContext.Transforms.ProjectToPrincipalComponents(outputColumnName: "Score", inputColumnName: "Features", rank: 2)
-                    .Append(MLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "UserId", inputColumnName: nameof(Candidate.UserId), OneHotEncodingEstimator.OutputKind.Indicator));
-
-                //Create the training pipeline
-                var trainer = MLContext.Clustering.Trainers.KMeans(featureColumnName: "Features", numberOfClusters: 3);
-                var trainingPipeline = dataProcessPipeline.Append(trainer);
-
-                //Train the model fitting to the pivotDataView
-                logger.LogInformation("=============== Training the model ===============");
-                ITransformer trainedModel = trainingPipeline.Fit(trainDataView);
-
-                //STEP 5: Evaluate the model and show accuracy stats
-                logger.LogInformation("===== Evaluating Model's accuracy with Test data =====");
-                var predictions = trainedModel.Transform(trainDataView);
-                var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Features");
-
-                // Save/persist the trained model to a .ZIP file
-                MLContext.Model.Save(trainedModel, trainDataView.Schema, modelPath);
-
-                logger.LogInformation($"The model was saved to {modelPath}");
+                var dataProcessPipeline = MLContext.Transforms.Concatenate("Skills",
+                        "assembly",
+                        "csharp",
+                        "c",
+                        "cpp",
+                        "css",
+                        "html",
+                        "go",
+                        "java",
+                        "javascript",
+                        "php",
+                        "powershell",
+                        "python",
+                        "ruby",
+                        "typescript",
+                        "algorithm",
+                        "android",
+                        "angular",
+                        "angularjs",
+                        "aws",
+                        "bitcoin",
+                        "bootstrap",
+                        "bootstrap4",
+                        "clean_architecture",
+                        "cloud",
+                        "collaboration",
+                        "cryptocurrency",
+                        "cryptography",
+                        "data_science",
+                        "database",
+                        "deep_learning",
+                        "design_patterns",
+                        "desktop",
+                        "dev_ops",
+                        "django",
+                        "docker",
+                        "dotnetcore",
+                        "elasticsearch",
+                        "frontend",
+                        "git",
+                        "graphql",
+                        "html5",
+                        "http2",
+                        "ionic",
+                        "ios",
+                        "jquery",
+                        "json",
+                        "linux",
+                        "mongodb",
+                        "mysql",
+                        "nodejs",
+                        "postgresql",
+                        "reactjs",
+                        "redis")
+                .Append(MLContext.Clustering.Trainers.KMeans("Skills", numberOfClusters: 3));
+                var trainedModel = dataProcessPipeline.Fit(trainingData);
+                var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
+                var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.LogError(e, "Model training operation failed.");
-                throw;
+                throw ex;
             }
         }
+
+        private SeedData ProcessRequest(RecommendationRequest recommendationRequest)
+        {
+            var seedData = new SeedData();
+            foreach (var skill in recommendationRequest.ProjectSkills)
+            {
+                var propertyInfo = seedData.GetType().GetProperty(skill.Tag.ToLower());
+                propertyInfo.SetValue(seedData, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
+            }
+            return seedData;
+        }
+
     }
 }
