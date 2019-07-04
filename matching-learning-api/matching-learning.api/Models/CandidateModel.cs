@@ -56,6 +56,7 @@ namespace matching_learning.api.Models
         {
             UserName = candidate.UserId;
             MatchingScore = candidate.Score;
+            Name = $"{Name?[0].ToString().ToUpperInvariant()}{Name?.Substring(1)}";
 
             return this;
         }

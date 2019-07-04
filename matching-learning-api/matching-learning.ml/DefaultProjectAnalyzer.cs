@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using matching_learning.ml.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML;
-using Microsoft.ML.Data;
-using Microsoft.ML.Transforms;
-using OxyPlot;
-using OxyPlot.Series;
 
 namespace matching_learning.ml
 {
@@ -22,6 +15,7 @@ namespace matching_learning.ml
     public class DefaultProjectAnalyzer : IProjectAnalyzer
     {
         private MLContext MLContext { get; set; }
+
         private ILogger Logger { get; set; }
 
         public DefaultProjectAnalyzer(ILogger logger)
@@ -174,6 +168,5 @@ namespace matching_learning.ml
                 throw;
             }
         }
-
     }
 }

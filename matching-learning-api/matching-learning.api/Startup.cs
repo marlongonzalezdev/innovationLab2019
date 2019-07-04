@@ -4,7 +4,6 @@ using matching_learning.api.Models;
 using matching_learning.api.Repositories;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
