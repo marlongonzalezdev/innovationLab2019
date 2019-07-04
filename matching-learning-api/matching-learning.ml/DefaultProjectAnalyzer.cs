@@ -88,7 +88,7 @@ namespace matching_learning.ml
                 var trainDataView = MLContext.Data.LoadFromTextFile(inputPath,
                     columns: new[]
                     {
-                        new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 1440) }),
+adsa                        new TextLoader.Column("Skills", DataKind.Single, new[] {new TextLoader.Range(0, 53) }),
                         new TextLoader.Column(nameof(Candidate.UserId), DataKind.String, 0)
                     },
                     hasHeader: true,
