@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using matching_learning.api.Repositories;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace matching_learning.api
@@ -15,7 +17,7 @@ namespace matching_learning.api
     {
         private readonly IHostingEnvironment _env;
 
-        public Startup(IConfiguration configuration, 
+        public Startup(IConfiguration configuration,
             IHostingEnvironment env)
         {
             Configuration = configuration;
@@ -32,12 +34,12 @@ namespace matching_learning.api
             services.AddCors(options =>
             {
                 options.AddPolicy("AnotherPolicy",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                      builder =>
+                      {
+                          builder.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                      });
             });
 
             services.AddSwaggerGen(c =>
@@ -52,9 +54,17 @@ namespace matching_learning.api
                 c.IncludeXmlComments(Path.Combine(_env.ContentRootPath, "matching-learning.api.xml"));
             });
 
-
             services.AddHttpContextAccessor();
-            services.AddScoped<IProjectAnalyzer, DefaultProjectAnalyzer>();
+
+            services.AddSingleton<IProjectAnalyzer, DefaultProjectAnalyzer>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultProjectAnalyzer>>();
+                DefaultProjectAnalyzer analyzer = new DefaultProjectAnalyzer(logger);
+                //analyzer.TrainModelIfNotExists();
+
+                return analyzer;
+            });
+
             var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
             services.AddSingleton<IPhotoRepository>(photosRepo);
         }
@@ -72,7 +82,11 @@ namespace matching_learning.api
                 app.UseHsts();
             }
 
+            app.UseCors("AnotherPolicy");
+
             app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.Use((context, next) =>
             {
@@ -89,7 +103,6 @@ namespace matching_learning.api
             app.UseSwagger();
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Matching Learning API"));
-
 
             app.UseMvc();
         }

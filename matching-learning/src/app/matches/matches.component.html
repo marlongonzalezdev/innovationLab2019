@@ -1,6 +1,25 @@
-<h2>Matches</h2>
-<li *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onSelect(user)">
-    <span class="badge">Id:{{user.id}} </span>Name: {{user.name}} {{user.lastName}} Match: {{user.matchPercent}}
-</li>
+<div class="get-matches" *ngIf="display">
+    <button mat-button (click)="processData()">
+        <mat-icon>cached</mat-icon>
+        Get matches
+    </button>
+</div>
 
-<app-user-details [user]="selectedUser"></app-user-details>
+<div class="spinner-container">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+</div>
+
+<div class="matches__container" *ngIf="showContent">
+    <h2>Matches</h2>
+    <ul class="list-group matches__items">
+        <li class="list-group-item" *ngFor="let match of matches" [class.selected]="match === selectedMatch"
+            (click)="onSelect(match)">
+            <!-- <span class="badge badge-secondary user_id">{{user.id}} </span> -->
+            <span class="badge user_name">{{match.name}} {{match.lastName}} </span>
+            <span class="badge badge-success user_percent">{{match.matchingScore | number}}</span>
+        </li>
+    </ul>
+    <div class="photo__container">
+        <app-user-details [user]="selectedMatch"></app-user-details>
+    </div>
+</div>

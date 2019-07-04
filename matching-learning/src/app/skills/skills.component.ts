@@ -1,53 +1,49 @@
-import { Component, OnInit } from '@angular/core';
-
-
-export interface Skill {
-  value: string;
-  viewValue: string;
-  expectedScore: number;
-}
-
+import {Component, OnInit} from '@angular/core';
+import {Skills} from '../mock-skills';
+import {Skill} from '../skill';
+import {Project} from '../project';
 
 @Component({
-  selector: 'app-skills',
-  templateUrl: './skills.component.html',
-  styleUrls: ['./skills.component.css']
+    selector: 'app-skills',
+    templateUrl: './skills.component.html',
+    styleUrls: ['./skills.component.css']
 })
 export class SkillsComponent implements OnInit {
-  skills: Skill[] = [];
+    project: Project;
+    display: boolean;
+    skillList = Skills;
 
-  skillList: Skill[] = [
-    { value: '1', viewValue: 'C#', expectedScore: undefined },
-    { value: '2', viewValue: 'SQL', expectedScore: undefined },
-    { value: '3', viewValue: 'Java', expectedScore: undefined },
-    { value: '3', viewValue: 'Elastic Search', expectedScore: undefined },
-    { value: '3', viewValue: 'Kotlin', expectedScore: undefined },
-    { value: '3', viewValue: 'Angular', expectedScore: undefined },
-    { value: '3', viewValue: 'React', expectedScore: undefined},
-    { value: '3', viewValue: 'Javascript', expectedScore: undefined },
-  ];
+    selectedSkill: Skill;
+    expectedScore: number;
 
-  selectedSkill: Skill;
-  expectedScore: number;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-  add(skill: Skill): void {
-
-    if (!skill || !this.expectedScore) { return; }
-    if (!this.skills.find(s => s === skill)) {
-      skill.expectedScore = this.expectedScore;
-      this.skills.push(skill);
-      this.selectedSkill = undefined;
-      this.expectedScore = undefined;
+    constructor() {
+        this.project = new Project();
+        this.project.name = 'Example';
+        this.project.skills = [];
+        this.display = false;
     }
-  }
 
-  delete(name: string): void {
+    ngOnInit() {
+    }
 
-  }
+    add(skill: Skill): void {
 
+        if (!skill || !this.expectedScore) {
+            return;
+        }
+        if (!this.project.skills.find(s => s === skill)) {
+            skill.weight = this.expectedScore;
+            this.project.skills.push(skill);
+            this.selectedSkill = undefined;
+            this.expectedScore = undefined;
+        }
+        this.display = true;
+    }
+
+    delete(skill: Skill): void {
+      const index = this.project.skills.indexOf(skill, 0);
+      if (index > -1) {
+        this.project.skills.splice(index, 1);
+      }
+    }
 }

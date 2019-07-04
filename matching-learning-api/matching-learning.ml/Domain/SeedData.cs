@@ -62,7 +62,7 @@ namespace matching_learning.ml.Domain
         [LoadColumn(26)]
         public float cryptocurrency { get; set; }
         [LoadColumn(27)]
-        public float cryptograpy { get; set; }
+        public float cryptography { get; set; }
         [LoadColumn(28)]
         public float data_science { get; set; }
         [LoadColumn(29)]
@@ -112,7 +112,7 @@ namespace matching_learning.ml.Domain
         [LoadColumn(51)]
         public float postgresql { get; set; }
         [LoadColumn(52)]
-        public float react { get; set; }
+        public float reactjs { get; set; }
         [LoadColumn(53)]
         public float redis { get; set; }
     }
