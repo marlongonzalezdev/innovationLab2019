@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GenFu;
 using matching_learning.ml.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,6 +12,49 @@ namespace matching_learning.api.Models
     /// </summary>
     public class ProjectRecommendationsModel
     {
+        private static readonly Random _random = new Random(Environment.TickCount);
+
+        static ProjectRecommendationsModel() => candidates = new List<Candidate>
+        {
+            new Candidate
+            {
+                UserId = "mgonzalez",
+                Name = "Marlon",
+                LastName = "González",
+                Score = _random.NextDouble()
+            },
+            new Candidate
+            {
+                UserId = "yvaldes",
+                Name = "Yanara",
+                LastName = "Valdes",
+                Score = _random.NextDouble()
+            },
+            new Candidate
+            {
+                UserId = "dalvarez",
+                Name = "Delia",
+                LastName = "Álvarez",
+                Score = _random.NextDouble()
+            },
+            new Candidate
+            {
+                UserId = "wclaro",
+                Name = "Willian",
+                LastName = "Claro",
+                Score = _random.NextDouble()
+            },
+            new Candidate
+            {
+                UserId = "ktamayo",
+                Name = "Karel",
+                LastName = "Tamayo",
+                Score = _random.NextDouble()
+            }
+        };
+
+        private static readonly IList<Candidate> candidates;
+
         /// <summary>
         /// Gets or sets the matches.
         /// </summary>
@@ -30,7 +75,7 @@ namespace matching_learning.api.Models
             var userModels = new List<CandidateModel>();
             foreach (var candidate in obj.Matches)
             {
-                var userModel = CandidateModel.FromCandidate(candidate);
+                CandidateModel userModel = A.New<CandidateModel>().FromCandidate(candidate);
                 userModel.PhotoUrl = linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "Get", "Photo", new { id = candidate.UserId });
                 userModels.Add(userModel);
             }

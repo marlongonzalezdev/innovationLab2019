@@ -1,4 +1,6 @@
-﻿namespace matching_learning.ml.Domain
+﻿using System;
+
+namespace matching_learning.ml.Domain
 {
     /// <summary>
     /// The candidate in the domain.
@@ -38,5 +40,14 @@
         /// The score.
         /// </value>
         public double Score { get; set; }
+
+        internal static Candidate FromPrediction(ClusteringPrediction cp)
+        {
+            return new Candidate
+            {
+                UserId = cp.UserId,
+                Score = cp.Distance[cp.SelectedClusterId]
+            };
+        }
     }
 }
