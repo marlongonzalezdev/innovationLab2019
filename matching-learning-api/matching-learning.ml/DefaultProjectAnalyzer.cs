@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using matching_learning.ml.Domain;
+using Microsoft.Extensions.Logging;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms;
@@ -22,10 +23,12 @@ namespace matching_learning.ml
     {
         private readonly Random _random = new Random(Environment.TickCount);
         private MLContext MLContext { get; set; }
+        private ILogger Logger { get; set; }
 
-        public DefaultProjectAnalyzer()
+        public DefaultProjectAnalyzer(ILogger logger)
         {
             MLContext = new MLContext();
+            Logger = logger;
         }
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
@@ -147,8 +150,6 @@ namespace matching_learning.ml
                 var trainedModel = dataProcessPipeline.Fit(trainingData);
                 var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
                 var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
-                // trying to read prediction members (selected cluster id)
-                ITransformer selectedCluster = trainedModel.ElementAt((int)prediction.SelectedClusterId);
             }
             catch (Exception ex)
             {
@@ -161,7 +162,7 @@ namespace matching_learning.ml
             var seedData = new SeedData();
             foreach (var skill in recommendationRequest.ProjectSkills)
             {
-                var propertyInfo = seedData.GetType().GetProperty(skill.Tag);
+                var propertyInfo = seedData.GetType().GetProperty(skill.Tag.ToLower());
                 propertyInfo.SetValue(seedData, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
             }
             return seedData;

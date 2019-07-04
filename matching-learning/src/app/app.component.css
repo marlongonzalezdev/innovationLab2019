@@ -1,11 +1,6 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
-.spinner-container
-{
-    margin: 20px
+.skills-container {
+    display: inline-block;
 }
 
-.expectedScore-container
-{
-
-}
