@@ -60,7 +60,7 @@ namespace matching_learning.api
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultProjectAnalyzer>>();
                 DefaultProjectAnalyzer analyzer = new DefaultProjectAnalyzer(logger);
-                analyzer.TrainModelIfNotExists();
+                //analyzer.TrainModelIfNotExists();
 
                 return analyzer;
             });

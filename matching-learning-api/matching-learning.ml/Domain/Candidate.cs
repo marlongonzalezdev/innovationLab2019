@@ -13,6 +13,8 @@
         /// </value>
         public string UserId { get; set; }
 
+        public string Skills { get; set; }
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
