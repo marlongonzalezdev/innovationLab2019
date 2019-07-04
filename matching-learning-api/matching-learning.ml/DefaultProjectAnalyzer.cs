@@ -56,7 +56,7 @@ namespace matching_learning.ml
                     new Candidate
                     {
                         UserId = "wclaro",
-                        Name = "Willian",
+                        Name = "William",
                         LastName = "Claro",
                         Score = _random.NextDouble()
                     },
