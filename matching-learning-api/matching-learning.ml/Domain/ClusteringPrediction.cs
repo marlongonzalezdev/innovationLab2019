@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML.Data;
+using System;
 
 namespace matching_learning.ml.Domain
 {
@@ -6,11 +7,14 @@ namespace matching_learning.ml.Domain
     {
         [ColumnName("PredictedLabel")]
         public uint SelectedClusterId;
+
         [ColumnName("Score")]
         public float[] Distance;
-        [ColumnName("Skills")]
+
+        [ColumnName("Features")]
         public float[] Location;
-        [ColumnName("UserId")]
+
+        [ColumnName("user_id")]
         public string UserId;
     }
 }

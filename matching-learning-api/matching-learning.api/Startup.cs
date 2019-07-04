@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using matching_learning.api.Models;
 using matching_learning.api.Repositories;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
@@ -60,13 +61,17 @@ namespace matching_learning.api
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultProjectAnalyzer>>();
                 DefaultProjectAnalyzer analyzer = new DefaultProjectAnalyzer(logger);
-                //analyzer.TrainModelIfNotExists();
+                analyzer.TrainModelIfNotExists();
 
                 return analyzer;
             });
 
             var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
             services.AddSingleton<IPhotoRepository>(photosRepo);
+
+            GenFu.GenFu.Configure<CandidateModel>()
+                .Fill(c => c.Name)
+                .Fill(c => c.LastName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

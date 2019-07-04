@@ -52,15 +52,12 @@ namespace matching_learning.api.Models
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         /// <returns></returns>
-        public static CandidateModel FromCandidate(Candidate candidate)
+        public CandidateModel FromCandidate(Candidate candidate)
         {
-            return new CandidateModel
-            {
-                Name = candidate.Name,
-                LastName = candidate.LastName,
-                UserName = candidate.UserId,
-                MatchingScore = candidate.Score
-            };
+            UserName = candidate.UserId;
+            MatchingScore = candidate.Score;
+
+            return this;
         }
     }
 }

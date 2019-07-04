@@ -21,7 +21,6 @@ namespace matching_learning.ml
     /// <seealso cref="matching_learning.ml.IProjectAnalyzer" />
     public class DefaultProjectAnalyzer : IProjectAnalyzer
     {
-        private readonly Random _random = new Random(Environment.TickCount);
         private MLContext MLContext { get; set; }
         private ILogger Logger { get; set; }
 
@@ -33,66 +32,81 @@ namespace matching_learning.ml
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
         {
-            var candidates = new List<Candidate>
-                {
-                    new Candidate
-                    {
-                        UserId = "mgonzalez",
-                        Name = "Marlon",
-                        LastName = "González",
-                        Score = _random.NextDouble()
-                    },
-                    new Candidate
-                    {
-                        UserId = "yvaldes",
-                        Name = "Yanara",
-                        LastName = "Valdes",
-                        Score = _random.NextDouble()
-                    },
-                    new Candidate
-                    {
-                        UserId = "dalvarez",
-                        Name = "Delia",
-                        LastName = "Álvarez",
-                        Score = _random.NextDouble()
-                    },
-                    new Candidate
-                    {
-                        UserId = "wclaro",
-                        Name = "Willian",
-                        LastName = "Claro",
-                        Score = _random.NextDouble()
-                    },
-                    new Candidate
-                    {
-                        UserId = "ktamayo",
-                        Name = "Karel",
-                        LastName = "Tamayo",
-                        Score = _random.NextDouble()
-                    }
-                }
-                .OrderByDescending(x => x.Score);
-            RecommendationModelTraining(recommendationRequest);
+            var predictionData = PredictValue(recommendationRequest);
+
+            var candidates = predictionData.userData
+                .Where(p => p.SelectedClusterId.Equals(predictionData.prediction.SelectedClusterId))
+                .OrderByDescending(x => x.Distance[x.SelectedClusterId])
+                .Select(Candidate.FromPrediction)
+                .ToList();
+
             return Task.FromResult(new RecommendationResponse
             {
                 Matches = candidates
             });
         }
 
-        public void RecommendationModelTraining(RecommendationRequest recommendationRequest)
+        public (ClusteringPrediction[] userData, ClusteringPrediction prediction) PredictValue(RecommendationRequest recommendationRequest)
         {
-            string inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
             string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
-
+            var inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
             try
             {
+                var data = MLContext.Data.LoadFromTextFile<SeedData>(
+                   path: inputPath,
+                   hasHeader: false,
+                   separatorChar: ',');
                 //training data, loading data from csv file data file in memory
+                DataViewSchema modelSchema;
 
+                // Load data preparation pipeline and trained model out dataPrepPipelineSchema);
+                ITransformer trainedModel = MLContext.Model.Load(modelPath, out modelSchema);
+
+                var transformedDataView = trainedModel.Transform(data);
+                var predictionEngine = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
+                var prediction = predictionEngine.Predict(ProcessRequest(recommendationRequest));
+
+                ClusteringPrediction[] userData = MLContext.Data
+                    .CreateEnumerable<ClusteringPrediction>(transformedDataView, false)
+                    .ToArray();
+
+                return (userData, prediction);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private SeedData ProcessRequest(RecommendationRequest recommendationRequest)
+        {
+            var seedData = new SeedData();
+            foreach (var skill in recommendationRequest.ProjectSkills)
+            {
+                var propertyInfo = seedData.GetType().GetProperty(skill.Tag.ToLower());
+                propertyInfo.SetValue(seedData, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
+            }
+            return seedData;
+        }
+
+        public void TrainModelIfNotExists()
+        {
+            try
+            {
+                string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
+                var inputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
+                if (File.Exists(modelPath))
+                {
+                    Logger.LogInformation($"Trained model found at {inputPath}. Skipping training.");
+                    return;
+                }
+
+             
                 var trainingData = MLContext.Data.LoadFromTextFile<SeedData>(
-                    path: inputPath,
-                    hasHeader: false,
-                    separatorChar: ',');
-                var dataProcessPipeline = MLContext.Transforms.Concatenate("Skills",
+                   path: inputPath,
+                   hasHeader: false,
+                   separatorChar: ',');
+                var dataProcessPipeline = MLContext.Transforms.Concatenate("Features",
                         "assembly",
                         "csharp",
                         "c",
@@ -146,26 +160,19 @@ namespace matching_learning.ml
                         "postgresql",
                         "reactjs",
                         "redis")
-                .Append(MLContext.Clustering.Trainers.KMeans("Skills", numberOfClusters: 3));
+                .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: 3));
                 var trainedModel = dataProcessPipeline.Fit(trainingData);
-                var predictor = MLContext.Model.CreatePredictionEngine<SeedData, ClusteringPrediction>(trainedModel);
-                var prediction = predictor.Predict(ProcessRequest(recommendationRequest));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
 
-        private SeedData ProcessRequest(RecommendationRequest recommendationRequest)
-        {
-            var seedData = new SeedData();
-            foreach (var skill in recommendationRequest.ProjectSkills)
-            {
-                var propertyInfo = seedData.GetType().GetProperty(skill.Tag.ToLower());
-                propertyInfo.SetValue(seedData, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
+                // Save/persist the trained model to a .ZIP file
+                MLContext.Model.Save(trainedModel, trainingData.Schema, modelPath);
+
+                Logger.LogInformation($"The model was saved to {modelPath}");
             }
-            return seedData;
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Model training operation failed.");
+                throw;
+            }
         }
 
     }
