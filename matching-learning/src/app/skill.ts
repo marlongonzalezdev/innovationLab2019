@@ -1,13 +1,13 @@
 export class Skill {
-  // id: number;
+  show: string;
   tag: string;
   weight: number;
 
   /**
    *
    */
-  constructor( tag: string, weight: number) {
-    // this.id = id;
+  constructor( show: string, tag: string, weight: number) {
+    this.show = show;
     this.tag = tag;
     this.weight = weight;
   }
