@@ -10,14 +10,14 @@ import {Project} from '../project';
 })
 export class MatchesComponent implements OnInit {
 
-    matches: Match[];
+    matches: Match[] = [];
     selectedMatch: Match;
 
     loading: boolean;
-    showContent: boolean;
 
     @Input() project: Project;
     @Input() display: boolean;
+    @Input() showContent: boolean;
 
     processData() {
         this.showContent = false;
