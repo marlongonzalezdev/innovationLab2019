@@ -160,7 +160,7 @@ namespace matching_learning.ml
                         "postgresql",
                         "reactjs",
                         "redis")
-                .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: 3));
+                .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: 15));
                 var trainedModel = dataProcessPipeline.Fit(trainingData);
 
                 // Save/persist the trained model to a .ZIP file
