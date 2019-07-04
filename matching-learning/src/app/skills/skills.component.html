@@ -5,7 +5,7 @@
                 <mat-label>Select skills:</mat-label>
                 <mat-select [(value)]="selectedSkill">
                     <mat-option *ngFor="let skill of skillList" [value]="skill">
-                        {{skill.tag}}
+                        {{skill.show}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
