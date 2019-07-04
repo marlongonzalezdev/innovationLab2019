@@ -127,6 +127,11 @@
             A model to represent the recommendations for a given project.
             </summary>
         </member>
+        <member name="P:matching_learning.api.Models.ProjectRecommendationsModel.TotalItems">
+            <summary>
+            The total number of elements.
+            </summary>
+        </member>
         <member name="P:matching_learning.api.Models.ProjectRecommendationsModel.Matches">
             <summary>
             Gets or sets the matches.

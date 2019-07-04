@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GenFu;
 using matching_learning.ml.Domain;
 using Microsoft.AspNetCore.Http;
@@ -12,48 +11,10 @@ namespace matching_learning.api.Models
     /// </summary>
     public class ProjectRecommendationsModel
     {
-        private static readonly Random _random = new Random(Environment.TickCount);
-
-        static ProjectRecommendationsModel() => candidates = new List<Candidate>
-        {
-            new Candidate
-            {
-                UserId = "mgonzalez",
-                Name = "Marlon",
-                LastName = "González",
-                Score = _random.NextDouble()
-            },
-            new Candidate
-            {
-                UserId = "yvaldes",
-                Name = "Yanara",
-                LastName = "Valdes",
-                Score = _random.NextDouble()
-            },
-            new Candidate
-            {
-                UserId = "dalvarez",
-                Name = "Delia",
-                LastName = "Álvarez",
-                Score = _random.NextDouble()
-            },
-            new Candidate
-            {
-                UserId = "wclaro",
-                Name = "Willian",
-                LastName = "Claro",
-                Score = _random.NextDouble()
-            },
-            new Candidate
-            {
-                UserId = "ktamayo",
-                Name = "Karel",
-                LastName = "Tamayo",
-                Score = _random.NextDouble()
-            }
-        };
-
-        private static readonly IList<Candidate> candidates;
+        /// <summary>
+        /// The total number of elements.
+        /// </summary>
+        public int TotalItems { get; set; }
 
         /// <summary>
         /// Gets or sets the matches.
@@ -82,7 +43,8 @@ namespace matching_learning.api.Models
 
             var result = new ProjectRecommendationsModel
             {
-                Matches = userModels
+                Matches = userModels,
+                TotalItems = userModels.Count
             };
 
             return result;
