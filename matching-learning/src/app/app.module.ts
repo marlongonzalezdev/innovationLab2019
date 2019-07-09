@@ -9,6 +9,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { SkillsComponent } from './skills/skills.component';
 import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule, MatCardModule, MatInputModule} from '@angular/material';
+import {MatTableModule} from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material';
 import { HttpErrorHandler } from './http-error-handler.service';
 import { MessageService }  from '../message.service';
 
@@ -31,7 +33,9 @@ import { MessageService }  from '../message.service';
     MatProgressSpinnerModule,
     MatIconModule,
     MatCardModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [
     HttpErrorHandler,

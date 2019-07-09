@@ -9,12 +9,11 @@
     <mat-spinner *ngIf="loading"></mat-spinner>
 </div>
 
-<div class="matches__container" *ngIf="showContent">
+<!-- <div class="matches__container" *ngIf="showContent">
     <h2>Matches</h2>
     <ul class="list-group matches__items">
         <li class="list-group-item" *ngFor="let match of matches" [class.selected]="match === selectedMatch"
             (click)="onSelect(match)">
-            <!-- <span class="badge badge-secondary user_id">{{user.id}} </span> -->
             <span class="badge user_name">{{match.name}} {{match.lastName}} </span>
             <span class="badge badge-success user_percent">{{match.matchingScore | number}}</span>
         </li>
@@ -22,4 +21,31 @@
     <div class="photo__container">
         <app-user-details [user]="selectedMatch"></app-user-details>
     </div>
+</div> -->
+
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+        <!-- User Column -->
+        <ng-container matColumnDef="userName">
+            <th mat-header-cell *matHeaderCellDef> <b>User</b> </th>
+            <td mat-cell *matCellDef="let element" [class.selected]="element === selectedMatch"
+                (click)="onSelect(element)"> {{element.name}} {{element.lastName}}</td>
+        </ng-container>
+
+        <!-- MatchingScore Column -->
+        <ng-container matColumnDef="matchingScore">
+            <th mat-header-cell *matHeaderCellDef> <b>Score</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.matchingScore}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+
+<div class="photo__container">
+    <app-user-details [user]="selectedMatch"></app-user-details>
 </div>

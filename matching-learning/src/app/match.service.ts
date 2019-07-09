@@ -18,7 +18,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class MatchService {
-  matchesUrl = 'https://localhost:5001/Project/candidates';  // URL to web api
+  matchesUrl = 'https://localhost:44374/Project/candidates';  // URL to web api
   private handleError: HandleError;
 
   constructor(
