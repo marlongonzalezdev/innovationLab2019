@@ -1,4 +1,4 @@
-# innovationLab2019
+# innovationLabs2019
 
 This repo contains the sources and docs for the Innovation Lab 2019 @ Endava.
 
