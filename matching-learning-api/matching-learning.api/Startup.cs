@@ -67,6 +67,7 @@ namespace matching_learning.api
 
             var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
             services.AddSingleton<IPhotoRepository>(photosRepo);
+            services.AddSingleton<ISkillRepository, SkillRepository>();
 
             GenFu.GenFu.Configure<CandidateModel>()
                 .Fill(c => c.Name)
