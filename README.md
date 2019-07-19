@@ -10,7 +10,7 @@ The UI is an angular project inside *matching-learning* directory.
   3. In the same cmd run ng serve --open to run the angular app.
   
 ### API Project
-The API is a dotnet core 3.0 web api inside *matching-learning-api* directory.
+The API is a dotnet core 2.2 web api inside *matching-learning-api* directory.
 
 ### If you want to work with the API follow the below steps:
 
