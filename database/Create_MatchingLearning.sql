@@ -10,6 +10,7 @@ GO
 DROP TABLE IF EXISTS [dbo].[Experience]
 DROP TABLE IF EXISTS [dbo].[Evaluation]
 DROP TABLE IF EXISTS [dbo].[EvaluationType]
+DROP TABLE IF EXISTS [dbo].[SkillLearningCurve]
 DROP TABLE IF EXISTS [dbo].[SkillGrades]
 DROP TABLE IF EXISTS [dbo].[SkillRelation]
 DROP TABLE IF EXISTS [dbo].[Skill]
@@ -234,6 +235,18 @@ CREATE TABLE [dbo].[SkillGrades] (
 )
 GO
 
+CREATE TABLE [dbo].[SkillLearningCurve] (
+  [Id]                            INT IDENTITY(1, 1) NOT NULL,
+  [SkillId]                       INT NOT NULL,
+  [Months]                        INT NOT NULL,
+  [AvgRanking]                    [MLDecimal] NOT NULL,
+
+  CONSTRAINT [PK_SkillLearningCurve] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+  CONSTRAINT [FK_SkillLearningCurve_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
+)
+GO
+
 ----------------------------------------------------------------------------------------------------
 
 CREATE TABLE [dbo].[EvaluationType] (
@@ -339,7 +352,7 @@ GO
 ----------------------------------------------------------------------------------------------------
 
 INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('CLOUD', 'CLOUD Computing', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('AZURE', 'Azure', 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('AZURE', 'MS Azure', 0)
 INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('AMZN', 'Amazon AWS', 0)
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -464,6 +477,10 @@ INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('CONF', 'Self-Confidence'
 INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('FLEX', 'Flexibility/Adaptability')
 INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('PRES', 'Working Well Under Pressure')
 INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('POSI', 'Positive Attitude')
+
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('OENG', 'Oral English')
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('WENG', 'Writting English')
+
 GO
 
 ----------------------------------------------------------------------------------------------------
