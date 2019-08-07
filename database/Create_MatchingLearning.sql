@@ -7,6 +7,7 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+DROP TABLE IF EXISTS [dbo].[SkillEstimatedExpertise]
 DROP TABLE IF EXISTS [dbo].[Experience]
 DROP TABLE IF EXISTS [dbo].[Evaluation]
 DROP TABLE IF EXISTS [dbo].[EvaluationType]
@@ -239,7 +240,7 @@ CREATE TABLE [dbo].[SkillLearningCurve] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [SkillId]                       INT NOT NULL,
   [Months]                        INT NOT NULL,
-  [AvgRanking]                    [MLDecimal] NOT NULL,
+  [AvgExpertise]                  [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_SkillLearningCurve] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -265,8 +266,7 @@ CREATE TABLE [dbo].[Evaluation] (
   [EvaluationKey]                 NVARCHAR(256) NULL,
   [EvaluationTypeId]              INT NOT NULL,
   [Date]                          DATETIME NOT NULL,
-  [LastUpdated]                   DATETIME NOT NULL,
-  [Ranking]                       INT NOT NULL,
+  [Expertise]                     [MLDecimal] NOT NULL,
   [Notes]                         NVARCHAR(MAX) NULL,
 
   CONSTRAINT [PK_Evaluation] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -294,6 +294,22 @@ CREATE TABLE [dbo].[Experience] (
   CONSTRAINT [FK_Experience_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
 
   CONSTRAINT [FK_Experience_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
+)
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE TABLE [dbo].[SkillEstimatedExpertise] (
+  [Id]                            INT IDENTITY(1, 1) NOT NULL,
+  [PeopleId]                      INT NOT NULL,
+  [SkillId]                       INT NOT NULL,
+  [Expertise]                     [MLDecimal] NOT NULL,
+
+  CONSTRAINT [PK_SkillEstimatedExpertise] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+  CONSTRAINT [FK_SkillEstimatedExpertise_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
+
+  CONSTRAINT [FK_SkillEstimatedExpertise_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
 )
 GO
 
