@@ -7,6 +7,8 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+DROP VIEW IF EXISTS [dbo].[GlobalSkill]
+
 DROP TABLE IF EXISTS [dbo].[SkillEstimatedExpertise]
 DROP TABLE IF EXISTS [dbo].[Experience]
 DROP TABLE IF EXISTS [dbo].[Evaluation]
@@ -192,8 +194,6 @@ CREATE TABLE [dbo].[Skill] (
   [TechnologyRoleId]              INT NULL,
   [SoftSkillId]                   INT NULL,
   [BusinessAreaId]                INT NULL,
-
-  [ObsolesenceByYear]             [MLDecimal] NULL,
 
   CONSTRAINT [PK_Skill] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -514,6 +514,19 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+INSERT INTO [dbo].[Skill] ([TechnologyId]) SELECT [Id] FROM [dbo].[Technology]
+
+INSERT INTO [dbo].[Skill] ([TechnologyVersionId]) SELECT [Id] FROM [dbo].[TechnologyVersion]
+
+INSERT INTO [dbo].[Skill] ([TechnologyRoleId]) SELECT [Id] FROM [dbo].[TechnologyRole]
+
+INSERT INTO [dbo].[Skill] ([SoftSkillId]) SELECT [Id] FROM [dbo].[SoftSkill]
+
+INSERT INTO [dbo].[Skill] ([BusinessAreaId]) SELECT [Id] FROM [dbo].[BusinessArea]
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pedro', 'Minetti', NULL, NULL, 22191, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Luciano', 'Deluca', NULL, NULL, 31863, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Eduardo', 'Ducer', NULL, NULL, 87806, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
@@ -703,4 +716,131 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+DECLARE @candidateId INT
+DECLARE @skillId INT
 
+DECLARE @rndExpertice FLOAT
+DECLARE @rndImpact FLOAT
+
+DECLARE @limitImpact FLOAT = 0.1
+
+DECLARE candidate_cursor CURSOR FOR   
+SELECT [Id]
+FROM [dbo].[Candidate]
+  
+OPEN candidate_cursor  
+  
+FETCH NEXT FROM candidate_cursor   
+INTO @candidateId 
+  
+WHILE @@FETCH_STATUS = 0  
+ BEGIN
+  DECLARE skill_cursor CURSOR FOR   
+  SELECT [Id]
+  FROM [dbo].[Skill]
+  
+  OPEN skill_cursor  
+  
+  FETCH NEXT FROM skill_cursor   
+  INTO @skillId 
+  
+  WHILE @@FETCH_STATUS = 0  
+   BEGIN
+    SET @rndExpertice = RAND()
+    SET @rndImpact = RAND()
+
+    IF (@rndImpact < @limitImpact)
+     BEGIN
+      INSERT INTO [dbo].[SkillEstimatedExpertise] (
+        [CandidateId],
+        [SkillId],
+        [Expertise]
+      )
+      VALUES (
+        @candidateId,
+        @skillId,
+        @rndExpertice
+      )
+     END
+
+    FETCH NEXT FROM skill_cursor   
+    INTO @skillId 
+   END   
+
+  CLOSE skill_cursor;  
+  DEALLOCATE skill_cursor; 
+    
+  FETCH NEXT FROM candidate_cursor   
+  INTO @candidateId 
+ END   
+
+CLOSE candidate_cursor;  
+DEALLOCATE candidate_cursor; 
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+GO
+
+CREATE VIEW [dbo].[GlobalSkill]
+AS
+  SELECT [S].[Id] AS [SkillId],
+         [T].[Id] AS [RelatedId],
+         1 AS [Category],
+         [T].[Code],
+         [T].[Name]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyId] = [T].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [TV].[Id] AS [RelatedId],
+         2 AS [Category],
+         [T].[Code] + ' v' + [TV].[Version],
+         [T].[Name] + ' v' + [TV].[Version]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyVersionId] = [TV].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [TR].[Id] AS [RelatedId],
+         3 AS [Category],
+         [TR].[Code],
+         [TR].[Name]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyRoleId] = [TR].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [SK].[Id] AS [RelatedId],
+         4 AS [Category],
+         [SK].[Code],
+         [SK].[Name]
+  FROM [dbo].[SoftSkill] AS [SK]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[SoftSkillId] = [SK].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [BA].[Id] AS [RelatedId],
+         5 AS [Category],
+         [BA].[Code],
+         [BA].[Name]
+  FROM [dbo].[BusinessArea] AS [BA]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[BusinessAreaId] = [BA].[Id]
+GO
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+SELECT * FROM [dbo].[Candidate]
+
+SELECT * FROM [dbo].[Skill]
+
+SELECT * FROM [dbo].[GlobalSkill]
+
+SELECT * 
+FROM [dbo].[SkillEstimatedExpertise] AS [SEE]
+INNER JOIN [dbo].[GlobalSkill] AS [GS] ON [GS].[SkillId] = [SEE].[SkillId]
+INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
