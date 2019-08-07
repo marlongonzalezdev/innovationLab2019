@@ -209,17 +209,16 @@ GO
 
 CREATE TABLE [dbo].[SkillRelation] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [SkillId1]                      INT NOT NULL,
-  [SkillId2]                      INT NOT NULL,
-  [RelationType]                  INT NOT NULL CONSTRAINT [CH_SkillRelation_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Parent/Child, 2: Version, , 3: Similar
-  [Factor1To2]                    [MLDecimal] NOT NULL,
-  [Factor2To1]                    [MLDecimal] NOT NULL,
+  [NewSkillId]                    INT NOT NULL,
+  [OldSkillId]                    INT NOT NULL,
+  [RelationType]                  INT NOT NULL CONSTRAINT [CH_SkillRelation_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Parent/Child, 2: Version, 3: Similar
+  [ConversionFactor]              [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_SkillRelation] PRIMARY KEY CLUSTERED ([Id] ASC),
 
-  CONSTRAINT [FK_SkillRelation_Skill_SkillId1] FOREIGN KEY ([SkillId1]) REFERENCES [dbo].[Skill] ([Id]),
+  CONSTRAINT [FK_SkillRelation_Skill_SkillId1] FOREIGN KEY ([NewSkillId]) REFERENCES [dbo].[Skill] ([Id]),
 
-  CONSTRAINT [FK_SkillRelation_Skill_SkillId2] FOREIGN KEY ([SkillId2]) REFERENCES [dbo].[Skill] ([Id]),
+  CONSTRAINT [FK_SkillRelation_Skill_SkillId2] FOREIGN KEY ([OldSkillId]) REFERENCES [dbo].[Skill] ([Id]),
 )
 GO
 
