@@ -20,9 +20,9 @@ DROP TABLE IF EXISTS [dbo].[SoftSkill]
 DROP TABLE IF EXISTS [dbo].[TechnologyRole]
 DROP TABLE IF EXISTS [dbo].[TechnologyVersion]
 DROP TABLE IF EXISTS [dbo].[Technology]
-DROP TABLE IF EXISTS [dbo].[PeoplePeopleRole]
-DROP TABLE IF EXISTS [dbo].[People]
-DROP TABLE IF EXISTS [dbo].[PeopleRole]
+DROP TABLE IF EXISTS [dbo].[CandidateCandidateRole]
+DROP TABLE IF EXISTS [dbo].[Candidate]
+DROP TABLE IF EXISTS [dbo].[CandidateRole]
 DROP TABLE IF EXISTS [dbo].[DeliveryUnit]
 DROP TABLE IF EXISTS [dbo].[Region]
 GO
@@ -71,50 +71,50 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-CREATE TABLE [dbo].[PeopleRole] (
+CREATE TABLE [dbo].[CandidateRole] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
     
-  CONSTRAINT [PK_PeopleRole] PRIMARY KEY CLUSTERED ([Id] ASC),
+  CONSTRAINT [PK_CandidateRole] PRIMARY KEY CLUSTERED ([Id] ASC),
 
-  CONSTRAINT [UC_PeopleRole_Code] UNIQUE NONCLUSTERED ([Code] ASC),
+  CONSTRAINT [UC_CandidateRole_Code] UNIQUE NONCLUSTERED ([Code] ASC),
 )
 GO
 
-CREATE TABLE [dbo].[People] (
+CREATE TABLE [dbo].[Candidate] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [DeliveryUnitId]                INT NOT NULL,
-  [RelationType]                  INT NOT NULL CONSTRAINT [CH_People_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Employee, 2: Candidate, 3: External
+  [RelationType]                  INT NOT NULL CONSTRAINT [CH_Candidate_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Employee, 2: Candidate, 3: External
   [FirstName]                     [MLName] NOT NULL,
   [LastName]                      [MLName] NOT NULL,
-  [DocType]                       INT NULL CONSTRAINT [CH_People_DocType] CHECK ([DocType] IN (1, 2)), -- 1: NationalIdentity, 2: Passport
+  [DocType]                       INT NULL CONSTRAINT [CH_Candidate_DocType] CHECK ([DocType] IN (1, 2)), -- 1: NationalIdentity, 2: Passport
   [DocNumber]                     NVARCHAR(64) NULL,
   [EmployeeNumber]                INT NULL,
   [InBench]                       BIT NOT NULL,
 
-  CONSTRAINT [PK_People] PRIMARY KEY CLUSTERED ([Id] ASC),
+  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED ([Id] ASC),
   
-  CONSTRAINT [FK_People_DeliveryUnit_DeliveryUnitId] FOREIGN KEY ([DeliveryUnitId]) REFERENCES [dbo].[DeliveryUnit] ([Id]),
+  CONSTRAINT [FK_Candidate_DeliveryUnit_DeliveryUnitId] FOREIGN KEY ([DeliveryUnitId]) REFERENCES [dbo].[DeliveryUnit] ([Id]),
 )
 GO
 
--- CONSTRAINT [UC_People_EmployeeNumber] NONCLUSTERED ([EmployeeNumber] ASC),
+-- CONSTRAINT [UC_Candidate_EmployeeNumber] NONCLUSTERED ([EmployeeNumber] ASC),
 
---  CONSTRAINT [UC_People_Doc] NONCLUSTERED ([DocType] ASC, [DocNumber] ASC),
+--  CONSTRAINT [UC_Candidate_Doc] NONCLUSTERED ([DocType] ASC, [DocNumber] ASC),
 
-CREATE TABLE [dbo].[PeoplePeopleRole] (
+CREATE TABLE [dbo].[CandidateCandidateRole] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [PeopleId]                      INT NOT NULL,
-  [PeopleRoleId]                  INT NOT NULL,
+  [CandidateId]                   INT NOT NULL,
+  [CandidateRoleId]               INT NOT NULL,
   [StartDate]                     DATETIME NOT NULL,
   [EndDate]                       DATETIME NULL,
 
-  CONSTRAINT [PK_PeoplePeopleRole] PRIMARY KEY CLUSTERED ([Id] ASC),
+  CONSTRAINT [PK_CandidateCandidateRole] PRIMARY KEY CLUSTERED ([Id] ASC),
   
-  CONSTRAINT [FK_PeoplePeopleRole_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
+  CONSTRAINT [FK_CandidateCandidateRole_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
-  CONSTRAINT [FK_PeoplePeopleRole_PeopleRole_PeopleRoleId] FOREIGN KEY ([PeopleRoleId]) REFERENCES [dbo].[PeopleRole] ([Id]),
+  CONSTRAINT [FK_CandidateCandidateRole_CandidateRole_CandidateRoleId] FOREIGN KEY ([CandidateRoleId]) REFERENCES [dbo].[CandidateRole] ([Id]),
 )
 GO
 
@@ -261,7 +261,7 @@ GO
 
 CREATE TABLE [dbo].[Evaluation] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [PeopleId]                      INT NOT NULL,
+  [CandidateId]                   INT NOT NULL,
   [SkillId]                       INT NOT NULL,
   [EvaluationKey]                 NVARCHAR(256) NULL,
   [EvaluationTypeId]              INT NOT NULL,
@@ -273,7 +273,7 @@ CREATE TABLE [dbo].[Evaluation] (
 
   CONSTRAINT [UC_Evaluation_EvaluationKey] UNIQUE NONCLUSTERED ([EvaluationKey] ASC),
 
-  CONSTRAINT [FK_Evaluation_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
+  CONSTRAINT [FK_Evaluation_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
   CONSTRAINT [FK_Evaluation_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
 
@@ -283,7 +283,7 @@ GO
 
 CREATE TABLE [dbo].[Experience] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [PeopleId]                      INT NOT NULL,
+  [CandidateId]                   INT NOT NULL,
   [SkillId]                       INT NOT NULL,
   [StartDate]                     DATETIME NOT NULL,
   [EndDate]                       DATETIME NULL,
@@ -291,7 +291,7 @@ CREATE TABLE [dbo].[Experience] (
 
   CONSTRAINT [PK_Experience] PRIMARY KEY CLUSTERED ([Id] ASC),
 
-  CONSTRAINT [FK_Experience_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
+  CONSTRAINT [FK_Experience_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
   CONSTRAINT [FK_Experience_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
 )
@@ -301,13 +301,13 @@ GO
 
 CREATE TABLE [dbo].[SkillEstimatedExpertise] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [PeopleId]                      INT NOT NULL,
+  [CandidateId]                   INT NOT NULL,
   [SkillId]                       INT NOT NULL,
   [Expertise]                     [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_SkillEstimatedExpertise] PRIMARY KEY CLUSTERED ([Id] ASC),
 
-  CONSTRAINT [FK_SkillEstimatedExpertise_People_PeopleId] FOREIGN KEY ([PeopleId]) REFERENCES [dbo].[People] ([Id]),
+  CONSTRAINT [FK_SkillEstimatedExpertise_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
   CONSTRAINT [FK_SkillEstimatedExpertise_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
 )
@@ -342,14 +342,15 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('PM', 'Project Manager')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('BA', 'Business Analyst')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('DEV', 'Developer')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('TST', 'Tester')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('DBA', 'Database Administrator')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('SRV', 'Servers Administrator')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('NET', 'Networks Administrator')
-INSERT INTO [dbo].[PeopleRole] ([Code], [Name]) VALUES ('UX', 'UX Designer')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('PM', 'Project Manager')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('BA', 'Business Analyst')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('DEV', 'Developer')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('TST', 'Tester')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('DBA', 'Database Administrator')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('SRV', 'Servers Administrator')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('NET', 'Networks Administrator')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('UX', 'UX Designer')
+INSERT INTO [dbo].[CandidateRole] ([Code], [Name]) VALUES ('ADMIN', 'Admin Roles')
 GO
 
 ----------------------------------------------------------------------------------------------------
@@ -513,57 +514,191 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Daniel', 'Cabrera', NULL, NULL, 16429, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Yony', 'Gomez', NULL, NULL, 13163, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Fernando', 'Olmos', NULL, NULL, 29707, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Eugenia', 'Pais', NULL, NULL, 96919, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Marcelo', 'Zepedeo', NULL, NULL, 95795, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Adrián', 'Belen', NULL, NULL, 87138, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Queirolo', NULL, NULL, 69873, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alfonso', 'Rodriguez', NULL, NULL, 26013, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Hernan', 'Rumbo', NULL, NULL, 51488, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Orlando', 'Garbarino', NULL, NULL, 15830, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Bruno', 'Candia', NULL, NULL, 11534, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Victoria', 'Andrada', NULL, NULL, 90896, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Mathías', 'Rodriguez', NULL, NULL, 41007, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pedro', 'Minetti', NULL, NULL, 22191, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Luciano', 'Deluca', NULL, NULL, 31863, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Eduardo', 'Ducer', NULL, NULL, 87806, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Rodrigo', 'Valdez', NULL, NULL, 53161, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Valentín', 'Gadola', NULL, NULL, 70880, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Martín', 'Acosta', NULL, NULL, 74003, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Santiago', 'Ferreiro', NULL, NULL, 32131, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Adrián', 'Lopez', NULL, NULL, 39929, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Giovanina', 'Chirione', NULL, NULL, 21854, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Yony', 'Gómez', NULL, NULL, 63261, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Aniela', 'Amy', NULL, NULL, 1172, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alberto', 'Da Cunha', NULL, NULL, 74183, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Federico', 'Trujillo', NULL, NULL, 65589, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Da Silva', NULL, NULL, 73983, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Camila', 'Sorio', NULL, NULL, 45076, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Horacio', 'Blanco', NULL, NULL, 59180, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Gastón', 'Aroztegui', NULL, NULL, 67583, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Jimena', 'Irigaray', NULL, NULL, 73956, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Nicolás', 'Lasarte', NULL, NULL, 33283, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Nicolás', 'Gómez', NULL, NULL, 23876, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Fernado', 'Olmos', NULL, NULL, 19918, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Juan', 'Estrada', NULL, NULL, 43086, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ruben', 'Bracco', NULL, NULL, 87901, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Daniel', 'Cabrera', NULL, NULL, 45822, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Adrián', 'Belen', NULL, NULL, 88823, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Federico', 'García', NULL, NULL, 66164, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Sebastian', 'Queirolo', NULL, NULL, 60720, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alejandro', 'Latchinian', NULL, NULL, 28468, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Beerbal', 'Abdulkhader', NULL, NULL, 78980, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ariel', 'Sisro', NULL, NULL, 41844, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Damián', 'Pereira', NULL, NULL, 41556, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Queirolo', NULL, NULL, 82477, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Bruno', 'Candia', NULL, NULL, 15955, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Juan', 'Aguerre', NULL, NULL, 94701, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'García', NULL, NULL, 30303, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Martin', 'Caetano', NULL, NULL, 92995, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Roberto', 'Assandri', NULL, NULL, 52505, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alejandro', 'Capece', NULL, NULL, 17534, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Hernán', 'Rumbo', NULL, NULL, 17036, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alfonso', 'Rodriguez', NULL, NULL, 6520, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Javier', 'Calero', NULL, NULL, 15192, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Andrés', 'Maedo', NULL, NULL, 83497, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pedro', 'Tournier', NULL, NULL, 5223, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Marcos', 'Guimaraes', NULL, NULL, 29882, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ignacio', 'Assandri', NULL, NULL, 13538, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Federico', 'Canet', NULL, NULL, 63064, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Raúl', 'Fossemale', NULL, NULL, 90456, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Andrés', 'Nieves', NULL, NULL, 45742, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Silvia', 'Derkoyorikian', NULL, NULL, 43623, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ignacio', 'Loureiro', NULL, NULL, 50462, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Mauricio', 'Mora', NULL, NULL, 93260, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Cawen', NULL, NULL, 69534, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Javier', 'Barrios', NULL, NULL, 64114, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Marcelo', 'Zepedeo', NULL, NULL, 59283, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Marlon', 'González', NULL, NULL, 11291, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Fernando', 'Stromillo', NULL, NULL, 66266, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Yanara', 'Valdes', NULL, NULL, 34263, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alberto', 'Hernández', NULL, NULL, 49707, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Yago', 'Auza', NULL, NULL, 55439, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Octavio', 'Garbarino', NULL, NULL, 23551, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Nicolas', 'Mañay', NULL, NULL, 26078, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Camila', 'Roji', NULL, NULL, 70122, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Delia', 'Alvarez', NULL, NULL, 54793, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Eugenia', 'Pais', NULL, NULL, 16157, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Victoria', 'Andrada', NULL, NULL, 14084, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Andrés', 'Bores', NULL, NULL, 46172, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Leonardo', 'Mendizabal', NULL, NULL, 90731, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Mathías', 'Rodríguez', NULL, NULL, 13913, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Hugo', 'Ocampo', NULL, NULL, 2556, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'María Julia', 'Etcheverry', NULL, NULL, 19662, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Valeria', 'Rotunno', NULL, NULL, 35226, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'William', 'Claro', NULL, NULL, 6958, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Rodrigo', 'Alvarez', NULL, NULL, 22988, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Uriarte', NULL, NULL, 56067, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Alvaro', 'Restuccia', NULL, NULL, 30105, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ignacio', 'Secco', NULL, NULL, 21723, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Fernando', 'Cañas', NULL, NULL, 68768, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'María Noel', 'Mosqueira', NULL, NULL, 25628, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Camilo', 'Gomez', NULL, NULL, 5649, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Raidel', 'Gonzalez', NULL, NULL, 70652, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Malvina', 'Jaume', NULL, NULL, 86194, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Gerardo', 'Barbitta', NULL, NULL, 90856, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Pablo', 'Gus', NULL, NULL, 89910, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Jorge', 'Jova', NULL, NULL, 62560, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Juan Manuel', 'Fagundez', NULL, NULL, 70625, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Delia', 'Álvarez', NULL, NULL, 54393, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Yanara', 'Valdez', NULL, NULL, 79078, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Marlon', 'González', NULL, NULL, 27082, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'William', 'Claro', NULL, NULL, 33169, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Adrián', 'Costa', NULL, NULL, 14537, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Agustín', 'Narvaez', NULL, NULL, 75797, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Andrea', 'Sabella', NULL, NULL, 12231, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ezequiel', 'Konjuh', NULL, NULL, 64668, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[People] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Luis', 'Fregeiro', NULL, NULL, 53014, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pedro' AND [P].[LastName] = 'Minetti' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luciano' AND [P].[LastName] = 'Deluca' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Eduardo' AND [P].[LastName] = 'Ducer' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Rodrigo' AND [P].[LastName] = 'Valdez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Valentín' AND [P].[LastName] = 'Gadola' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Martín' AND [P].[LastName] = 'Acosta' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Santiago' AND [P].[LastName] = 'Ferreiro' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Lopez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Giovanina' AND [P].[LastName] = 'Chirione' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yony' AND [P].[LastName] = 'Gómez' AND [PR].[Code] = 'UX'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Aniela' AND [P].[LastName] = 'Amy' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alberto' AND [P].[LastName] = 'Da Cunha' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'Trujillo' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Da Silva' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camila' AND [P].[LastName] = 'Sorio' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Horacio' AND [P].[LastName] = 'Blanco' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Gastón' AND [P].[LastName] = 'Aroztegui' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Jimena' AND [P].[LastName] = 'Irigaray' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolás' AND [P].[LastName] = 'Lasarte' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolás' AND [P].[LastName] = 'Gómez' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernado' AND [P].[LastName] = 'Olmos' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan' AND [P].[LastName] = 'Estrada' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ruben' AND [P].[LastName] = 'Bracco' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Daniel' AND [P].[LastName] = 'Cabrera' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Belen' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'García' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Sebastian' AND [P].[LastName] = 'Queirolo' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alejandro' AND [P].[LastName] = 'Latchinian' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Beerbal' AND [P].[LastName] = 'Abdulkhader' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ariel' AND [P].[LastName] = 'Sisro' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Damián' AND [P].[LastName] = 'Pereira' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Queirolo' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Bruno' AND [P].[LastName] = 'Candia' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan' AND [P].[LastName] = 'Aguerre' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'García' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Martin' AND [P].[LastName] = 'Caetano' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Roberto' AND [P].[LastName] = 'Assandri' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alejandro' AND [P].[LastName] = 'Capece' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Hernán' AND [P].[LastName] = 'Rumbo' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alfonso' AND [P].[LastName] = 'Rodriguez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Javier' AND [P].[LastName] = 'Calero' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Maedo' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pedro' AND [P].[LastName] = 'Tournier' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marcos' AND [P].[LastName] = 'Guimaraes' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Assandri' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'Canet' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Raúl' AND [P].[LastName] = 'Fossemale' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Nieves' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Silvia' AND [P].[LastName] = 'Derkoyorikian' AND [PR].[Code] = 'DBA'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Loureiro' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Mauricio' AND [P].[LastName] = 'Mora' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Cawen' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Javier' AND [P].[LastName] = 'Barrios' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marcelo' AND [P].[LastName] = 'Zepedeo' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marlon' AND [P].[LastName] = 'González' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Stromillo' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yanara' AND [P].[LastName] = 'Valdes' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alberto' AND [P].[LastName] = 'Hernández' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yago' AND [P].[LastName] = 'Auza' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Octavio' AND [P].[LastName] = 'Garbarino' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolas' AND [P].[LastName] = 'Mañay' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camila' AND [P].[LastName] = 'Roji' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Delia' AND [P].[LastName] = 'Alvarez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Eugenia' AND [P].[LastName] = 'Pais' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Victoria' AND [P].[LastName] = 'Andrada' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Bores' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Leonardo' AND [P].[LastName] = 'Mendizabal' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Mathías' AND [P].[LastName] = 'Rodríguez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Hugo' AND [P].[LastName] = 'Ocampo' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'María Julia' AND [P].[LastName] = 'Etcheverry' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Valeria' AND [P].[LastName] = 'Rotunno' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'William' AND [P].[LastName] = 'Claro' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Rodrigo' AND [P].[LastName] = 'Alvarez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Uriarte' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alvaro' AND [P].[LastName] = 'Restuccia' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Secco' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Cañas' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'María Noel' AND [P].[LastName] = 'Mosqueira' AND [PR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camilo' AND [P].[LastName] = 'Gomez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Raidel' AND [P].[LastName] = 'Gonzalez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Malvina' AND [P].[LastName] = 'Jaume' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Gerardo' AND [P].[LastName] = 'Barbitta' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Gus' AND [PR].[Code] = 'SRV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Jorge' AND [P].[LastName] = 'Jova' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan Manuel' AND [P].[LastName] = 'Fagundez' AND [PR].[Code] = 'SRV'
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Daniel' AND [P].[LastName] = 'Cabrera' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Yony' AND [P].[LastName] = 'Gomez' AND [PR].[Code] = 'UX'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Olmos' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Eugenia' AND [P].[LastName] = 'Pais' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Marcelo' AND [P].[LastName] = 'Zepedeo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Belen' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Queirolo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Alfonso' AND [P].[LastName] = 'Rodriguez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Hernan' AND [P].[LastName] = 'Rumbo' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Orlando' AND [P].[LastName] = 'Garbarino' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Bruno' AND [P].[LastName] = 'Candia' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Victoria' AND [P].[LastName] = 'Andrada' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Mathías' AND [P].[LastName] = 'Rodriguez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Adrián', 'Costa', NULL, NULL, 14537, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Agustín', 'Narvaez', NULL, NULL, 75797, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Andrea', 'Sabella', NULL, NULL, 12231, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Ezequiel', 'Konjuh', NULL, NULL, 64668, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench]) SELECT [Id], 1, 'Luis', 'Fregeiro', NULL, NULL, 53014, 0 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
 
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Delia' AND [P].[LastName] = 'Álvarez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Yanara' AND [P].[LastName] = 'Valdez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Marlon' AND [P].[LastName] = 'González' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'William' AND [P].[LastName] = 'Claro' AND [PR].[Code] = 'DEV'
-
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Costa' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Agustín' AND [P].[LastName] = 'Narvaez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Andrea' AND [P].[LastName] = 'Sabella' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Ezequiel' AND [P].[LastName] = 'Konjuh' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[PeoplePeopleRole] ([PeopleId], [PeopleRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[People] AS P, [dbo].[PeopleRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Costa' AND [PR].[Code] = 'PM'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Agustín' AND [P].[LastName] = 'Narvaez' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrea' AND [P].[LastName] = 'Sabella' AND [PR].[Code] = 'TST'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ezequiel' AND [P].[LastName] = 'Konjuh' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
