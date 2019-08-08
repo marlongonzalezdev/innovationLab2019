@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.api.Domain.DTOs;
@@ -24,7 +25,7 @@ namespace matching_learning.api.Repositories.Common
                         "       [DocType]," +
                         "       [DocNumber]," +
                         "       [EmployeeNumber]," +
-                        "       [InBench]" +
+                        "       [InBench] " +
                         "FROM [dbo].[Candidate]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -33,26 +34,25 @@ namespace matching_learning.api.Repositories.Common
                 {
                     conn.Open();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
 
-                    if (reader.HasRows)
+                    foreach (DataRow dr in dt.Rows)
                     {
-                        while (reader.Read())
+                        res.Add(new Candidate()
                         {
-                            res.Add(new Candidate()
-                            {
-                                Id = reader.GetInt32(0),
-                                DeliveryUnitId = reader.GetInt32(1),
-                                DeliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == reader.GetInt32(1)),
-                                RelationType = (CandidateRelationType)reader.GetInt32(2),
-                                FirstName = reader.GetString(3),
-                                LastName = reader.GetString(4),
-                                DocType = (DocumentType?)(reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5)),
-                                DocNumber = (reader.IsDBNull(6) ? (string)null : reader.GetString(6)),
-                                EmployeeNumber = reader.GetInt32(7),
-                                InBench = reader.GetBoolean(8),
-                            });
-                        }
+                            Id = dr.Db2Int("Id"),
+                            DeliveryUnitId = dr.Db2Int("DeliveryUnitId"),
+                            DeliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId")),
+                            RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
+                            FirstName = dr.Db2String("FirstName"),
+                            LastName = dr.Db2String("LastName"),
+                            DocType = (DocumentType?)dr.Db2NullableInt("DocType"),
+                            DocNumber = dr.Db2String("DocNumber"),
+                            EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
+                            InBench = dr.Db2Bool("InBench"),
+                        });
                     }
                 }
             }

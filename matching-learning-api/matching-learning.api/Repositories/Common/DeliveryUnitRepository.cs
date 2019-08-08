@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.api.Domain.DTOs;
@@ -18,7 +19,7 @@ namespace matching_learning.api.Repositories.Common
             var query = "SELECT [Id], " +
                         "       [Code]," +
                         "       [Name]," +
-                        "       [RegionId]" +
+                        "       [RegionId] " +
                         "FROM [dbo].[DeliveryUnit]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -27,21 +28,20 @@ namespace matching_learning.api.Repositories.Common
                 {
                     conn.Open();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
 
-                    if (reader.HasRows)
+                    foreach (DataRow dr in dt.Rows)
                     {
-                        while (reader.Read())
+                        res.Add(new DeliveryUnit()
                         {
-                            res.Add(new DeliveryUnit()
-                            {
-                                Id = reader.GetInt32(0),
-                                Code = reader.GetString(1),
-                                Name = reader.GetString(2),
-                                RegionId = reader.GetInt32(3),
-                                Region = regions.FirstOrDefault(r => r.Id == reader.GetInt32(3)),
-                            });
-                        }
+                            Id = dr.Db2Int("Id"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            RegionId = dr.Db2Int("RegionId"),
+                            Region = regions.FirstOrDefault(r => r.Id == dr.Db2Int("RegionId")),
+                        });
                     }
                 }
             }

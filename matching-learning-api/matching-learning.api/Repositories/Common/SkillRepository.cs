@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using matching_learning.api.Domain.DTOs;
 using matching_learning.api.Domain.Enums;
@@ -15,7 +16,7 @@ namespace matching_learning.api.Repositories.Common
                         "       [GS].[RelatedId]," +
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
-                        "       [GS].[Name]" +
+                        "       [GS].[Name] " +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -24,20 +25,20 @@ namespace matching_learning.api.Repositories.Common
                 {
                     conn.Open();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
 
-                    if (reader.HasRows)
+                    foreach (DataRow dr in dt.Rows)
                     {
-                        while (reader.Read())
+                        res.Add(new Skill()
                         {
-                            res.Add(new Skill()
-                            {
-                                Id = reader.GetInt32(0),
-                                Category = (SkillCategory)reader.GetInt32(2),
-                                Code = reader.GetString(3),
-                                Name = reader.GetString(4),
-                            });
-                        }
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                        });
                     }
                 }
             }

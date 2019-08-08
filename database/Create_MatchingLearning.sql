@@ -252,7 +252,7 @@ GO
 CREATE TABLE [dbo].[EvaluationType] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [Factor]                        [MLDecimal] NOT NULL,
+  [Weight]                        [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_EvaluationType] PRIMARY KEY CLUSTERED ([Id] ASC),
 )
@@ -354,15 +354,14 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('ExpertEvaluation', 0.7)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('LeaderEvaluation', 0.9)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('PairEvaluation', 0.7)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('Interview', 0.9)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('Certification', 0.75)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('Curriculum Vitae', 0.3)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('LinkedIn', 0.1)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('PluralSight', 0.2)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Factor]) VALUES ('HackerRank', 0.1)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('ExpertEvaluation', 0.9)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('LeaderEvaluation', 0.7)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('PairEvaluation', 0.5)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('Certification', 0.75)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('Curriculum Vitae', 0.25)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('LinkedIn', 0.1)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('PluralSight', 0.2)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('HackerRank', 0.3)
 GO
 
 ----------------------------------------------------------------------------------------------------

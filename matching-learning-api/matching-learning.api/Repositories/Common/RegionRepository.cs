@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using matching_learning.api.Domain.DTOs;
 
@@ -14,26 +15,25 @@ namespace matching_learning.api.Repositories.Common
                         "       [Code]," +
                         "       [Name] " +
                         "FROM [dbo].[Region]";
-            
+
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
                     conn.Open();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
 
-                    if (reader.HasRows)
+                    foreach (DataRow dr in dt.Rows)
                     {
-                        while (reader.Read())
+                        res.Add(new Region()
                         {
-                            res.Add(new Region()
-                            {
-                                Id = reader.GetInt32(0),
-                                Code = reader.GetString(1),
-                                Name = reader.GetString(2),
-                            });
-                        }
+                            Id = dr.Db2Int("Id"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                        });
                     }
                 }
             }
