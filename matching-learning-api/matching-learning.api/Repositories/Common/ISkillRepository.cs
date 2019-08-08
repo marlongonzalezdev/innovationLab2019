@@ -3,7 +3,7 @@ using matching_learning.api.Domain.DTOs;
 
 namespace matching_learning.api.Repositories.Common
 {
-    interface ISkillRepository
+    public interface ISkillRepository
     {
         List<Skill> GetSkills();
     }

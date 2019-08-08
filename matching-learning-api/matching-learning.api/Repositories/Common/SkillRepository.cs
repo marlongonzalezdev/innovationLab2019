@@ -14,8 +14,8 @@ namespace matching_learning.api.Repositories.Common
             var query = "SELECT [GS].[SkillId], " +
                         "       [GS].[RelatedId]," +
                         "       [GS].[Category]," +
-                        "       [BA].[Code]," +
-                        "       [BA].[Name]" +
+                        "       [GS].[Code]," +
+                        "       [GS].[Name]" +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))

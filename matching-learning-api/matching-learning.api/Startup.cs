@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using matching_learning.api.Models;
-using matching_learning.api.Repositories;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -65,10 +64,15 @@ namespace matching_learning.api
                 return analyzer;
             });
 
-            var photosRepo = new FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
-            services.AddSingleton<IPhotoRepository>(photosRepo);
-            services.AddSingleton<ISkillRepository, SkillRepository>();
+            var photosRepo = new Repositories.FileSystemPhotoRepository(Path.Combine(_env.ContentRootPath, "Photos"));
+            services.AddSingleton<Repositories.IPhotoRepository>(photosRepo);
+            services.AddSingleton<Repositories.ISkillRepository, Repositories.SkillRepository>();
 
+            services.AddSingleton<Repositories.Common.IRegionRepository, Repositories.Common.RegionRepository>();
+            services.AddSingleton<Repositories.Common.IDeliveryUnitRepository, Repositories.Common.DeliveryUnitRepository>();
+            services.AddSingleton<Repositories.Common.ICandidateRepository, Repositories.Common.CandidateRepository>();
+            services.AddSingleton<Repositories.Common.ISkillRepository, Repositories.Common.SkillRepository>();
+            
             GenFu.GenFu.Configure<CandidateModel>()
                 .Fill(c => c.Name)
                 .Fill(c => c.LastName);
