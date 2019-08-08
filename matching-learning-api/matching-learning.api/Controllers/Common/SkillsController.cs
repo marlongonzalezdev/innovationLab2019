@@ -25,13 +25,90 @@ namespace matching_learning.api.Controllers.Common
         }
 
         /// <summary>
-        /// Gets the photo with the specified identifier.
+        /// Gets the skills.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("skills")]
+        [Route("Skills")]
         public ActionResult<List<Skill>> Get()
         {
             return _skillRepository.GetSkills();
+        }
+
+        /// <summary>
+        /// Gets the skill with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("Skill")]
+        public ActionResult<Skill> GetSkillById(int id)
+        {
+            return _skillRepository.GetSkillById(id);
+        }
+
+        /// <summary>
+        /// Gets the business area with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("BusinessArea")]
+        public ActionResult<BusinessArea> GetBusinessAreaById(int id)
+        {
+            return _skillRepository.GetBusinessAreaById(id);
+        }
+
+        /// <summary>
+        /// Gets the soft skill with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("SoftSkill")]
+        public ActionResult<SoftSkill> GetSoftSkillById(int id)
+        {
+            return _skillRepository.GetSoftSkillById(id);
+        }
+
+        /// <summary>
+        /// Gets the technology with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("Technology")]
+        public ActionResult<Technology> GetTechnologyById(int id)
+        {
+            return _skillRepository.GetTechnologyById(id);
+        }
+
+        /// <summary>
+        /// Gets the technology version with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("TechnologyVersion")]
+        public ActionResult<TechnologyVersion> GetTechnologyVersionById(int id)
+        {
+            return _skillRepository.GetTechnologyVersionById(id);
+        }
+
+        /// <summary>
+        /// Gets the technology role with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("TechnologyRole")]
+        public ActionResult<TechnologyRole> GetTechnologyRoleById(int id)
+        {
+            return _skillRepository.GetTechnologyRoleById(id);
+        }
+
+        /// <summary>
+        /// Gets the technology versions with the specified parent technology skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("TechnologyVersionsByTechnology")]
+        public ActionResult<List<TechnologyVersion>> GetTechnologyVersionsByTechnologyId(int id)
+        {
+            return _skillRepository.GetTechnologyVersionsByTechnologyId(id);
         }
     }
 }

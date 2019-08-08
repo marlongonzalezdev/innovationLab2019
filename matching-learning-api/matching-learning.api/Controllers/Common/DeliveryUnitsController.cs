@@ -25,10 +25,10 @@ namespace matching_learning.api.Controllers.Common
         }
 
         /// <summary>
-        /// Gets the photo with the specified identifier.
+        /// Gets the delivery units.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("deliveryunits")]
+        [Route("DeliveryUnits")]
         public ActionResult<List<DeliveryUnit>> Get()
         {
             return _deliveryUnitRepository.GetDeliveryUnits();

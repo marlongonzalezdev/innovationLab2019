@@ -25,10 +25,10 @@ namespace matching_learning.api.Controllers.Common
         }
 
         /// <summary>
-        /// Gets the photo with the specified identifier.
+        /// Gets the regions.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("regions")]
+        [Route("Regions")]
         public ActionResult<List<Region>> Get()
         {
             return _regionRepository.GetRegions();

@@ -25,10 +25,10 @@ namespace matching_learning.api.Controllers.Common
         }
 
         /// <summary>
-        /// Gets the photo with the specified identifier.
+        /// Gets the candidates.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("candidates")]
+        [Route("Candidates")]
         public ActionResult<List<Candidate>> Get()
         {
             return _candidateRepository.GetCandidates();
