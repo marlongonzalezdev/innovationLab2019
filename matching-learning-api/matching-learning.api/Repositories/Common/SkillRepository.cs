@@ -99,8 +99,8 @@ namespace matching_learning.api.Repositories.Common
                         "       @category AS [Category]," +
                         "       [BA].[Code]," +
                         "       [BA].[Name] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId]" +
+                        "FROM [dbo].[Skill] AS [S] " +
+                        "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [S].[Id] = @skillId";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))

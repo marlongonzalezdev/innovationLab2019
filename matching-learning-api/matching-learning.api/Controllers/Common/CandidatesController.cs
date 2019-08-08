@@ -33,5 +33,16 @@ namespace matching_learning.api.Controllers.Common
         {
             return _candidateRepository.GetCandidates();
         }
+
+        /// <summary>
+        /// Gets the candidate with the identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("Candidate")]
+        public ActionResult<Candidate> GetCandidateById(int id)
+        {
+            return _candidateRepository.GetCandidateById(id);
+        }
     }
 }
