@@ -24,6 +24,7 @@ namespace matching_learning.api.Controllers.Common
             _skillRepository = skillRepository;
         }
 
+        #region Retrieve
         /// <summary>
         /// Gets the skills.
         /// </summary>
@@ -110,5 +111,88 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetTechnologyVersionsByTechnologyId(id);
         }
+        #endregion
+
+        #region Save
+        /// <summary>
+        /// Save the business area object in the database (insert/update).
+        /// </summary>
+        /// <param name="ba"></param>
+        [HttpPost("SaveBusinessArea")]
+        [ProducesResponseType(typeof(BusinessArea), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveBusinessArea([FromBody] BusinessArea ba)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _skillRepository.SaveBusinessArea(ba);
+
+            var res = _skillRepository.GetBusinessAreaByCode(ba.Code);
+
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Save the soft skill object in the database (insert/update).
+        /// </summary>
+        /// <param name="ss"></param>
+        [HttpPost("SaveSoftSkill")]
+        [ProducesResponseType(typeof(SoftSkill), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveSoftSkill([FromBody] SoftSkill ss)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _skillRepository.SaveSoftSkill(ss);
+
+            var res = _skillRepository.GetSoftSkillByCode(ss.Code);
+
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Save the technology object in the database (insert/update).
+        /// </summary>
+        /// <param name="tech"></param>
+        [HttpPost("SaveTechnology")]
+        [ProducesResponseType(typeof(Technology), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveTechnology([FromBody] Technology tech)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _skillRepository.SaveTechnology(tech);
+
+            var res = _skillRepository.GetTechnologyByCode(tech.Code);
+
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Save the technology role object in the database (insert/update).
+        /// </summary>
+        /// <param name="tr"></param>
+        [HttpPost("SaveTechnologyRole")]
+        [ProducesResponseType(typeof(TechnologyRole), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveTechnologyRole([FromBody] TechnologyRole tr)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _skillRepository.SaveTechnologyRole(tr);
+
+            var res = _skillRepository.GetTechnologyRoleByCode(tr.Code);
+
+            return Ok(res);
+        }
+        #endregion
     }
 }

@@ -95,6 +95,52 @@ namespace matching_learning.api.Repositories.Common
             return (res);
         }
 
+        public Skill GetSkillByCode(string code)
+        {
+            Skill res = null;
+
+            var query = "SELECT [GS].[SkillId], " +
+                        "       [GS].[RelatedId]," +
+                        "       [GS].[Category]," +
+                        "       [GS].[Code]," +
+                        "       [GS].[Name]," +
+                        "       [GS].[DefaultExpertise] " +
+                        "FROM [dbo].[GlobalSkill] AS [GS] " +
+                        "WHERE [GS].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new Skill()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+
         public BusinessArea GetBusinessAreaById(int id)
         {
             BusinessArea res = null;
@@ -145,6 +191,56 @@ namespace matching_learning.api.Repositories.Common
             return (res);
         }
 
+        public BusinessArea GetBusinessAreaByCode(string code)
+        {
+            BusinessArea res = null;
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [BA].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [BA].[Code]," +
+                        "       [BA].[Name]," +
+                        "       [BA].[DefaultExpertise] " +
+                        "FROM [dbo].[Skill] AS [S] " +
+                        "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
+                        "WHERE [BA].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.BusinessArea;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new BusinessArea()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+        
         public SoftSkill GetSoftSkillById(int id)
         {
             SoftSkill res = null;
@@ -165,6 +261,56 @@ namespace matching_learning.api.Repositories.Common
                 {
                     cmd.Parameters.Add("@skillId", SqlDbType.Int);
                     cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.SoftSkill;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new SoftSkill()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public SoftSkill GetSoftSkillByCode(string code)
+        {
+            SoftSkill res = null;
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [SK].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [SK].[Code]," +
+                        "       [SK].[Name]," +
+                        "       [SK].[DefaultExpertise] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
+                        "WHERE [SK].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
 
                     cmd.Parameters.Add("@category", SqlDbType.Int);
                     cmd.Parameters["@category"].Value = SkillCategory.SoftSkill;
@@ -216,6 +362,58 @@ namespace matching_learning.api.Repositories.Common
                 {
                     cmd.Parameters.Add("@skillId", SqlDbType.Int);
                     cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.Technology;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new Technology()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                            IsVersioned = dr.Db2Bool("IsVersioned")
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public Technology GetTechnologyByCode(string code)
+        {
+            Technology res = null;
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [T].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [T].[Code]," +
+                        "       [T].[Name]," +
+                        "       [T].[DefaultExpertise]," +
+                        "       [T].[IsVersioned] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
+                        "WHERE [T].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
 
                     cmd.Parameters.Add("@category", SqlDbType.Int);
                     cmd.Parameters["@category"].Value = SkillCategory.Technology;
@@ -306,6 +504,65 @@ namespace matching_learning.api.Repositories.Common
             return (res);
         }
 
+        public TechnologyVersion GetTechnologyVersionByCode(string code)
+        {
+            TechnologyVersion res = null;
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                         "       [TV].[Id] AS [RelatedId]," +
+                         "       @category AS [Category]," +
+                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                         "       [TV].[DefaultExpertise]," +
+                         "       [TV].[Version]," +
+                         "       [TV].[StartDate]," +
+                         "       [TV].[TechnologyId] " +
+                         "FROM [dbo].[Skill] AS [S]" +
+                         "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[Id] = [S].[TechnologyVersionId]" +
+                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
+                         "WHERE [T].[Code] + ' v' + [TV].[Version] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
+                        res = new TechnologyVersion()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                            ParentTechnology = parent,
+                            Version = dr.Db2String("Version"),
+                            StartDate = dr.Db2DateTime("StartDate"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+        
         public TechnologyRole GetTechnologyRoleById(int id)
         {
             TechnologyRole res = null;
@@ -326,6 +583,56 @@ namespace matching_learning.api.Repositories.Common
                 {
                     cmd.Parameters.Add("@skillId", SqlDbType.Int);
                     cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyRole;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new TechnologyRole()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public TechnologyRole GetTechnologyRoleByCode(string code)
+        {
+            TechnologyRole res = null;
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [TR].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [TR].[Code]," +
+                        "       [TR].[Name]," +
+                        "       [TR].[DefaultExpertise] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
+                        "WHERE [TR].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
 
                     cmd.Parameters.Add("@category", SqlDbType.Int);
                     cmd.Parameters["@category"].Value = SkillCategory.TechnologyRole;
@@ -381,6 +688,62 @@ namespace matching_learning.api.Repositories.Common
                 {
                     cmd.Parameters.Add("@skillId", SqlDbType.Int);
                     cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(new TechnologyVersion()
+                        {
+                            Id = dr.Db2Int("SkillId"),
+                            RelatedId = dr.Db2Int("RelatedId"),
+                            Category = (SkillCategory)dr.Db2Int("Category"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                            ParentTechnology = parent,
+                            Version = dr.Db2String("Version"),
+                            StartDate = dr.Db2DateTime("StartDate"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code)
+        {
+            var res = new List<TechnologyVersion>();
+
+            var parent = GetTechnologyByCode(code);
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [TV].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[DefaultExpertise]," +
+                        "       [TV].[Version]," +
+                        "       [TV].[StartDate] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
+                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
+                        "WHERE [T].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
 
                     cmd.Parameters.Add("@category", SqlDbType.Int);
                     cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
