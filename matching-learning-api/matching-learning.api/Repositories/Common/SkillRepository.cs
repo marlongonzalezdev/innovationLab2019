@@ -8,6 +8,7 @@ namespace matching_learning.api.Repositories.Common
 {
     public class SkillRepository : ISkillRepository
     {
+        #region Retrieve
         public List<Skill> GetSkills()
         {
             var res = new List<Skill>();
@@ -410,5 +411,258 @@ namespace matching_learning.api.Repositories.Common
 
             return (res);
         }
+        #endregion
+
+        #region Save
+        #region Save BusinessArea
+        public void SaveBusinessArea(BusinessArea ba)
+        {
+            if (ba.Id < 0)
+            {
+                insertBusinessArea(ba);
+            }
+            else
+            {
+                updateBusinessArea(ba);
+            }
+        }
+
+        private void insertBusinessArea(BusinessArea ba)
+        {
+            var stmntBA = "INSERT INTO [dbo].[BusinessArea] (" +
+                          " [Code]," +
+                          " [Name]," +
+                          " [DefaultExpertise] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @code," +
+                          "  @name," +
+                          "  @defaultExpertise" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [BusinessAreaId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[BusinessArea]" +
+                             "WHERE [Code] = @code";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdBA = new SqlCommand(stmntBA, conn))
+                    {
+                        cmdBA.Transaction = trans;
+
+                        cmdBA.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdBA.Parameters["@code"].Value = ba.Code;
+
+                        cmdBA.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmdBA.Parameters["@name"].Value = ba.Name;
+
+                        cmdBA.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmdBA.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+
+                        cmdBA.ExecuteNonQuery();
+                    }
+
+                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+                    {
+                        cmdSkill.Transaction = trans;
+
+                        cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSkill.Parameters["@code"].Value = ba.Code;
+
+                        cmdSkill.ExecuteNonQuery();
+                    }
+                    
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        private void updateBusinessArea(BusinessArea ba)
+        {
+            var stmnt = "UPDATE [dbo].[BusinessArea] " +
+                        "SET [Code] = @code," +
+                        "    [Name] = @name," +
+                        "    [DefaultExpertise] = @defaultExpertise " +
+                        "WHERE [Id] = @baId";
+            
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@baId", SqlDbType.Int);
+                        cmd.Parameters["@baId"].Value = ba.RelatedId;
+
+                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmd.Parameters["@code"].Value = ba.Code;
+
+                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmd.Parameters["@name"].Value = ba.Name;
+
+                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmd.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+
+                        cmd.ExecuteNonQuery();
+                    }
+                    
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        #endregion
+
+        #region Save SoftSkill
+        public void SaveSoftSkill(SoftSkill ss)
+        {
+            if (ss.Id < 0)
+            {
+                insertSoftSkill(ss);
+            }
+            else
+            {
+                updateSoftSkill(ss);
+            }
+        }
+
+        private void insertSoftSkill(SoftSkill ss)
+        {
+            var stmntSS = "INSERT INTO [dbo].[SoftSkill] (" +
+                          " [Code]," +
+                          " [Name]," +
+                          " [DefaultExpertise] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @code," +
+                          "  @name," +
+                          "  @defaultExpertise" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [SoftSkillId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[SoftSkill]" +
+                             "WHERE [Code] = @code";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdSS = new SqlCommand(stmntSS, conn))
+                    {
+                        cmdSS.Transaction = trans;
+
+                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSS.Parameters["@code"].Value = ss.Code;
+
+                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmdSS.Parameters["@name"].Value = ss.Name;
+
+                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmdSS.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+
+                        cmdSS.ExecuteNonQuery();
+                    }
+
+                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+                    {
+                        cmdSkill.Transaction = trans;
+
+                        cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSkill.Parameters["@code"].Value = ss.Code;
+
+                        cmdSkill.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        private void updateSoftSkill(SoftSkill ss)
+        {
+            var stmnt = "UPDATE [dbo].[SoftSkill] " +
+                        "SET [Code] = @code," +
+                        "    [Name] = @name," +
+                        "    [DefaultExpertise] = @defaultExpertise " +
+                        "WHERE [Id] = @ssId";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@ssId", SqlDbType.Int);
+                        cmd.Parameters["@ssId"].Value = ss.RelatedId;
+
+                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmd.Parameters["@code"].Value = ss.Code;
+
+                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmd.Parameters["@name"].Value = ss.Name;
+
+                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmd.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        #endregion
+        #endregion
     }
 }
