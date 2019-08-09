@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using matching_learning.api.Domain.DTOs;
 using matching_learning.api.Domain.Enums;
+using Microsoft.AspNetCore.Authentication;
 
 namespace matching_learning.api.Repositories.Common
 {
@@ -240,7 +242,7 @@ namespace matching_learning.api.Repositories.Common
 
             return (res);
         }
-        
+
         public SoftSkill GetSoftSkillById(int id)
         {
             SoftSkill res = null;
@@ -562,7 +564,7 @@ namespace matching_learning.api.Repositories.Common
 
             return (res);
         }
-        
+
         public TechnologyRole GetTechnologyRoleById(int id)
         {
             TechnologyRole res = null;
@@ -782,6 +784,151 @@ namespace matching_learning.api.Repositories.Common
 
             return (res);
         }
+
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertises()
+        {
+            var res = new List<SkillEstimatedExpertise>();
+
+            var query = "SELECT [SEE].[Id], " +
+                        "       [SEE].[CandidateId], " +
+                        "       [SEE].[SkillId], " +
+                        "       [SEE].[Expertise] " +
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]";
+
+            var candidateRepository = new CandidateRepository();
+            var candidates = candidateRepository.GetCandidates();
+            var skills = GetSkills();
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
+                        var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
+
+                        res.Add(new SkillEstimatedExpertise()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Candidate = candidate,
+                            Skill = skill,
+                            Expertise = dr.Db2Decimal("Expertise"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids)
+        {
+            var all = GetSkillEstimatedExpertises();
+
+            var res = all.Where(see => ids.Contains(see.Skill.Id));
+               
+            return (res.ToList());
+        }
+
+        public List<SkillRelation> GetSkillRelationsBySkillId(int id)
+        {
+            var res = new List<SkillRelation>();
+
+            var query = "SELECT [SR].[Id], " +
+                        "       [SR].[SkillId], " +
+                        "       [SR].[AssociatedSkillId]," +
+                        "       [SR].[RelationType]," +
+                        "       [SR].[ConversionFactor] " +
+                        "FROM [dbo].[SkillRelation] AS [SR] " +
+                        "WHERE [SR].[SkillId] = @skillId";
+
+            var mainSkill = GetSkillById(id);
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@skillId", SqlDbType.Int);
+                    cmd.Parameters["@skillId"].Value = id;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
+
+                        res.Add(new SkillRelation()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Skill = mainSkill,
+                            AssociatedSkill = associatedSkill,
+                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
+                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<SkillRelation> GetSkillRelationsBySkillCode(string code)
+        {
+            var res = new List<SkillRelation>();
+
+            var query = "SELECT [SR].[Id], " +
+                        "       [SR].[SkillId], " +
+                        "       [SR].[AssociatedSkillId]," +
+                        "       [SR].[RelationType]," +
+                        "       [SR].[ConversionFactor] " +
+                        "FROM [dbo].[SkillRelation] AS [SR] " +
+                        "INNER JOIN  [dbo].[GlobalSkill] AS [GS] ON [GS][.[SkillId] = [SR].[SkillId] " +
+                        "WHERE [GS].[Code] = @skillCode";
+
+            var mainSkill = GetSkillByCode(code);
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@skillCode", SqlDbType.Int);
+                    cmd.Parameters["@skillCode"].Value = code;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
+
+                        res.Add(new SkillRelation()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Skill = mainSkill,
+                            AssociatedSkill = associatedSkill,
+                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
+                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
         #endregion
 
         #region Save
@@ -852,7 +999,7 @@ namespace matching_learning.api.Repositories.Common
 
                         cmdSkill.ExecuteNonQuery();
                     }
-                    
+
                     trans.Commit();
                 }
                 catch
@@ -870,7 +1017,7 @@ namespace matching_learning.api.Repositories.Common
                         "    [Name] = @name," +
                         "    [DefaultExpertise] = @defaultExpertise " +
                         "WHERE [Id] = @baId";
-            
+
             SqlTransaction trans;
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -898,7 +1045,7 @@ namespace matching_learning.api.Repositories.Common
 
                         cmd.ExecuteNonQuery();
                     }
-                    
+
                     trans.Commit();
                 }
                 catch

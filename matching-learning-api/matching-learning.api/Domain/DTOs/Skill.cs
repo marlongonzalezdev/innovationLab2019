@@ -12,7 +12,7 @@ namespace matching_learning.api.Domain.DTOs
         public string Name { get; set; }
         public decimal DefaultExpertise { get; set; }
 
-    public int CompareTo(Skill other)
+        public int CompareTo(Skill other)
         {
             return (Name.CompareTo(other.Name));
         }

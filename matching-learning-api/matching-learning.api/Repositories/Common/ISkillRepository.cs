@@ -28,6 +28,12 @@ namespace matching_learning.api.Repositories.Common
 
         List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id);
         List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code);
+
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertises();
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids);
+
+        List<SkillRelation> GetSkillRelationsBySkillId(int id);
+        List<SkillRelation> GetSkillRelationsBySkillCode(string code);
         #endregion
 
         #region Save

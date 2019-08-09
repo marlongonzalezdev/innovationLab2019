@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using matching_learning.api.Domain.DTOs;
 using matching_learning.api.Repositories.Common;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace matching_learning.api.Controllers.Common
@@ -110,6 +111,39 @@ namespace matching_learning.api.Controllers.Common
         public ActionResult<List<TechnologyVersion>> GetTechnologyVersionsByTechnologyId(int id)
         {
             return _skillRepository.GetTechnologyVersionsByTechnologyId(id);
+        }
+
+        /// <summary>
+        /// Gets the skill estimated expertise.
+        /// </summary>
+        /// <returns></returns>
+        [Route("SkillEstimatedExpertises")]
+        public ActionResult<List<SkillEstimatedExpertise>> GetSkillEstimatedExpertises()
+        {
+            return _skillRepository.GetSkillEstimatedExpertises();
+        }
+
+        /// <summary>
+        /// Gets the skill estimated expertise by skill ids.
+        /// </summary>
+        /// <param name="ids">The identifier.</param>
+        /// <returns></returns>
+        [HttpPost("SkillEstimatedExpertisesBySkillIds")]
+        [Consumes("application/json")]
+        public ActionResult<List<SkillEstimatedExpertise>> GetSkillEstimatedExpertisesBySkillIds([FromBody] List<int> ids)
+        {
+            return _skillRepository.GetSkillEstimatedExpertisesBySkillIds(ids);
+        }
+
+        /// <summary>
+        /// Gets the skill relations for a skill.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("SkillRelationsBySkillId")]
+        public ActionResult<List<SkillRelation>> GetSkillRelationsBySkillId(int id)
+        {
+            return _skillRepository.GetSkillRelationsBySkillId(id);
         }
         #endregion
 

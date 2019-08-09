@@ -1,3 +1,6 @@
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
 GET
 https://localhost:44374/Regions/Regions
 http://localhost:62460/Regions/Regions
@@ -42,10 +45,40 @@ GET
 https://localhost:44374/Skills/TechnologyRole?id=84
 http://localhost:62460/Skills/TechnologyRole?id=84
 
+
 GET
 https://localhost:44374/Skills/TechnologyVersionsByTechnology?id=10
 http://localhost:62460/Skills/TechnologyVersionsByTechnology?id=10
 
+
+GET
+https://localhost:44374/Skills/SkillEstimatedExpertises
+http://localhost:62460/Skills/SkillEstimatedExpertises
+
+
+POST
+https://localhost:44374/Skills/SkillEstimatedExpertisesBySkillIds
+http://localhost:62460/Skills/SkillEstimatedExpertisesBySkillIds
+
+Host: localhost:44374
+Connection: keep-alive
+Content-Length: 9
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+[1,2,3]
+
+
+GET
+https://localhost:44374/Skills/SkillRelationsBySkillId?id=80
+http://localhost:62460/Skills/SkillRelationsBySkillId?id=80
+
+----------------------------------------------------------------------------------------------------
 
 POST
 https://localhost:44374/Skills/SaveBusinessArea
@@ -118,3 +151,6 @@ Accept-Encoding: gzip, deflate, br
 Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 {"id":-1,"relatedId":-1,"category":3,"code":"TRTST1","name":"TR Test 01","defaultExpertise":0.1234,"parentTechnology":null}
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
