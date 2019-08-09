@@ -1,0 +1,120 @@
+GET
+https://localhost:44374/Regions/Regions
+http://localhost:62460/Regions/Regions
+
+GET
+https://localhost:44374/DeliveryUnits/DeliveryUnits
+http://localhost:62460/DeliveryUnits/DeliveryUnits
+
+GET
+https://localhost:44374/Candidates/Candidates
+http://localhost:62460/Candidates/Candidates
+
+GET
+https://localhost:44374/Candidates/Candidate?id=22
+http://localhost:62460/Candidates/Candidate?id=22
+
+GET
+https://localhost:44374/Skills/Skills
+http://localhost:62460/Skills/Skills
+
+GET
+https://localhost:44374/Skills/Skill?id=5
+http://localhost:62460/Skills/Skill?id=5
+
+GET
+https://localhost:44374/Skills/BusinessArea?id=102
+http://localhost:62460/Skills/BusinessArea?id=102
+
+GET
+https://localhost:44374/Skills/SoftSkill?id=90
+http://localhost:62460/Skills/SoftSkill?id=90
+
+GET
+https://localhost:44374/Skills/Technology?id=10
+http://localhost:62460/Skills/Technology?id=10
+
+GET
+https://localhost:44374/Skills/TechnologyVersion?id=22
+http://localhost:62460/Skills/TechnologyVersion?id=22
+
+GET
+https://localhost:44374/Skills/TechnologyRole?id=84
+http://localhost:62460/Skills/TechnologyRole?id=84
+
+GET
+https://localhost:44374/Skills/TechnologyVersionsByTechnology?id=10
+http://localhost:62460/Skills/TechnologyVersionsByTechnology?id=10
+
+
+POST
+https://localhost:44374/Skills/SaveBusinessArea
+http://localhost:62460/Skills/SaveBusinessArea
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":-1,"relatedId":-1,"category":5,"code":"BATST1","name":"BA Test 01","defaultExpertise":0.1234}
+
+
+POST
+https://localhost:44374/Skills/SaveSoftSkill
+http://localhost:62460/Skills/SaveSoftSkill
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":-1,"relatedId":-1,"category":4,"code":"SKTST1","name":"SK Test 01","defaultExpertise":0.1234}
+
+
+POST
+https://localhost:44374/Skills/SaveTechnology
+http://localhost:62460/Skills/SaveTechnology
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":-1,"relatedId":-1,"category":1,"code":"TECHTST1","name":"TECH Test 01","defaultExpertise":0.1234,"isVersioned":true}
+
+
+
+POST
+https://localhost:44374/Skills/SaveTechnologyRole
+http://localhost:62460/Skills/SaveTechnologyRole
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":-1,"relatedId":-1,"category":3,"code":"TRTST1","name":"TR Test 01","defaultExpertise":0.1234,"parentTechnology":null}

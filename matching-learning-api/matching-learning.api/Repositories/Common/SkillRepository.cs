@@ -572,7 +572,8 @@ namespace matching_learning.api.Repositories.Common
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +
-                        "       [TR].[DefaultExpertise] " +
+                        "       [TR].[DefaultExpertise]," +
+                        "       [TR].[TechnologyId] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [S].[Id] = @skillId";
@@ -597,6 +598,8 @@ namespace matching_learning.api.Repositories.Common
                     {
                         DataRow dr = dt.Rows[0];
 
+                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
                         res = new TechnologyRole()
                         {
                             Id = dr.Db2Int("SkillId"),
@@ -605,6 +608,7 @@ namespace matching_learning.api.Repositories.Common
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
                             DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                            ParentTechnology = parent,
                         };
                     }
                 }
@@ -622,7 +626,8 @@ namespace matching_learning.api.Repositories.Common
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +
-                        "       [TR].[DefaultExpertise] " +
+                        "       [TR].[DefaultExpertise]," +
+                        "       [TR].[TechnologyId] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [TR].[Code] = @code";
@@ -647,6 +652,8 @@ namespace matching_learning.api.Repositories.Common
                     {
                         DataRow dr = dt.Rows[0];
 
+                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
                         res = new TechnologyRole()
                         {
                             Id = dr.Db2Int("SkillId"),
@@ -655,6 +662,7 @@ namespace matching_learning.api.Repositories.Common
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
                             DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                            ParentTechnology = parent,
                         };
                     }
                 }
