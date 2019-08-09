@@ -663,6 +663,274 @@ namespace matching_learning.api.Repositories.Common
             }
         }
         #endregion
+
+        #region Save Technology
+        public void SaveTechnology(Technology tech)
+        {
+            if (tech.Id < 0)
+            {
+                insertTechnology(tech);
+            }
+            else
+            {
+                updateTechnology(tech);
+            }
+        }
+
+        private void insertTechnology(Technology tech)
+        {
+            var stmntTech = "INSERT INTO [dbo].[Technology] (" +
+                          " [Code]," +
+                          " [Name]," +
+                          " [DefaultExpertise]," +
+                          " [IsVersioned] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @code," +
+                          "  @name," +
+                          "  @defaultExpertise," +
+                          "  @isVersioned" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [TechnologyId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[Technology]" +
+                             "WHERE [Code] = @code";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdSS = new SqlCommand(stmntTech, conn))
+                    {
+                        cmdSS.Transaction = trans;
+
+                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSS.Parameters["@code"].Value = tech.Code;
+
+                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmdSS.Parameters["@name"].Value = tech.Name;
+
+                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmdSS.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
+
+                        cmdSS.Parameters.Add("@isVersioned", SqlDbType.Bit);
+                        cmdSS.Parameters["@isVersioned"].Value = tech.IsVersioned;
+
+                        cmdSS.ExecuteNonQuery();
+                    }
+
+                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+                    {
+                        cmdSkill.Transaction = trans;
+
+                        cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSkill.Parameters["@code"].Value = tech.Code;
+
+                        cmdSkill.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        private void updateTechnology(Technology tech)
+        {
+            var stmnt = "UPDATE [dbo].[Technology] " +
+                        "SET [Code] = @code," +
+                        "    [Name] = @name," +
+                        "    [DefaultExpertise] = @defaultExpertise," +
+                        "    [IsVersioned] = @isVersioned " +
+                        "WHERE [Id] = @techId";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@techId", SqlDbType.Int);
+                        cmd.Parameters["@techId"].Value = tech.RelatedId;
+
+                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmd.Parameters["@code"].Value = tech.Code;
+
+                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmd.Parameters["@name"].Value = tech.Name;
+
+                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmd.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
+
+                        cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
+                        cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        #endregion
+
+        #region Save TechnologyRole
+        public void SaveTechnologyRole(TechnologyRole tr)
+        {
+            if (tr.Id < 0)
+            {
+                insertTechnologyRole(tr);
+            }
+            else
+            {
+                updateTechnologyRole(tr);
+            }
+        }
+
+        private void insertTechnologyRole(TechnologyRole tr)
+        {
+            var stmntTR = "INSERT INTO [dbo].[TechnologyRole] (" +
+                          " [TechnologyId]," +
+                          " [Code]," +
+                          " [Name]," +
+                          " [DefaultExpertise] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @technologyId," +
+                          "  @code," +
+                          "  @name," +
+                          "  @defaultExpertise" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [TechnologyRoleId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[TechnologyRole]" +
+                             "WHERE [Code] = @code";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdTR = new SqlCommand(stmntTR, conn))
+                    {
+                        cmdTR.Transaction = trans;
+
+                        cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
+                        cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+
+                        cmdTR.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdTR.Parameters["@code"].Value = tr.Code;
+
+                        cmdTR.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmdTR.Parameters["@name"].Value = tr.Name;
+
+                        cmdTR.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmdTR.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
+
+                        cmdTR.ExecuteNonQuery();
+                    }
+
+                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+                    {
+                        cmdSkill.Transaction = trans;
+
+                        cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmdSkill.Parameters["@code"].Value = tr.Code;
+
+                        cmdSkill.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        private void updateTechnologyRole(TechnologyRole tr)
+        {
+            var stmnt = "UPDATE [dbo].[TechnologyRole] " +
+                        "SET [TechnologyId] = @technologyId," +
+                        "    [Code] = @code," +
+                        "    [Name] = @name," +
+                        "    [DefaultExpertise] = @defaultExpertise " +
+                        "WHERE [Id] = @ssId";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@technologyId", SqlDbType.Int);
+                        cmd.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+
+                        cmd.Parameters.Add("@ssId", SqlDbType.Int);
+                        cmd.Parameters["@ssId"].Value = tr.RelatedId;
+
+                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                        cmd.Parameters["@code"].Value = tr.Code;
+
+                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+                        cmd.Parameters["@name"].Value = tr.Name;
+
+                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+                        cmd.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        #endregion
         #endregion
     }
 }
