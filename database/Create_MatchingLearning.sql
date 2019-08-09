@@ -126,6 +126,7 @@ CREATE TABLE [dbo].[Technology] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL,
   [IsVersioned]                   BIT NOT NULL,
 
   CONSTRAINT [PK_Technology] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -137,8 +138,9 @@ GO
 CREATE TABLE [dbo].[TechnologyVersion] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [TechnologyId]                  INT NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL,
   [Version]                       [MLCode] NOT NULL,
-  [StartDate]                     DATETIME  NULL,
+  [StartDate]                     DATETIME  NOT NULL,
 
   CONSTRAINT [PK_TechnologyVersion] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -153,6 +155,7 @@ CREATE TABLE [dbo].[TechnologyRole] (
   [TechnologyId]                  INT NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_TechnologyRole] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -166,6 +169,7 @@ CREATE TABLE [dbo].[SoftSkill] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_SoftSkill] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -177,6 +181,7 @@ CREATE TABLE [dbo].[BusinessArea] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL,
 
   CONSTRAINT [PK_BusinessArea] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -315,6 +320,61 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+GO
+
+CREATE VIEW [dbo].[GlobalSkill]
+AS
+  SELECT [S].[Id] AS [SkillId],
+         [T].[Id] AS [RelatedId],
+         1 AS [Category],
+         [T].[Code],
+         [T].[Name],
+         [T].[DefaultExpertise]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyId] = [T].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [TV].[Id] AS [RelatedId],
+         2 AS [Category],
+         [T].[Code] + ' v' + [TV].[Version] AS [Code],
+         [T].[Name] + ' v' + [TV].[Version] AS [Name],
+         [TV].[DefaultExpertise]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyVersionId] = [TV].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [TR].[Id] AS [RelatedId],
+         3 AS [Category],
+         [TR].[Code],
+         [TR].[Name],
+         [TR].[DefaultExpertise]
+  FROM [dbo].[Technology] AS [T]
+  INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyRoleId] = [TR].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [SK].[Id] AS [RelatedId],
+         4 AS [Category],
+         [SK].[Code],
+         [SK].[Name],
+         [SK].[DefaultExpertise]
+  FROM [dbo].[SoftSkill] AS [SK]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[SoftSkillId] = [SK].[Id]
+  UNION ALL
+  SELECT [S].[Id] AS [SkillId],
+         [BA].[Id] AS [RelatedId],
+         5 AS [Category],
+         [BA].[Code],
+         [BA].[Name],
+         [BA].[DefaultExpertise]
+  FROM [dbo].[BusinessArea] AS [BA]
+  INNER JOIN [dbo].[Skill] AS [S] ON [S].[BusinessAreaId] = [BA].[Id]
+GO
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
 INSERT INTO [dbo].[Region] ([Code], [Name]) VALUES ('WEU', 'West Europe')
 INSERT INTO [dbo].[Region] ([Code], [Name]) VALUES ('EEU', 'East Europe')
 INSERT INTO [dbo].[Region] ([Code], [Name]) VALUES ('NLATAM', 'North Latin-America')
@@ -366,147 +426,147 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('CLOUD', 'CLOUD Computing', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('AZURE', 'MS Azure', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('AMZN', 'Amazon AWS', 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('CLOUD', 'CLOUD Computing', 0.0, 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('AZURE', 'MS Azure', 0.0, 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('AMZN', 'Amazon AWS', 0.0, 0)
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('SQL', 'SQL', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('SQLServer', 'MS SQL Server', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('SQLServerAzure', 'MS SQL Server Azure', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('Oracle', 'Oracle', 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQL', 'SQL', 0.2, 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLServer', 'MS SQL Server', 0.2, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLServerAzure', 'MS SQL Server Azure', 0.15, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('Oracle', 'Oracle', 0.1, 1)
 GO
 
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '6.0', '1995-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '6.5', '1996-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.0', '1998-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2000', '2000-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2005', '2005-11-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2008', '2008-08-06' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2008 R2', '2010-04-21' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2012', '2012-03-06' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2014', '2014-03-18' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2016', '2016-06-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2017', '2017-10-02' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '6.0', '1995-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '6.5', '1996-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '7.0', '1998-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2000', '2000-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2005', '2005-11-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2008', '2008-08-06' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2008 R2', '2010-04-21' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2012', '2012-03-06' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2014', '2014-03-18' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2016', '2016-06-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2017', '2017-10-02' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
 GO
 
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2010', '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServerAzure'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], '2010', 0.1, '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServerAzure'
 GO
 
-INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name]) SELECT [Id], 'SQL Srv TSQL Dev', 'MS SQL Server TSQL Developer' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name]) SELECT [Id], 'SQL Srv DBA', 'MS SQL Server Database Administrator' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name]) SELECT [Id], 'SQL Srv IS', 'MS SQL Server Integration Services' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name]) SELECT [Id], 'SQL Srv SSRS', 'MS SQL Server Reporting Services' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
-GO
-
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('.NET', '.NET', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('.NET FRMK', '.NET Framework', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('C#', 'C#', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('VB.NET', 'VB.NET', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('MS C++', 'MS C++', 1)
-
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '3.0', '2006-11-06' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '3.5', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.5', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.5.1', '2013-10-17' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.5.2', '2014-05-05' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.6', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.6.1', '2015-11-30' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.6.2', '2016-08-02' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.7', '2017-04-05' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.7.1', '2017-10-17' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.7.2', '2018-04-30' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.8', '2019-04-18' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
-
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.2', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '3.0', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '5.0', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '6.0', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.0', '2017-03-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.1', '2017-08-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.2', '2017-11-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.3', '2018-01-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
-
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '8.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '9.0', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '10.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '11.0', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '14.0', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '15.0', '2017-04-05' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name], [DefaultExpertise]) SELECT [Id], 'SQL Srv TSQL Dev', 'MS SQL Server TSQL Developer', 0.25 FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name], [DefaultExpertise]) SELECT [Id], 'SQL Srv DBA', 'MS SQL Server Database Administrator', 0.1 FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name], [DefaultExpertise]) SELECT [Id], 'SQL Srv IS', 'MS SQL Server Integration Services', 0.0 FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
+INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name], [DefaultExpertise]) SELECT [Id], 'SQL Srv SSRS', 'MS SQL Server Reporting Services', 0.0 FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
 GO
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('JAVA', 'JAVA', 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('JDK', 'JDK', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('J2SE', 'J2SE', 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('JAVA SE', 'Java SE', 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('.NET', '.NET', 0.0, 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('.NET FRMK', '.NET Framework', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('C#', 'C#', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('VB.NET', 'VB.NET', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('MS C++', 'MS C++', 0.0, 1)
 
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.0', '1996-01-01' FROM [dbo].[Technology] WHERE [Code] = 'JDK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.1', '1997-02-01' FROM [dbo].[Technology] WHERE [Code] = 'JDK'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.2', '1998-12-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.3', '2000-05-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '1.4', '2002-02-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '5.0', '2004-09-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '6', '2006-12-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '7', '2011-07-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '8', '2014-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '9', '2017-09-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '10', '2018-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '11', '2018-09-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '12', '2019-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '2.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '3.0', '2006-11-06' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '3.5', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.5', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.5.1', '2013-10-17' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.5.2', '2014-05-05' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.6', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.6.1', '2015-11-30' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.6.2', '2016-08-02' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.7', '2017-04-05' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.7.1', '2017-10-17' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.7.2', '2018-04-30' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.8', '2019-04-18' FROM [dbo].[Technology] WHERE [Code] = '.NET FRMK'
+
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.2', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '2.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '3.0', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '5.0', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '6.0', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.0', '2017-03-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.1', '2017-08-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.2', '2017-11-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.3', '2018-01-01' FROM [dbo].[Technology] WHERE [Code] = 'C#'
+
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.0', '2002-02-13' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7.1', '2003-04-24' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '8.0', '2005-11-07' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '9.0', '2007-11-19' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '10.0', '2010-04-12' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '11.0', '2012-08-15' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '14.0', '2015-07-20' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '15.0', '2017-04-05' FROM [dbo].[Technology] WHERE [Code] = 'VB.NET'
 GO
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-INSERT INTO [dbo].[Technology] ([Code], [Name], [IsVersioned]) VALUES ('ANGULAR', 'Angular', 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('JAVA', 'JAVA', 0.0, 0)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('JDK', 'JDK', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('J2SE', 'J2SE', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('JAVA SE', 'Java SE', 0.0, 1)
 
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], 'JS', '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '2.0', '2016-09-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '4.0', '2017-03-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [Version], [StartDate]) SELECT [Id], '5.0', '2017-11-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.0', '1996-01-01' FROM [dbo].[Technology] WHERE [Code] = 'JDK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.1', '1997-02-01' FROM [dbo].[Technology] WHERE [Code] = 'JDK'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.2', '1998-12-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.3', '2000-05-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.4', '2002-02-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '5.0', '2004-09-01' FROM [dbo].[Technology] WHERE [Code] = 'J2SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '6', '2006-12-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '7', '2011-07-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '8', '2014-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '9', '2017-09-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '10', '2018-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '11', '2018-09-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '12', '2019-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JAVA SE'
+GO
+
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('ANGULAR', 'Angular', 0.0, 1)
+
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, 'JS', '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '2.0', '2016-09-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.0', '2017-03-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '5.0', '2017-11-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
 GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('COMM', 'Communication')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('LEAD', 'Leadership')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('PLAN', 'Planning')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('TIME', 'Time Management')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('PROB', 'Problem Solving')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('TEAM', 'Team Player')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('CONF', 'Self-Confidence')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('FLEX', 'Flexibility/Adaptability')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('PRES', 'Working Well Under Pressure')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('POSI', 'Positive Attitude')
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('COMM', 'Communication', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('LEAD', 'Leadership', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('PLAN', 'Planning', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('TIME', 'Time Management', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('PROB', 'Problem Solving', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('TEAM', 'Team Player', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('CONF', 'Self-Confidence', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('FLEX', 'Flexibility/Adaptability', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('PRES', 'Working Well Under Pressure', 0.5)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('POSI', 'Positive Attitude', 0.5)
 
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('OENG', 'Oral English')
-INSERT INTO [dbo].[SoftSkill] ([Code], [Name]) VALUES ('WENG', 'Writting English')
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('OENG', 'Oral English', 0.25)
+INSERT INTO [dbo].[SoftSkill] ([Code], [Name], [DefaultExpertise]) VALUES ('WENG', 'Writting English', 0.5)
 
 GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('BANK', 'Banking')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('CRED', 'Credit Cards')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('INS', 'Insurance')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('ENER', 'Energy')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('RET', 'Retail')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('LOG', 'Logistics')
-INSERT INTO [dbo].[BusinessArea] ([Code], [Name]) VALUES ('MAN', 'Manufacturing')
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('BANK', 'Banking', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('CRED', 'Credit Cards', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('INS', 'Insurance', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('ENER', 'Energy', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('RET', 'Retail', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('LOG', 'Logistics', 0.1)
+INSERT INTO [dbo].[BusinessArea] ([Code], [Name], [DefaultExpertise]) VALUES ('MAN', 'Manufacturing', 0.1)
 GO
 
 ----------------------------------------------------------------------------------------------------
@@ -775,55 +835,20 @@ WHILE @@FETCH_STATUS = 0
 CLOSE candidate_cursor;  
 DEALLOCATE candidate_cursor; 
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-
-GO
-
-CREATE VIEW [dbo].[GlobalSkill]
-AS
-  SELECT [S].[Id] AS [SkillId],
-         [T].[Id] AS [RelatedId],
-         1 AS [Category],
-         [T].[Code],
-         [T].[Name]
-  FROM [dbo].[Technology] AS [T]
-  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyId] = [T].[Id]
-  UNION ALL
-  SELECT [S].[Id] AS [SkillId],
-         [TV].[Id] AS [RelatedId],
-         2 AS [Category],
-         [T].[Code] + ' v' + [TV].[Version],
-         [T].[Name] + ' v' + [TV].[Version]
-  FROM [dbo].[Technology] AS [T]
-  INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]
-  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyVersionId] = [TV].[Id]
-  UNION ALL
-  SELECT [S].[Id] AS [SkillId],
-         [TR].[Id] AS [RelatedId],
-         3 AS [Category],
-         [TR].[Code],
-         [TR].[Name]
-  FROM [dbo].[Technology] AS [T]
-  INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]
-  INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyRoleId] = [TR].[Id]
-  UNION ALL
-  SELECT [S].[Id] AS [SkillId],
-         [SK].[Id] AS [RelatedId],
-         4 AS [Category],
-         [SK].[Code],
-         [SK].[Name]
-  FROM [dbo].[SoftSkill] AS [SK]
-  INNER JOIN [dbo].[Skill] AS [S] ON [S].[SoftSkillId] = [SK].[Id]
-  UNION ALL
-  SELECT [S].[Id] AS [SkillId],
-         [BA].[Id] AS [RelatedId],
-         5 AS [Category],
-         [BA].[Code],
-         [BA].[Name]
-  FROM [dbo].[BusinessArea] AS [BA]
-  INNER JOIN [dbo].[Skill] AS [S] ON [S].[BusinessAreaId] = [BA].[Id]
-GO
+INSERT INTO [dbo].[SkillEstimatedExpertise] (
+  [CandidateId],
+  [SkillId],
+  [Expertise]
+)
+SELECT [C].[Id],
+       [GS].[SkillId],
+       [GS].[DefaultExpertise]
+FROM [dbo].[Candidate] AS [C]
+CROSS JOIN [dbo].[GlobalSkill] AS [GS]
+WHERE NOT EXISTS (SELECT 1
+                  FROM [SkillEstimatedExpertise] AS [SEE]
+                  WHERE [SEE].[CandidateId] = [C].[Id]
+                    AND [SEE].[SkillId] = [GS].[SkillId])
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------

@@ -16,7 +16,8 @@ namespace matching_learning.api.Repositories.Common
                         "       [GS].[RelatedId]," +
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
-                        "       [GS].[Name] " +
+                        "       [GS].[Name]," +
+                        "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -38,6 +39,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                         });
                     }
                 }
@@ -54,8 +56,9 @@ namespace matching_learning.api.Repositories.Common
                         "       [GS].[RelatedId]," +
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
-                        "       [GS].[Name] " +
-                        "FROM [dbo].[GlobalSkill] AS [GS]" +
+                        "       [GS].[Name]," +
+                        "       [GS].[DefaultExpertise] " +
+                        "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[SkillId] = @skillId";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -82,6 +85,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                         };
                     }
                 }
@@ -98,7 +102,8 @@ namespace matching_learning.api.Repositories.Common
                         "       [BA].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
                         "       [BA].[Code]," +
-                        "       [BA].[Name] " +
+                        "       [BA].[Name]," +
+                        "       [BA].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S] " +
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [S].[Id] = @skillId";
@@ -130,6 +135,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                         };
                     }
                 }
@@ -146,7 +152,8 @@ namespace matching_learning.api.Repositories.Common
                         "       [SK].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
                         "       [SK].[Code]," +
-                        "       [SK].[Name] " +
+                        "       [SK].[Name]," +
+                        "       [SK].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
                         "WHERE [S].[Id] = @skillId";
@@ -178,6 +185,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                         };
                     }
                 }
@@ -195,6 +203,7 @@ namespace matching_learning.api.Repositories.Common
                         "       @category AS [Category]," +
                         "       [T].[Code]," +
                         "       [T].[Name]," +
+                        "       [T].[DefaultExpertise]," +
                         "       [T].[IsVersioned] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
@@ -227,6 +236,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                             IsVersioned = dr.Db2Bool("IsVersioned")
                         };
                     }
@@ -245,6 +255,7 @@ namespace matching_learning.api.Repositories.Common
                          "       @category AS [Category]," +
                          "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                          "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                         "       [TV].[DefaultExpertise]," +
                          "       [TV].[Version]," +
                          "       [TV].[StartDate]," +
                          "       [TV].[TechnologyId] " +
@@ -282,6 +293,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                             ParentTechnology = parent,
                             Version = dr.Db2String("Version"),
                             StartDate = dr.Db2DateTime("StartDate"),
@@ -301,7 +313,8 @@ namespace matching_learning.api.Repositories.Common
                         "       [TR].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
-                        "       [TR].[Name] " +
+                        "       [TR].[Name]," +
+                        "       [TR].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [S].[Id] = @skillId";
@@ -333,6 +346,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                         };
                     }
                 }
@@ -352,6 +366,7 @@ namespace matching_learning.api.Repositories.Common
                         "       @category AS [Category]," +
                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[DefaultExpertise]," +
                         "       [TV].[Version]," +
                         "       [TV].[StartDate] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -384,6 +399,7 @@ namespace matching_learning.api.Repositories.Common
                             Category = (SkillCategory)dr.Db2Int("Category"),
                             Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                             ParentTechnology = parent,
                             Version = dr.Db2String("Version"),
                             StartDate = dr.Db2DateTime("StartDate"),
