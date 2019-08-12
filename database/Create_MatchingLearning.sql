@@ -451,7 +451,7 @@ INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Vers
 INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '2017', '2017-10-02' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
 GO
 
-INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], '2010', 0.1, '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServerAzure'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.1,  '2010','2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServerAzure'
 GO
 
 INSERT INTO [dbo].[TechnologyRole] ([TechnologyId], [Code], [Name], [DefaultExpertise]) SELECT [Id], 'SQL Srv TSQL Dev', 'MS SQL Server TSQL Developer', 0.25 FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
@@ -799,7 +799,7 @@ DECLARE @skillId INT
 DECLARE @rndExpertice FLOAT
 DECLARE @rndImpact FLOAT
 
-DECLARE @limitImpact FLOAT = 0.1
+DECLARE @limitImpact FLOAT = 0.2
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -809,7 +809,7 @@ OPEN candidate_cursor
   
 FETCH NEXT FROM candidate_cursor   
 INTO @candidateId 
-  
+
 WHILE @@FETCH_STATUS = 0  
  BEGIN
   DECLARE skill_cursor CURSOR FOR   
@@ -869,6 +869,17 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE [SEE].[CandidateId] = [C].[Id]
                     AND [SEE].[SkillId] = [GS].[SkillId])
 
+
+UPDATE [dbo].[SkillEstimatedExpertise]
+SET [Expertise] = 0
+WHERE [CandidateId] IN (SELECT [CandidateId]
+                        FROM [dbo].[CandidateCandidateRole] AS [CCR]
+                        INNER JOIN [dbo].[CandidateRole] AS [CR] ON [CR].[Id] = [CCR].[CandidateRoleId]
+                        WHERE [CR].[Code] IN ('ADMIN'))
+  AND [SkillId] IN (SELECT [Id]
+                    FROM [dbo].[Skill] AS [S]
+                    WHERE [S].[TechnologyId] IS NOT NULL OR [S].[TechnologyRoleId] IS NOT NULL OR [S].[TechnologyVersionId] IS NOT NULL OR [S].[BusinessAreaId] IS NOT NULL)
+
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
@@ -882,7 +893,8 @@ SELECT *
 FROM [dbo].[SkillEstimatedExpertise] AS [SEE]
 INNER JOIN [dbo].[GlobalSkill] AS [GS] ON [GS].[SkillId] = [SEE].[SkillId]
 INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]
-
+ORDER BY [SEE].[CandidateId],
+         [SEE].[SkillId]
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
