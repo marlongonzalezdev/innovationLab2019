@@ -17,6 +17,8 @@ namespace matching_learning.api.Repositories.Common
 
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
 
+            var candidateRolesHistory = getCandidatesRoleHistory();
+
             var query = "SELECT [C].[Id], " +
                         "       [C].[DeliveryUnitId]," +
                         "       [C].[RelationType]," +
@@ -40,9 +42,18 @@ namespace matching_learning.api.Repositories.Common
 
                     foreach (DataRow dr in dt.Rows)
                     {
+                        var candidateId = dr.Db2Int("Id");
+
+                        var rolesHistory = new List<CandidateRoleHistory>();
+
+                        if (candidateRolesHistory.ContainsKey(candidateId))
+                        {
+                            rolesHistory = candidateRolesHistory[candidateId];
+                        }
+                        
                         res.Add(new Candidate()
                         {
-                            Id = dr.Db2Int("Id"),
+                            Id = candidateId,
                             DeliveryUnitId = dr.Db2Int("DeliveryUnitId"),
                             DeliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId")),
                             RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
@@ -52,6 +63,7 @@ namespace matching_learning.api.Repositories.Common
                             DocNumber = dr.Db2String("DocNumber"),
                             EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
                             InBench = dr.Db2Bool("InBench"),
+                            RolesHistory = rolesHistory,
                         });
                     }
                 }
@@ -67,6 +79,8 @@ namespace matching_learning.api.Repositories.Common
             var deliveryUnitsRepository = new DeliveryUnitRepository();
 
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
+
+            var candidateRolesHistory = getCandidatesRoleHistoryByCandidateId(id);
 
             var query = "SELECT [C].[Id], " +
                         "       [C].[DeliveryUnitId]," +
@@ -109,6 +123,7 @@ namespace matching_learning.api.Repositories.Common
                             DocNumber = dr.Db2String("DocNumber"),
                             EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
                             InBench = dr.Db2Bool("InBench"),
+                            RolesHistory = candidateRolesHistory,
                         };
                     }
                 }
@@ -116,5 +131,100 @@ namespace matching_learning.api.Repositories.Common
 
             return (res);
         }
+
+        #region Candicate Role History
+        private Dictionary<int, List<CandidateRoleHistory>> getCandidatesRoleHistory()
+        {
+            var res = new Dictionary<int, List<CandidateRoleHistory>>();
+
+            var candidateRoleRepository = new CandidateRoleRepository();
+
+            var candidateRoles = candidateRoleRepository.GetCandidateRoles();
+
+            var query = "SELECT [CCR].[Id], " +
+                        "       [CCR].[CandidateId]," +
+                        "       [CCR].[CandidateRoleId]," +
+                        "       [CCR].[StartDate]," +
+                        "       [CCR].[EndDate] " +
+                        "FROM [dbo].[CandidateCandidateRole] AS [CCR]";
+            
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        int candidateId = dr.Db2Int("CandidateId");
+
+                        if (!res.ContainsKey(candidateId))
+                        {
+                            res.Add(candidateId, new List<CandidateRoleHistory>());
+                        }
+
+                        res[candidateId].Add(new CandidateRoleHistory()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Role = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId")),
+                            Start = dr.Db2DateTime("StartDate"),
+                            End = dr.Db2NullableDateTime("EndDate"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<CandidateRoleHistory> getCandidatesRoleHistoryByCandidateId(int candidateId)
+        {
+            var res = new List<CandidateRoleHistory>();
+
+            var candidateRoleRepository = new CandidateRoleRepository();
+
+            var candidateRoles = candidateRoleRepository.GetCandidateRoles();
+
+            var query = "SELECT [CCR].[Id], " +
+                        "       [CCR].[CandidateId]," +
+                        "       [CCR].[CandidateRoleId]," +
+                        "       [CCR].[StartDate]," +
+                        "       [CCR].[EndDate] " +
+                        "FROM [dbo].[CandidateCandidateRole] AS [CCR] " +
+                        "WHERE [CCR].[CandidateId] = @candidateId";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@candidateId", SqlDbType.Int);
+                    cmd.Parameters["@candidateId"].Value = candidateId;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(new CandidateRoleHistory()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Role = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId")),
+                            Start = dr.Db2DateTime("StartDate"),
+                            End = dr.Db2NullableDateTime("EndDate"),
+                        });
+                    }
+                }
+            }
+
+            return (res);
+        }
+        #endregion
     }
 }
