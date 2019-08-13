@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.api.Domain.DTOs;
 using matching_learning.api.Domain.Enums;
-using Microsoft.AspNetCore.Authentication;
 
 namespace matching_learning.api.Repositories.Common
 {

@@ -2,7 +2,6 @@
 using System.Linq;
 using matching_learning.api.Domain.DTOs;
 using matching_learning.api.Repositories.Common;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace matching_learning.api.Controllers.Common
