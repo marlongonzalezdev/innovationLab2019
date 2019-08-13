@@ -1,6 +1,6 @@
-.matches__items {
+/*.matches__items {
     display: inline-block;
-    /*width: 100%;*/
+    !*width: 100%;*!
     color: black;
     vertical-align: top;
     min-width: 500px;
@@ -25,7 +25,7 @@
     float: right;
     padding-left: 30px;
     padding-top: 30px;
-    /*display: none;*/
+    !*display: none;*!
 }
 
 .spinner-container {
@@ -34,4 +34,4 @@
 
 table {
     width: 100%;
-  }
+  }*/
