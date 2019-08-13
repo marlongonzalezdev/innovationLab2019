@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using matching_learning.api.Domain.Enums;
 
 namespace matching_learning.api.Domain.DTOs
@@ -25,6 +26,7 @@ namespace matching_learning.api.Domain.DTOs
                 return (this.FirstName + ", " + this.LastName);
             }
         }
+
         public DocumentType? DocType { get; set; }
 
         public string DocNumber { get; set; }
@@ -34,6 +36,18 @@ namespace matching_learning.api.Domain.DTOs
         public bool InBench { get; set; }
 
         public List<CandidateRoleHistory> RolesHistory { get; set; }
+
+        public CandidateRole ActiveRole
+        {
+            get
+            {
+                var crh = this.RolesHistory.FirstOrDefault(rh => !rh.End.HasValue);
+
+                if (crh == null) { return (null); }
+
+                return (crh.Role);
+            }
+        }
 
         public int CompareTo(Candidate other)
         {
