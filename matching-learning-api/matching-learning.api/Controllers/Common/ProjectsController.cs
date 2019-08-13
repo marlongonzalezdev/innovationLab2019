@@ -8,7 +8,7 @@ namespace matching_learning.api.Controllers.Common
 {
     [Route("[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class ProjectsController : ControllerBase
     {
         private readonly ISkillRepository _skillRepository;
         private readonly ICandidateRepository _candidateRepository;
@@ -18,7 +18,7 @@ namespace matching_learning.api.Controllers.Common
         /// </summary>
         /// <param name="skillRepository">The skills repo.</param>
         /// <param name="candidateRepository">The candidates repo.</param>
-        public ProjectController(ISkillRepository skillRepository, ICandidateRepository candidateRepository)
+        public ProjectsController(ISkillRepository skillRepository, ICandidateRepository candidateRepository)
         {
             _skillRepository = skillRepository;
             _candidateRepository = candidateRepository;
@@ -38,7 +38,7 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkill.Id).Distinct().ToList();
+            List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
 
             var estimated = _skillRepository.GetSkillEstimatedExpertisesBySkillIds(reqSkills);
 
@@ -47,14 +47,14 @@ namespace matching_learning.api.Controllers.Common
                 estimated = estimated.Where(e => e.Candidate.InBench == pcr.InBenchFilter.Value).ToList();
             }
 
-            if (pcr.DeliveryUnitFilter != null)
+            if (pcr.DeliveryUnitIdFilter.HasValue)
             {
-                estimated = estimated.Where(e => e.Candidate.DeliveryUnitId == pcr.DeliveryUnitFilter.Id).ToList();
+                estimated = estimated.Where(e => e.Candidate.DeliveryUnitId == pcr.DeliveryUnitIdFilter.Value).ToList();
             }
 
-            if (pcr.RoleFilter != null)
+            if (pcr.RoleIdFilter.HasValue)
             {
-                estimated = estimated.Where(e => e.Candidate.ActiveRole != null && e.Candidate.ActiveRole.Id == pcr.RoleFilter.Id).ToList();
+                estimated = estimated.Where(e => e.Candidate.ActiveRole != null && e.Candidate.ActiveRole.Id == pcr.RoleIdFilter.Value).ToList();
             }
 
             if (pcr.RelationTypeFilter != null)
@@ -68,7 +68,7 @@ namespace matching_learning.api.Controllers.Common
             {
                 Candidate = fc,
                 Ranking = getRanking(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
-            }).Where(pc => pc.Ranking >= 0).OrderByDescending(pc => pc.Ranking).Take(pcr.Max).ToList();
+            }).Where(pc => pc.Ranking > 0).OrderByDescending(pc => pc.Ranking).Take(pcr.Max).ToList();
 
             return Ok(res);
         }
@@ -79,7 +79,7 @@ namespace matching_learning.api.Controllers.Common
 
             foreach (var sf in skillsFilter)
             {
-                var ce = candidateExpertise.FirstOrDefault(cexp => cexp.Skill.Id == sf.RequiredSkill.Id);
+                var ce = candidateExpertise.FirstOrDefault(cexp => cexp.Skill.Id == sf.RequiredSkillId);
 
                 if (sf.MinAccepted.HasValue && (ce == null || ce.Expertise < sf.MinAccepted.Value))
                 {

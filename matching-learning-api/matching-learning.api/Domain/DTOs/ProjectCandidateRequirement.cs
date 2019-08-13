@@ -9,9 +9,9 @@ namespace matching_learning.api.Domain.DTOs
 
         public List<ProjectSkillRequirement> SkillsFilter { get; set; }
 
-        public CandidateRole RoleFilter { get; set; }
+        public int? RoleIdFilter { get; set; }
 
-        public DeliveryUnit DeliveryUnitFilter { get; set; }
+        public int? DeliveryUnitIdFilter { get; set; }
 
         public bool? InBenchFilter { get; set; }
 

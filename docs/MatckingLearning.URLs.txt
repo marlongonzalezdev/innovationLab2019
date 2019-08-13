@@ -154,3 +154,25 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
+
+POST
+https://localhost:44374/Projects/GetProjectCandidates
+http://localhost:62460/Projects/GetProjectCandidates
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"max":10,"SkillsFilter":{[{"requiredSkillId":25,"weight":0.1,"minAccepted":null},{"requiredSkillId":65,"weight":0.9,"minAccepted":null}]},"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
+
+[{"requiredSkillId":25,"weight":0.1,"minAccepted":null},{"requiredSkillId":65,"weight":0.9,"minAccepted":null}]
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 {
     public class ProjectSkillRequirement
     {
-        public Skill RequiredSkill { get; set; }
+        public int RequiredSkillId { get; set; }
 
         public decimal Weight { get; set; }
 
