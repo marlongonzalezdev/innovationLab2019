@@ -4,15 +4,18 @@ import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MatchesComponent } from './matches/matches.component';
+import { MatchesComponent } from './components/matches/matches.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { UserDetailsComponent } from './user-details/user-details.component';
-import { SkillsComponent } from './skills/skills.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { SkillsComponent } from './components/skills/skills.component';
+import { MenuComponent } from './components/menu/menu.component';
+
 import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule, MatCardModule, MatInputModule} from '@angular/material';
-import {MatTableModule} from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material';
+import {MatListModule, MatSidenavModule, MatToolbarModule, MatTableModule, MatPaginatorModule, MatMenuModule} from '@angular/material';
+
 import { HttpErrorHandler } from './http-error-handler.service';
-import { MessageService }  from '../message.service';
+import {MessageService} from '../message.service';
+
 
 
 @NgModule({
@@ -20,7 +23,8 @@ import { MessageService }  from '../message.service';
     AppComponent,
     MatchesComponent,
     UserDetailsComponent,
-    SkillsComponent
+    SkillsComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +39,11 @@ import { MessageService }  from '../message.service';
     MatCardModule,
     MatInputModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+    MatMenuModule
   ],
   providers: [
     HttpErrorHandler,
