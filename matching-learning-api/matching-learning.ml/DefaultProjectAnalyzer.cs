@@ -17,7 +17,9 @@ namespace matching_learning.ml
     /// <seealso cref="matching_learning.ml.IProjectAnalyzer" />
     public class DefaultProjectAnalyzer : IProjectAnalyzer
     {
-        private const int NumberOfClusters = 15;
+        private const int NumberOfClusters = 5;
+
+        // private readonly ISkillRepository _skillRepository;
 
         private MLContext MLContext { get; set; }
 
@@ -27,6 +29,7 @@ namespace matching_learning.ml
         {
             MLContext = new MLContext();
             Logger = logger;
+            // _skillRepository = new SkillRepository();
         }
 
         public Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest recommendationRequest)
@@ -178,6 +181,7 @@ namespace matching_learning.ml
             }
         }
 
+        
         private void SaveSegmentationPlotChart(IEnumerable<ClusteringPrediction> predictions, string plotLocation)
         {
             var plot = new PlotModel { Title = "User Skill Clusters", IsLegendVisible = true };
