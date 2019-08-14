@@ -102,8 +102,7 @@ CREATE TABLE [dbo].[Candidate] (
 GO
 
 -- CONSTRAINT [UC_Candidate_EmployeeNumber] NONCLUSTERED ([EmployeeNumber] ASC),
-
---  CONSTRAINT [UC_Candidate_Doc] NONCLUSTERED ([DocType] ASC, [DocNumber] ASC),
+-- CONSTRAINT [UC_Candidate_Doc] NONCLUSTERED ([DocType] ASC, [DocNumber] ASC),
 
 CREATE TABLE [dbo].[CandidateCandidateRole] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
@@ -126,7 +125,7 @@ CREATE TABLE [dbo].[Technology] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [DefaultExpertise]              [MLDecimal] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_Technology_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
   [IsVersioned]                   BIT NOT NULL,
 
   CONSTRAINT [PK_Technology] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -138,7 +137,7 @@ GO
 CREATE TABLE [dbo].[TechnologyVersion] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [TechnologyId]                  INT NOT NULL,
-  [DefaultExpertise]              [MLDecimal] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_TechnologyVersion_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
   [Version]                       [MLCode] NOT NULL,
   [StartDate]                     DATETIME  NOT NULL,
 
@@ -155,7 +154,7 @@ CREATE TABLE [dbo].[TechnologyRole] (
   [TechnologyId]                  INT NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [DefaultExpertise]              [MLDecimal] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_TechnologyRole_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_TechnologyRole] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -169,7 +168,7 @@ CREATE TABLE [dbo].[SoftSkill] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [DefaultExpertise]              [MLDecimal] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_SoftSkill_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_SoftSkill] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -181,7 +180,7 @@ CREATE TABLE [dbo].[BusinessArea] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [DefaultExpertise]              [MLDecimal] NOT NULL,
+  [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_BusinessArea_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_BusinessArea] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -217,7 +216,7 @@ CREATE TABLE [dbo].[SkillRelation] (
   [SkillId]                       INT NOT NULL,
   [AssociatedSkillId]             INT NOT NULL,
   [RelationType]                  INT NOT NULL CONSTRAINT [CH_SkillRelation_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Parent/Child, 2: Version, 3: Similar
-  [ConversionFactor]              [MLDecimal] NOT NULL,
+  [ConversionFactor]              [MLDecimal] NOT NULL CONSTRAINT [CH_SkillRelation_ConversionFactor] CHECK ([ConversionFactor] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_SkillRelation] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -230,8 +229,8 @@ GO
 CREATE TABLE [dbo].[SkillGrades] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [SkillId]                       INT NOT NULL,
-  [MinValue]                      [MLDecimal] NOT NULL,
-  [MaxValue]                      [MLDecimal] NOT NULL,
+  [MinValue]                      [MLDecimal] NOT NULL CONSTRAINT [CH_SkillGrades_MinValue] CHECK ([MinValue] BETWEEN 0.0 AND 1.0),
+  [MaxValue]                      [MLDecimal] NOT NULL CONSTRAINT [CH_SkillGrades_MaxValue] CHECK ([MaxValue] BETWEEN 0.0 AND 1.0),
   [Description]                   NVARCHAR(MAX) NOT NULL,
 
   CONSTRAINT [PK_SkillGrades] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -244,7 +243,7 @@ CREATE TABLE [dbo].[SkillLearningCurve] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [SkillId]                       INT NOT NULL,
   [Months]                        INT NOT NULL,
-  [AvgExpertise]                  [MLDecimal] NOT NULL,
+  [ExpectedExpertise]             [MLDecimal] NOT NULL CONSTRAINT [CH_SkillLearningCurve_ExpectedExpertise] CHECK ([ExpectedExpertise] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_SkillLearningCurve] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -257,7 +256,7 @@ GO
 CREATE TABLE [dbo].[EvaluationType] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [Name]                          [MLName] NOT NULL,
-  [Weight]                        [MLDecimal] NOT NULL,
+  [Priority]                      [MLDecimal] NOT NULL CONSTRAINT [CH_EvaluationType_Priority] CHECK ([Priority] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_EvaluationType] PRIMARY KEY CLUSTERED ([Id] ASC),
 )
@@ -270,7 +269,7 @@ CREATE TABLE [dbo].[Evaluation] (
   [EvaluationKey]                 NVARCHAR(256) NULL,
   [EvaluationTypeId]              INT NOT NULL,
   [Date]                          DATETIME NOT NULL,
-  [Expertise]                     [MLDecimal] NOT NULL,
+  [Expertise]                     [MLDecimal] NOT NULL CONSTRAINT [CH_Evaluation_Expertise] CHECK ([Expertise] BETWEEN 0.0 AND 1.0),
   [Notes]                         NVARCHAR(MAX) NULL,
 
   CONSTRAINT [PK_Evaluation] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -291,7 +290,7 @@ CREATE TABLE [dbo].[Experience] (
   [SkillId]                       INT NOT NULL,
   [StartDate]                     DATETIME NOT NULL,
   [EndDate]                       DATETIME NULL,
-  [Percentage]                    [MLDecimal] NOT NULL,
+  [Percentage]                    [MLDecimal] NOT NULL CONSTRAINT [CH_Experience_Percentage] CHECK ([Percentage] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_Experience] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -307,7 +306,7 @@ CREATE TABLE [dbo].[SkillEstimatedExpertise] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [CandidateId]                   INT NOT NULL,
   [SkillId]                       INT NOT NULL,
-  [Expertise]                     [MLDecimal] NOT NULL,
+  [Expertise]                     [MLDecimal] NOT NULL CONSTRAINT [CH_SkillEstimatedExpertise_Expertise] CHECK ([Expertise] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_SkillEstimatedExpertise] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -414,14 +413,14 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('ExpertEvaluation', 0.9)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('LeaderEvaluation', 0.7)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('PairEvaluation', 0.5)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('Certification', 0.75)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('Curriculum Vitae', 0.25)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('LinkedIn', 0.1)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('PluralSight', 0.2)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Weight]) VALUES ('HackerRank', 0.3)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('ExpertEvaluation', 0.9)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('LeaderEvaluation', 0.7)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('PairEvaluation', 0.5)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('Certification', 0.75)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('Curriculum Vitae', 0.25)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('LinkedIn', 0.1)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('PluralSight', 0.2)
+INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('HackerRank', 0.3)
 GO
 
 ----------------------------------------------------------------------------------------------------
