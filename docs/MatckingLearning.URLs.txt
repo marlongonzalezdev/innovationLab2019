@@ -2,6 +2,23 @@
 ----------------------------------------------------------------------------------------------------
 
 GET
+https://localhost:44374/EnumEntities/CandidateRelationTypes
+http://localhost:62460/EnumEntities/CandidateRelationTypes
+
+GET
+https://localhost:44374/EnumEntities/DocumentTypes
+http://localhost:62460/EnumEntities/DocumentTypes
+
+GET
+https://localhost:44374/EnumEntities/SkillCategories
+http://localhost:62460/EnumEntities/SkillCategories
+
+GET
+https://localhost:44374/EnumEntities/SkillRelationTypes
+http://localhost:62460/EnumEntities/SkillRelationTypes
+
+
+GET
 https://localhost:44374/Regions/Regions
 http://localhost:62460/Regions/Regions
 

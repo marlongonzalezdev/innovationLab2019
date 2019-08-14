@@ -7,10 +7,10 @@ namespace matching_learning.common.Domain.Enums
         [Description("Technology")]
         Technology = 1,
 
-        [Description("TechnologyVersion")]
+        [Description("Technology Version")]
         TechnologyVersion,
 
-        [Description("TechnologyRole")]
+        [Description("Technology Role")]
         TechnologyRole,
 
         [Description("Soft Skill")]
