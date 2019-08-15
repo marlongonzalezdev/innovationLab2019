@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\matching-learning.common\matching-learning.common.csproj" />
-    <ProjectReference Include="..\matching-learning.ml\matching-learning.ml.csproj" />
   </ItemGroup>
 
   <ItemGroup>
