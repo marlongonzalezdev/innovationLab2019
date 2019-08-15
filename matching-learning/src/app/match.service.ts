@@ -27,16 +27,16 @@ export class MatchService {
     this.handleError = httpErrorHandler.createHandleError('MatchService');
   }
 
-  getMatches(project: Project): Observable<{matches:Match[]}> {
-    return this.http.post<{matches:Match[]}>(this.matchesUrl, project, httpOptions)
+  getMatches(project: Project): Observable<{matches: Match[]}> {
+    return this.http.post<{matches: Match[]}>(this.matchesUrl, project, httpOptions)
     .pipe(
-      catchError(this.handleError<{matches:Match[]}>('getMatches', {matches:[]}))
-    );    
+      catchError(this.handleError<{matches: Match[]}>('getMatches', {matches: []}))
+    );
   }
 
 
   // getMatches(): Observable<User[]> {
   //   return of(Users);
   // }
- 
+
 }

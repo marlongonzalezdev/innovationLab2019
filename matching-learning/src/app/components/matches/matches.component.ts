@@ -1,9 +1,11 @@
 import {Component, OnInit, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatchService} from '../match.service';
-import {Match} from '../match';
-import {Project} from '../project';
+import {MatchService} from '../../match.service';
+
+import {Project} from '../../project';
+
+import {Match} from '../../match';
 
 @Component({
     selector: 'app-matches',
@@ -13,7 +15,7 @@ import {Project} from '../project';
 export class MatchesComponent implements OnInit {
 
     displayedColumns: string[] = ['userName', 'matchingScore'];
-    dataSource :any;
+    dataSource: any;
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
     matches: Match[] = [];
@@ -38,7 +40,7 @@ export class MatchesComponent implements OnInit {
     constructor(private matchService: MatchService) {
     }
 
-    ngOnInit() {        
+    ngOnInit() {
     }
 
     getUsers(project: Project): void {

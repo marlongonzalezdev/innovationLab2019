@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Skills} from '../mock-skills';
-import {Skill} from '../skill';
-import {Project} from '../project';
+import {Skills} from '../../mock-skills';
+import {Skill} from '../../skill';
+import {Project} from '../../project';
 
 @Component({
     selector: 'app-skills',
