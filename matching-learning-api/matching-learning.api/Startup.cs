@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using matching_learning.common.Repositories;
 using matching_learning.api.Models;
 using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
@@ -76,10 +77,10 @@ namespace matching_learning.api
             services.AddSingleton<Repositories.IPhotoRepository>(photosRepo);
             services.AddSingleton<Repositories.ISkillRepository, Repositories.SkillRepository>();
 
-            services.AddSingleton<Repositories.Common.IRegionRepository, Repositories.Common.RegionRepository>();
-            services.AddSingleton<Repositories.Common.IDeliveryUnitRepository, Repositories.Common.DeliveryUnitRepository>();
-            services.AddSingleton<Repositories.Common.ICandidateRepository, Repositories.Common.CandidateRepository>();
-            services.AddSingleton<Repositories.Common.ISkillRepository, Repositories.Common.SkillRepository>();
+            services.AddSingleton<IRegionRepository, RegionRepository>();
+            services.AddSingleton<IDeliveryUnitRepository, DeliveryUnitRepository>();
+            services.AddSingleton<ICandidateRepository, CandidateRepository>();
+            services.AddSingleton<ISkillRepository, SkillRepository>();
 
             GenFu.GenFu.Configure<CandidateModel>()
                 .Fill(c => c.Name)

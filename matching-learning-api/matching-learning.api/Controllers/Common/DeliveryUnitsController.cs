@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using matching_learning.api.Domain.DTOs;
-using matching_learning.api.Repositories.Common;
+using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace matching_learning.api.Controllers.Common
