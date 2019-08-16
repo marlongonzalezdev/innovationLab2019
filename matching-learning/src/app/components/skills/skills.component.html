@@ -1,45 +1,36 @@
-<form class="skills-form">
-    <div class="container">
-        <div class="skills__selector">
-            <mat-form-field>
-                <mat-label>Select skills:</mat-label>
-                <mat-select [(value)]="selectedSkill">
-                    <mat-option *ngFor="let skill of skillList" [value]="skill">
-                        {{skill.show}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="skills__score">
-            <mat-form-field class="expectedScore-container">
-                <input matInput type="number" step="1" max="100" placeholder="Expected score:"
-                       [(ngModel)]="expectedScore" name="expectedScore">
-                <button mat-button *ngIf="expectedScore" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="expectedScore=undefined">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </mat-form-field>
-        </div>
-        <div class="skills__add">
-            <button mat-mini-fab color="primary" (click)="add(selectedSkill)">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
-    </div>
+<table mat-table [dataSource]="source" class="mat-elevation-z8">
 
-</form>
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+    </ng-container>
+    <!-- Code Column -->
+    <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef> Code </th>
+        <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+      </ng-container>
+    <!-- Category Column -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef> Category </th>
+      <td mat-cell *matCellDef="let element"> {{element.category}} </td>
+    </ng-container>
+  
+    <!-- Default expertise Column -->
+    <ng-container matColumnDef="defaultExpertise">
+      <th mat-header-cell *matHeaderCellDef> Expertise </th>
+      <td mat-cell *matCellDef="let element"> {{element.defaultExpertise}} </td>
+    </ng-container>
+  
+    
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-<div class="matches-container">
-
-    <div class="selected-skills__container">
-        <ul class="list-group skills__selected">
-            <li class="list-group-item" *ngFor="let skill of project.skills">
-                <span class="badge">{{skill.tag}}</span> --- <span class="badge">{{skill.weight * 100 | number}} %</span>
-                <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
-                  <mat-icon>delete</mat-icon>
-                </button>
-            </li>
-        </ul>
-    </div>
-    <app-matches [project]="project" [display]="display" [showContent]="showContent"></app-matches>
-</div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </table>
+  
+  

@@ -1,3 +1,4 @@
+import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
@@ -15,6 +16,9 @@ import {MatListModule, MatSidenavModule, MatToolbarModule, MatTableModule, MatPa
 
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
+import { SkillServiceBase } from './components/skills/services/skill-servie-base';
+import { SkillService } from './components/skills/services/skill.service';
+import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
 
 
@@ -24,7 +28,9 @@ import {MessageService} from '../message.service';
     MatchesComponent,
     UserDetailsComponent,
     SkillsComponent,
-    MenuComponent
+    MenuComponent,
+    InputCriteriaComponent,
+    SkilldetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +53,8 @@ import {MessageService} from '../message.service';
   ],
   providers: [
     HttpErrorHandler,
-    MessageService
+    MessageService,
+    { provide: SkillServiceBase, useClass: SkillService }
   ],
   bootstrap: [AppComponent]
 })
