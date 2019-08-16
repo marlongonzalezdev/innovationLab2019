@@ -1,0 +1,44 @@
+<form [formGroup]="service.form" class="normal-form">
+  <mat-grid-list cols="2" rowHeight="300px">
+    <mat-grid-tile>
+      <div class="controls-container">
+        <input type="hidden" formControlName="$key">
+        <mat-form-field>
+          <input formControlName="fullName" matInput placeholder="Full Name">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="email" matInput placeholder="Email">
+        </mat-form-field>
+        <!--<mat-form-field>
+                 <mat-select formControlName="department" placeholder="Department">
+                   <mat-option>None</mat-option>
+                   <ng-container *ngFor="let department of departments">
+                     <mat-option value="{{department.id}}">{{department.value}}</mat-option>
+                   </ng-container>
+                 </mat-select>
+            </mat-form-field>-->
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="controls-container">
+        <div class="add-bottom-padding">
+          <mat-radio-group formControlName="gender">
+            <mat-radio-button value="1">Male</mat-radio-button>
+            <mat-radio-button value="2">Female</mat-radio-button>
+            <mat-radio-button value="3">Other</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-checkbox formControlName="isInternal">Is Internal</mat-checkbox>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-checkbox formControlName="isInBench">Is in bench</mat-checkbox>
+        </div>
+        <div class="button-row">
+          <button mat-raised-button color="primary" type="submit">Submit</button>
+          <button mat-raised-button color="warn">Clear</button>
+        </div>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>
