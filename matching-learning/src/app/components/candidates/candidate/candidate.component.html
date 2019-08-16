@@ -9,9 +9,14 @@
         <mat-form-field>
           <input formControlName="email" matInput placeholder="Email">
         </mat-form-field>
-        <mat-form-field>
-          <input formControlName="du" matInput placeholder="DU">
-        </mat-form-field>
+        <!--<mat-form-field>
+                 <mat-select formControlName="department" placeholder="Department">
+                   <mat-option>None</mat-option>
+                   <ng-container *ngFor="let department of departments">
+                     <mat-option value="{{department.id}}">{{department.value}}</mat-option>
+                   </ng-container>
+                 </mat-select>
+            </mat-form-field>-->
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
@@ -23,16 +28,11 @@
             <mat-radio-button value="3">Other</mat-radio-button>
           </mat-radio-group>
         </div>
-        <mat-form-field>
-          <mat-select formControlName="department" placeholder="Department">
-            <mat-option>None</mat-option>
-            <ng-container *ngFor="let department of departments">
-              <mat-option value="{{department.id}}">{{department.value}}</mat-option>
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
         <div class="add-bottom-padding">
-          <mat-checkbox formControlName="isPermanent">Permanent Employee</mat-checkbox>
+          <mat-checkbox formControlName="isInternal">Is Internal</mat-checkbox>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-checkbox formControlName="isInBench">Is in bench</mat-checkbox>
         </div>
         <div class="button-row">
           <button mat-raised-button color="primary" type="submit">Submit</button>
