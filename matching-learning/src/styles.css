@@ -27,5 +27,28 @@ div.container
   padding: 5%;
 }
 
+.controls-container > *,.full-width {
+  width: 100%;
+}
+
+/* radio group */
+.add-bottom-padding{
+  padding-bottom: 10px;
+}
+
+/* add gap b/w adjacent button */
+.button-row button{
+  margin: 5px;
+}
+mat-radio-group mat-radio-button{
+  margin-left: 5px;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
 
 
