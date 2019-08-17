@@ -19,4 +19,18 @@ export class CandidateService {
     isInternal: new FormControl(false),
     isInBench: new FormControl(false)
   });
+
+  InitializeFormGroup() {
+    this.form.setValue({
+      $key: null,
+      name: '',
+      lastName: '',
+      du: 0,
+      relationType: 0,
+      email: '',
+      gender: 0,
+      isInternal: false,
+      isInBench: false
+    });
+  }
 }

@@ -17,4 +17,14 @@ export class CandidateComponent implements OnInit {
   ngOnInit() {
   }
 
+  onClear() {
+    this.service.form.reset();
+    this.service.InitializeFormGroup();
+  }
+
+  onSubmit() {
+    if (this.service.form.valid) {
+      this.onClear();
+    }
+  }
 }
