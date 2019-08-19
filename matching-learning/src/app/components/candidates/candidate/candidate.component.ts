@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {CandidateService} from '../../../shared/candidate.service';
+import {RelationTypeService} from '../../../shared/relation-type.service';
+import { DeliveryUnitService } from 'src/app/shared/delivery-unit.service';
 
 @Component({
   selector: 'app-candidate',
@@ -8,9 +10,10 @@ import {CandidateService} from '../../../shared/candidate.service';
 })
 export class CandidateComponent implements OnInit {
 
-  relationTypes: [];
-  deliveryUnits: [];
-  constructor(private service: CandidateService, private  deliveryUnitService, private relationTypeService) { }
+  private deliveryUnits  = [];
+  private relationTypes  = [];
+  constructor(private service: CandidateService, private  deliveryUnitService: DeliveryUnitService,
+              private relationTypeService: RelationTypeService) { }
 
 /*  deliveryUnits = [{ id: 1, value: 'Dep 1' },
     { id: 2, value: 'Dep 2' },
@@ -18,7 +21,7 @@ export class CandidateComponent implements OnInit {
 
   ngOnInit() {
      this.deliveryUnits =  this.deliveryUnitService.getDeliveryUnits();
-     this.relationTypes =  this.deliveryUnitService.getRelationTpes();
+     this.relationTypes =  this.relationTypeService.getRelationTpes();
   }
 
   onClear() {
