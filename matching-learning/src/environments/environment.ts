@@ -3,7 +3,13 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  dbConfig: {
+    baseUrl: 'https://localhost:44374',
+    GetCandidates: '/Candidates/Candidates',
+    GetDeliveryUnits: '/DeliveryUnits/DeliveryUnits',
+    GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
+  }
 };
 
 /*
