@@ -26,6 +26,7 @@ GET
 https://localhost:44374/DeliveryUnits/DeliveryUnits
 http://localhost:62460/DeliveryUnits/DeliveryUnits
 
+
 GET
 https://localhost:44374/Candidates/Candidates
 http://localhost:62460/Candidates/Candidates
@@ -33,6 +34,15 @@ http://localhost:62460/Candidates/Candidates
 GET
 https://localhost:44374/Candidates/Candidate?id=22
 http://localhost:62460/Candidates/Candidate?id=22
+
+GET
+https://localhost:44374/Candidates/CandidateRoles
+http://localhost:62460/Candidates/CandidateRoles
+
+GET
+https://localhost:44374/Candidates/CandidateRole?id=3
+http://localhost:62460/Candidates/CandidateRole?id=3
+
 
 GET
 https://localhost:44374/Skills/Skills
