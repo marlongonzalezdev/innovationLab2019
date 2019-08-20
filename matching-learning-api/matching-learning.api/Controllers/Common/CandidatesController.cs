@@ -69,5 +69,27 @@ namespace matching_learning.api.Controllers.Common
         {
             return _candidateRoleRepository.GetCandidateRoleById(id);
         }
+
+        #region Save
+        /// <summary>
+        /// Save the candidate object in the database (insert/update).
+        /// </summary>
+        /// <param name="ca"></param>
+        [HttpPost("SaveCandidate")]
+        [ProducesResponseType(typeof(Candidate), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveCandidate([FromBody] Candidate ca)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var id = _candidateRepository.SaveCandidate(ca);
+
+            var res = _candidateRepository.GetCandidateById(id);
+
+            return Ok(res);
+        }
+        #endregion
     }
 }

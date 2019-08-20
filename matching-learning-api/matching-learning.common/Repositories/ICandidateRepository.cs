@@ -8,5 +8,9 @@ namespace matching_learning.common.Repositories
         List<Candidate> GetCandidates();
 
         Candidate GetCandidateById(int id);
+
+        #region Save
+        int SaveCandidate(Candidate ca);
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace matching_learning.common.Repositories
                         {
                             rolesHistory = candidateRolesHistory[candidateId];
                         }
-                        
+
                         res.Add(new Candidate()
                         {
                             Id = candidateId,
@@ -147,7 +148,7 @@ namespace matching_learning.common.Repositories
                         "       [CCR].[StartDate]," +
                         "       [CCR].[EndDate] " +
                         "FROM [dbo].[CandidateCandidateRole] AS [CCR]";
-            
+
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
@@ -224,6 +225,195 @@ namespace matching_learning.common.Repositories
             }
 
             return (res);
+        }
+        #endregion
+
+        #region Save
+        public int SaveCandidate(Candidate ca)
+        {
+            if (ca.Id < 0)
+            {
+                insertCandidate(ca);
+            }
+            else
+            {
+                updateCandidate(ca);
+            }
+
+            return (ca.Id);
+        }
+
+        private void insertCandidate(Candidate ca)
+        {
+            var stmntIns = "INSERT INTO [dbo].[Candidate] (" +
+                          " [DeliveryUnitId]," +
+                          " [RelationType]," +
+                          " [FirstName]," +
+                          " [LastName]," +
+                          " [DocType]," +
+                          " [DocNumber]," +
+                          " [EmployeeNumber]," +
+                          " [InBench] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @deliveryUnitId," +
+                          "  @relationType," +
+                          "  @firstName," +
+                          "  @lastName," +
+                          "  @docType," +
+                          "  @docNumber," +
+                          "  @employeeNumber," +
+                          "  @inBench" +
+                          ")";
+
+            var stmntId = "SELECT @@IDENTITY";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdIns = new SqlCommand(stmntIns, conn))
+                    {
+                        cmdIns.Transaction = trans;
+
+                        cmdIns.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
+                        cmdIns.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
+
+                        cmdIns.Parameters.Add("@relationType", SqlDbType.Int);
+                        cmdIns.Parameters["@relationType"].Value = ca.RelationType;
+
+                        cmdIns.Parameters.Add("@firstName", SqlDbType.NVarChar);
+                        cmdIns.Parameters["@firstName"].Value = ca.FirstName;
+
+                        cmdIns.Parameters.Add("@lastName", SqlDbType.NVarChar);
+                        cmdIns.Parameters["@lastName"].Value = ca.LastName;
+
+                        cmdIns.Parameters.Add("@docType", SqlDbType.Int);
+                        if (ca.DocType.HasValue)
+                        {
+                            cmdIns.Parameters["@docType"].Value = ca.DocType.Value;
+                        }
+
+                        cmdIns.Parameters.Add("@docNumber", SqlDbType.NVarChar);
+                        cmdIns.Parameters["@docNumber"].Value = ca.DocNumber;
+
+                        cmdIns.Parameters.Add("@employeeNumber", SqlDbType.Int);
+                        if (ca.EmployeeNumber.HasValue)
+                        {
+                            cmdIns.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
+                        }
+
+                        cmdIns.Parameters.Add("@inBench", SqlDbType.Bit);
+                        cmdIns.Parameters["@inBench"].Value = ca.InBench;
+
+                        cmdIns.ExecuteNonQuery();
+                    }
+
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        if (id == null)
+                        { throw new ApplicationException("Error: cannot retrieve id of new candidate."); }
+
+                        ca.Id = (int)id;
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        private void updateCandidate(Candidate ca)
+        {
+            var stmnt = "UPDATE [dbo].[Candidate] " +
+                        "SET [DeliveryUnitId] = @deliveryUnitId," +
+                        "    [RelationType] = @relationType," +
+                        "    [FirstName] = @firstName," +
+                        "    [LastName] = @lastName," +
+                        "    [DocType] = @docType," +
+                        "    [DocNumber] = @docNumber," +
+                        "    [EmployeeNumber] = @employeeNumber," +
+                        "    [InBench] = @inBench " +
+                        "WHERE [Id] = @id";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@id", SqlDbType.Int);
+                        cmd.Parameters["@id"].Value = ca.Id;
+
+                        cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
+                        cmd.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
+
+                        cmd.Parameters.Add("@relationType", SqlDbType.Int);
+                        cmd.Parameters["@relationType"].Value = ca.RelationType;
+
+                        cmd.Parameters.Add("@firstName", SqlDbType.NVarChar);
+                        cmd.Parameters["@firstName"].Value = ca.FirstName;
+
+                        cmd.Parameters.Add("@lastName", SqlDbType.NVarChar);
+                        cmd.Parameters["@lastName"].Value = ca.LastName;
+
+                        cmd.Parameters.Add("@docType", SqlDbType.Int);
+                        if (ca.DocType.HasValue)
+                        {
+                            cmd.Parameters["@docType"].Value = ca.DocType.Value;
+                        }
+                        else
+                        {
+                            cmd.Parameters["@docType"].Value = null;
+                        }
+
+                        cmd.Parameters.Add("@docNumber", SqlDbType.NVarChar);
+                        cmd.Parameters["@docNumber"].Value = ca.DocNumber;
+
+                        cmd.Parameters.Add("@employeeNumber", SqlDbType.Int);
+                        if (ca.EmployeeNumber.HasValue)
+                        {
+                            cmd.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
+                        }
+                        else
+                        {
+                            cmd.Parameters["@employeeNumber"].Value = null;
+                        }
+
+                        cmd.Parameters.Add("@inBench", SqlDbType.Bit);
+                        cmd.Parameters["@inBench"].Value = ca.InBench;
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
         #endregion
     }

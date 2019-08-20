@@ -80,6 +80,7 @@ namespace matching_learning.api
             services.AddSingleton<IRegionRepository, RegionRepository>();
             services.AddSingleton<IDeliveryUnitRepository, DeliveryUnitRepository>();
             services.AddSingleton<ICandidateRepository, CandidateRepository>();
+            services.AddSingleton<ICandidateRoleRepository, CandidateRoleRepository>();
             services.AddSingleton<ISkillRepository, SkillRepository>();
 
             GenFu.GenFu.Configure<CandidateModel>()

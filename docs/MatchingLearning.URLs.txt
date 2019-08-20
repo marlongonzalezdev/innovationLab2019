@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
 https://marketplace.visualstudio.com/items?itemName=vscps.SlowCheetah-XMLTransforms
-
 Install-Package Microsoft.VisualStudio.SlowCheetah -Version 3.2.20
 
 ----------------------------------------------------------------------------------------------------
@@ -47,6 +46,26 @@ http://localhost:62460/Candidates/CandidateRoles
 GET
 https://localhost:44374/Candidates/CandidateRole?id=3
 http://localhost:62460/Candidates/CandidateRole?id=3
+
+
+POST
+https://localhost:44374/Candidates/SaveCandidate
+http://localhost:62460/Candidates/SaveCandidate
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":22,"deliveryUnitId":13,"relationType":1,"firstName":"Juan","lastName":"Ya no Estrada","name":"Ya no Juan, Estrada","docType":null,"docNumber":null,"employeeNumber":43086,"inBench":true}
+
+{"id":-1,"deliveryUnitId":13,"relationType":1,"firstName":"Juan","lastName":"Perez","name":"Juan, Perez","docType":null,"docNumber":null,"employeeNumber":43245,"inBench":true}
 
 
 GET
