@@ -7,6 +7,6 @@ namespace matching_learning_algorithm.Domain
 {
     public class RecommendationResponse
     {
-        public IEnumerable<Candidate> Matches { get; set; }
+        public IEnumerable<string> Matches { get; set; }
     }
 }
