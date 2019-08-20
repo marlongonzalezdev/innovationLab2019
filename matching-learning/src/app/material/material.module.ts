@@ -21,7 +21,8 @@ import * as Material from '@angular/material';
     Material.MatGridListModule,
     Material.MatRadioModule,
     Material.MatCheckboxModule,
-    Material.MatFormFieldModule
+    Material.MatFormFieldModule,
+    Material.MatSnackBarModule
   ],
   exports: [
     Material.MatSelectModule,
@@ -39,7 +40,8 @@ import * as Material from '@angular/material';
     Material.MatGridListModule,
     Material.MatRadioModule,
     Material.MatCheckboxModule,
-    Material.MatFormFieldModule
+    Material.MatFormFieldModule,
+    Material.MatSnackBarModule
   ]
 })
 export class MaterialModule { }
