@@ -20,8 +20,11 @@ import { SkilldetailsComponent } from './components/skilldetails/skilldetails.co
 import { CandidatesComponent } from './components/candidates/candidates.component';
 import { CandidateComponent } from './components/candidates/candidate/candidate.component';
 import {CandidateService} from './shared/candidate.service';
+import {DeliveryUnitService} from './shared/delivery-unit.service';
 
 import {MaterialModule} from './material/material.module';
+import {RelationTypeService} from './shared/relation-type.service';
+
 
 @NgModule({
   declarations: [
@@ -48,7 +51,9 @@ import {MaterialModule} from './material/material.module';
     HttpErrorHandler,
     MessageService,
     { provide: SkillServiceBase, useClass: SkillService },
-    CandidateService
+    CandidateService,
+    DeliveryUnitService,
+    RelationTypeService
   ],
   bootstrap: [AppComponent]
 })
