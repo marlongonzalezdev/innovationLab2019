@@ -1,7 +1,7 @@
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // <-- NgModel lives here
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,16 +11,17 @@ import { UserDetailsComponent } from './components/user-details/user-details.com
 import { SkillsComponent } from './components/skills/skills.component';
 import { MenuComponent } from './components/menu/menu.component';
 
-import {MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule, MatCardModule, MatInputModule} from '@angular/material';
-import {MatListModule, MatSidenavModule, MatToolbarModule, MatTableModule, MatPaginatorModule, MatMenuModule} from '@angular/material';
-
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
 import { SkillServiceBase } from './components/skills/services/skill-servie-base';
 import { SkillService } from './components/skills/services/skill.service';
 import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
+import { CandidatesComponent } from './components/candidates/candidates.component';
+import { CandidateComponent } from './components/candidates/candidate/candidate.component';
+import {CandidateService} from './shared/candidate.service';
 
+import {MaterialModule} from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -30,31 +31,24 @@ import { SkilldetailsComponent } from './components/skilldetails/skilldetails.co
     SkillsComponent,
     MenuComponent,
     InputCriteriaComponent,
-    SkilldetailsComponent
+    CandidatesComponent,
+    SkilldetailsComponent,
+    CandidateComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatSelectModule,
-    MatButtonModule,
     HttpClientModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatCardModule,
-    MatInputModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatMenuModule
+    MaterialModule,
+    ReactiveFormsModule
   ],
   providers: [
     HttpErrorHandler,
     MessageService,
-    { provide: SkillServiceBase, useClass: SkillService }
+    { provide: SkillServiceBase, useClass: SkillService },
+    CandidateService
   ],
   bootstrap: [AppComponent]
 })
