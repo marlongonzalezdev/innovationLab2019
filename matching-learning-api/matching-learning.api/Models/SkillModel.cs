@@ -26,6 +26,10 @@ namespace matching_learning.api.Models
         [Range(0d, 1.0d)]
         public double Weight { get; set; }
 
+        /// <summary>
+        /// ToSkill.
+        /// </summary>
+        /// <returns></returns>
         public Skill ToSkill()
         {
             return new Skill

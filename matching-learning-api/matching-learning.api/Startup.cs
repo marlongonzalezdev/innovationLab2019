@@ -15,20 +15,34 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace matching_learning.api
 {
+    /// <summary>
+    /// Startup class.
+    /// </summary>
     public class Startup
     {
         private readonly IHostingEnvironment _env;
 
+        /// <summary>
+        /// Web Api startup.
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="env"></param>
         public Startup(IConfiguration configuration,
-            IHostingEnvironment env)
+                       IHostingEnvironment env)
         {
             Configuration = configuration;
             _env = env;
         }
 
+        /// <summary>
+        /// Configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -88,7 +102,11 @@ namespace matching_learning.api
                 .Fill(c => c.LastName);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
