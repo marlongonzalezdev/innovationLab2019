@@ -1,32 +1,16 @@
-.skills-form {
-    border: 1px solid gray;
-}
-/*
-.skills__container {
-    width: 80%;
-    margin: auto;
+table {
+  width: 100%;
 }
 
-.skills__selector {
-    display: inline-block;
+.container {
+  padding: 30px;
 }
 
-.skills__score {
-    padding-left: 50px;
-    display: inline-block;
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
 }
 
-.skills__add {
-    padding-left: 30px;
-    display: inline-block;
+td, th {
+  width: 25%;
 }
-
-.selected-skills__container {
-    padding-top: 30px;
-    width: 60%;
-    display: inline-block;
-}*/
-
-/*.skills__selected {*/
-/*    width: 100%;*/
-/*}*/
