@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -30,11 +31,23 @@ namespace matching_learning.api.Controllers.Common
         /// </summary>
         /// <returns></returns>
         [Route("Skills")]
-        public ActionResult<List<Skill>> Get()
+        public ActionResult<List<Skill>> GetSkills()
         {
             return _skillRepository.GetSkills();
         }
 
+        /// <summary>
+        /// Gets the skills paginated.
+        /// </summary>
+        /// <param name="pageIdx">Page index (0 based).</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns></returns>
+        [Route("SkillsPaginated")]
+        public ActionResult<List<Skill>> GetSkillsPaginated(int pageIdx, int pageSize)
+        {
+            return _skillRepository.GetSkills().OrderBy(s => s.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
+        }
+        
         /// <summary>
         /// Gets the skill with the specified skill identifier.
         /// </summary>

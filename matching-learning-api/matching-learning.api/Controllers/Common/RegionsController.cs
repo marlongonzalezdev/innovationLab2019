@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,21 @@ namespace matching_learning.api.Controllers.Common
         /// </summary>
         /// <returns></returns>
         [Route("Regions")]
-        public ActionResult<List<Region>> Get()
+        public ActionResult<List<Region>> GetRegions()
         {
             return _regionRepository.GetRegions();
+        }
+
+        /// <summary>
+        /// Gets the regions paginated.
+        /// </summary>
+        /// <param name="pageIdx">Page index (0 based).</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns></returns>
+        [Route("RegionsPaginated")]
+        public ActionResult<List<Region>> GetRegionsPaginated(int pageIdx, int pageSize)
+        {
+            return _regionRepository.GetRegions().OrderBy(r => r.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
         }
     }
 }
