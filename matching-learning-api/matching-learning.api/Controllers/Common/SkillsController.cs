@@ -160,9 +160,9 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _skillRepository.SaveBusinessArea(ba);
+            var id = _skillRepository.SaveBusinessArea(ba);
 
-            var res = _skillRepository.GetBusinessAreaByCode(ba.Code);
+            var res = _skillRepository.GetBusinessAreaById(id);
 
             return Ok(res);
         }
@@ -180,9 +180,9 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _skillRepository.SaveSoftSkill(ss);
+            var id = _skillRepository.SaveSoftSkill(ss);
 
-            var res = _skillRepository.GetSoftSkillByCode(ss.Code);
+            var res = _skillRepository.GetSoftSkillById(id);
 
             return Ok(res);
         }
@@ -200,9 +200,9 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _skillRepository.SaveTechnology(tech);
+            var id = _skillRepository.SaveTechnology(tech);
 
-            var res = _skillRepository.GetTechnologyByCode(tech.Code);
+            var res = _skillRepository.GetTechnologyById(id);
 
             return Ok(res);
         }
@@ -220,9 +220,9 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _skillRepository.SaveTechnologyRole(tr);
+            var id = _skillRepository.SaveTechnologyRole(tr);
 
-            var res = _skillRepository.GetTechnologyRoleByCode(tr.Code);
+            var res = _skillRepository.GetTechnologyRoleById(id);
 
             return Ok(res);
         }
