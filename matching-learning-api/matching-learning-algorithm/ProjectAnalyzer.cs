@@ -8,6 +8,7 @@ using matching_learning.common.Domain.DTOs;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.ML.Data;
 
 namespace matching_learning_algorithm
 {
@@ -31,11 +32,7 @@ namespace matching_learning_algorithm
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
         }
-        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
         {
             var predictionData = PredictValue(candidateRequirement);

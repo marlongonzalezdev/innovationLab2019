@@ -1,3 +1,4 @@
+import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // <-- NgModel lives here
@@ -12,6 +13,9 @@ import { MenuComponent } from './components/menu/menu.component';
 
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
+import { SkillServiceBase } from './components/skills/services/skill-servie-base';
+import { SkillService } from './components/skills/services/skill.service';
+import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
 import { CandidatesComponent } from './components/candidates/candidates.component';
 import { CandidateComponent } from './components/candidates/candidate/candidate.component';
@@ -30,7 +34,9 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
     UserDetailsComponent,
     SkillsComponent,
     MenuComponent,
+    InputCriteriaComponent,
     CandidatesComponent,
+    SkilldetailsComponent,
     CandidateComponent
   ],
   imports: [
@@ -45,6 +51,7 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
   providers: [
     HttpErrorHandler,
     MessageService,
+    { provide: SkillServiceBase, useClass: SkillService },
     CandidateService,
     DeliveryUnitService,
     RelationTypeService
