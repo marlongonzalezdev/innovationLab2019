@@ -231,20 +231,24 @@ namespace matching_learning.common.Repositories
         #region Save
         public int SaveCandidate(Candidate ca)
         {
+            int res;
+
             if (ca.Id < 0)
             {
-                insertCandidate(ca);
+                res = insertCandidate(ca);
             }
             else
             {
-                updateCandidate(ca);
+                res = updateCandidate(ca);
             }
 
-            return (ca.Id);
+            return (res);
         }
 
-        private void insertCandidate(Candidate ca)
+        private int insertCandidate(Candidate ca)
         {
+            int res;
+
             var stmntIns = "INSERT INTO [dbo].[Candidate] (" +
                           " [DeliveryUnitId]," +
                           " [RelationType]," +
@@ -294,18 +298,36 @@ namespace matching_learning.common.Repositories
                         cmdIns.Parameters["@lastName"].Value = ca.LastName;
 
                         cmdIns.Parameters.Add("@docType", SqlDbType.Int);
+                        cmdIns.Parameters["@docType"].IsNullable = true;
                         if (ca.DocType.HasValue)
                         {
                             cmdIns.Parameters["@docType"].Value = ca.DocType.Value;
                         }
+                        else
+                        {
+                            cmdIns.Parameters["@docType"].Value = DBNull.Value;
+                        }
 
                         cmdIns.Parameters.Add("@docNumber", SqlDbType.NVarChar);
-                        cmdIns.Parameters["@docNumber"].Value = ca.DocNumber;
+                        cmdIns.Parameters["@docNumber"].IsNullable = true;
+                        if (!string.IsNullOrEmpty(ca.DocNumber))
+                        {
+                            cmdIns.Parameters["@docNumber"].Value = ca.DocNumber;
+                        }
+                        else
+                        {
+                            cmdIns.Parameters["@docNumber"].Value = DBNull.Value;
+                        }
 
                         cmdIns.Parameters.Add("@employeeNumber", SqlDbType.Int);
+                        cmdIns.Parameters["@employeeNumber"].IsNullable = true;
                         if (ca.EmployeeNumber.HasValue)
                         {
                             cmdIns.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
+                        }
+                        else
+                        {
+                            cmdIns.Parameters["@employeeNumber"].Value = DBNull.Value;
                         }
 
                         cmdIns.Parameters.Add("@inBench", SqlDbType.Bit);
@@ -319,11 +341,8 @@ namespace matching_learning.common.Repositories
                         cmdId.Transaction = trans;
 
                         var id = cmdId.ExecuteScalar();
-
-                        if (id == null)
-                        { throw new ApplicationException("Error: cannot retrieve id of new candidate."); }
-
-                        ca.Id = (int)id;
+                        
+                        res = Convert.ToInt32(id);
                     }
 
                     trans.Commit();
@@ -334,9 +353,11 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (res);
         }
 
-        private void updateCandidate(Candidate ca)
+        private int updateCandidate(Candidate ca)
         {
             var stmnt = "UPDATE [dbo].[Candidate] " +
                         "SET [DeliveryUnitId] = @deliveryUnitId," +
@@ -378,26 +399,36 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters["@lastName"].Value = ca.LastName;
 
                         cmd.Parameters.Add("@docType", SqlDbType.Int);
+                        cmd.Parameters["@docType"].IsNullable = true;
                         if (ca.DocType.HasValue)
                         {
                             cmd.Parameters["@docType"].Value = ca.DocType.Value;
                         }
                         else
                         {
-                            cmd.Parameters["@docType"].Value = null;
+                            cmd.Parameters["@docType"].Value = DBNull.Value;
                         }
 
                         cmd.Parameters.Add("@docNumber", SqlDbType.NVarChar);
-                        cmd.Parameters["@docNumber"].Value = ca.DocNumber;
+                        cmd.Parameters["@docNumber"].IsNullable = true;
+                        if (!string.IsNullOrEmpty(ca.DocNumber))
+                        {
+                            cmd.Parameters["@docNumber"].Value = ca.DocNumber;
+                        }
+                        else
+                        {
+                            cmd.Parameters["@docNumber"].Value = DBNull.Value;
+                        }
 
                         cmd.Parameters.Add("@employeeNumber", SqlDbType.Int);
+                        cmd.Parameters["@employeeNumber"].IsNullable = true;
                         if (ca.EmployeeNumber.HasValue)
                         {
                             cmd.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
                         }
                         else
                         {
-                            cmd.Parameters["@employeeNumber"].Value = null;
+                            cmd.Parameters["@employeeNumber"].Value = DBNull.Value;
                         }
 
                         cmd.Parameters.Add("@inBench", SqlDbType.Bit);
@@ -414,6 +445,8 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (ca.Id);
         }
         #endregion
     }
