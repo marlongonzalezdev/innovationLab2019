@@ -157,7 +157,12 @@ namespace matching_learning_algorithm
 
         private ExpandoObject ProcessRequest(ProjectCandidateRequirement candidateRequirement)
         {
-            throw new NotImplementedException();
+            var newPrediction = new ExpandoObject() as IDictionary<string, Object>;
+            foreach (var skill in candidateRequirement.SkillsFilter)
+            {
+                newPrediction.Add(skill.RequiredSkillId.ToString(), skill.Weight);
+            }
+            return newPrediction as ExpandoObject;
         }
     }
 }
