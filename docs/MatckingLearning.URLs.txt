@@ -1,4 +1,9 @@
 ----------------------------------------------------------------------------------------------------
+
+https://marketplace.visualstudio.com/items?itemName=vscps.SlowCheetah-XMLTransforms
+
+Install-Package Microsoft.VisualStudio.SlowCheetah -Version 3.2.20
+
 ----------------------------------------------------------------------------------------------------
 
 GET
