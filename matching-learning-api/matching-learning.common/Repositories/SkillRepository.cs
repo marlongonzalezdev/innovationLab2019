@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -932,20 +933,26 @@ namespace matching_learning.common.Repositories
 
         #region Save
         #region Save BusinessArea
-        public void SaveBusinessArea(BusinessArea ba)
+        public int SaveBusinessArea(BusinessArea ba)
         {
+            int res;
+
             if (ba.Id < 0)
             {
-                insertBusinessArea(ba);
+                res = insertBusinessArea(ba);
             }
             else
             {
-                updateBusinessArea(ba);
+                res = updateBusinessArea(ba);
             }
+
+            return (res);
         }
 
-        private void insertBusinessArea(BusinessArea ba)
+        private int insertBusinessArea(BusinessArea ba)
         {
+            int res;
+
             var stmntBA = "INSERT INTO [dbo].[BusinessArea] (" +
                           " [Code]," +
                           " [Name]," +
@@ -964,6 +971,8 @@ namespace matching_learning.common.Repositories
                              "FROM [dbo].[BusinessArea]" +
                              "WHERE [Code] = @code";
 
+            var stmntId = "SELECT @@IDENTITY";
+            
             SqlTransaction trans;
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -999,6 +1008,15 @@ namespace matching_learning.common.Repositories
                         cmdSkill.ExecuteNonQuery();
                     }
 
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        res = Convert.ToInt32(id);
+                    }
+
                     trans.Commit();
                 }
                 catch
@@ -1007,9 +1025,11 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (res);
         }
 
-        private void updateBusinessArea(BusinessArea ba)
+        private int updateBusinessArea(BusinessArea ba)
         {
             var stmnt = "UPDATE [dbo].[BusinessArea] " +
                         "SET [Code] = @code," +
@@ -1053,24 +1073,32 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (ba.Id);
         }
         #endregion
 
         #region Save SoftSkill
-        public void SaveSoftSkill(SoftSkill ss)
+        public int SaveSoftSkill(SoftSkill ss)
         {
+            int res;
+
             if (ss.Id < 0)
             {
-                insertSoftSkill(ss);
+                res = insertSoftSkill(ss);
             }
             else
             {
-                updateSoftSkill(ss);
+                res = updateSoftSkill(ss);
             }
+
+            return (res);
         }
 
-        private void insertSoftSkill(SoftSkill ss)
+        private int insertSoftSkill(SoftSkill ss)
         {
+            int res;
+
             var stmntSS = "INSERT INTO [dbo].[SoftSkill] (" +
                           " [Code]," +
                           " [Name]," +
@@ -1088,6 +1116,8 @@ namespace matching_learning.common.Repositories
                              "SELECT [Id] " +
                              "FROM [dbo].[SoftSkill]" +
                              "WHERE [Code] = @code";
+
+            var stmntId = "SELECT @@IDENTITY";
 
             SqlTransaction trans;
 
@@ -1124,6 +1154,15 @@ namespace matching_learning.common.Repositories
                         cmdSkill.ExecuteNonQuery();
                     }
 
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        res = Convert.ToInt32(id);
+                    }
+
                     trans.Commit();
                 }
                 catch
@@ -1132,9 +1171,11 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (res);
         }
 
-        private void updateSoftSkill(SoftSkill ss)
+        private int updateSoftSkill(SoftSkill ss)
         {
             var stmnt = "UPDATE [dbo].[SoftSkill] " +
                         "SET [Code] = @code," +
@@ -1178,24 +1219,32 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (ss.Id);
         }
         #endregion
 
         #region Save Technology
-        public void SaveTechnology(Technology tech)
+        public int SaveTechnology(Technology tech)
         {
+            int res;
+
             if (tech.Id < 0)
             {
-                insertTechnology(tech);
+                res = insertTechnology(tech);
             }
             else
             {
-                updateTechnology(tech);
+                res = updateTechnology(tech);
             }
+
+            return (res);
         }
 
-        private void insertTechnology(Technology tech)
+        private int insertTechnology(Technology tech)
         {
+            int res;
+
             var stmntTech = "INSERT INTO [dbo].[Technology] (" +
                           " [Code]," +
                           " [Name]," +
@@ -1215,6 +1264,8 @@ namespace matching_learning.common.Repositories
                              "SELECT [Id] " +
                              "FROM [dbo].[Technology]" +
                              "WHERE [Code] = @code";
+
+            var stmntId = "SELECT @@IDENTITY";
 
             SqlTransaction trans;
 
@@ -1254,6 +1305,15 @@ namespace matching_learning.common.Repositories
                         cmdSkill.ExecuteNonQuery();
                     }
 
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        res = Convert.ToInt32(id);
+                    }
+
                     trans.Commit();
                 }
                 catch
@@ -1262,9 +1322,11 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (res);
         }
 
-        private void updateTechnology(Technology tech)
+        private int updateTechnology(Technology tech)
         {
             var stmnt = "UPDATE [dbo].[Technology] " +
                         "SET [Code] = @code," +
@@ -1312,24 +1374,32 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (tech.Id);
         }
         #endregion
 
         #region Save TechnologyRole
-        public void SaveTechnologyRole(TechnologyRole tr)
+        public int SaveTechnologyRole(TechnologyRole tr)
         {
+            int res;
+
             if (tr.Id < 0)
             {
-                insertTechnologyRole(tr);
+                res = insertTechnologyRole(tr);
             }
             else
             {
-                updateTechnologyRole(tr);
+                res = updateTechnologyRole(tr);
             }
+
+            return (res);
         }
 
-        private void insertTechnologyRole(TechnologyRole tr)
+        private int insertTechnologyRole(TechnologyRole tr)
         {
+            int res;
+
             var stmntTR = "INSERT INTO [dbo].[TechnologyRole] (" +
                           " [TechnologyId]," +
                           " [Code]," +
@@ -1350,6 +1420,8 @@ namespace matching_learning.common.Repositories
                              "FROM [dbo].[TechnologyRole]" +
                              "WHERE [Code] = @code";
 
+            var stmntId = "SELECT @@IDENTITY";
+            
             SqlTransaction trans;
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -1388,6 +1460,15 @@ namespace matching_learning.common.Repositories
                         cmdSkill.ExecuteNonQuery();
                     }
 
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        res = Convert.ToInt32(id);
+                    }
+
                     trans.Commit();
                 }
                 catch
@@ -1396,9 +1477,11 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (res);
         }
 
-        private void updateTechnologyRole(TechnologyRole tr)
+        private int updateTechnologyRole(TechnologyRole tr)
         {
             var stmnt = "UPDATE [dbo].[TechnologyRole] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1446,6 +1529,8 @@ namespace matching_learning.common.Repositories
                     throw;
                 }
             }
+
+            return (tr.Id);
         }
         #endregion
         #endregion

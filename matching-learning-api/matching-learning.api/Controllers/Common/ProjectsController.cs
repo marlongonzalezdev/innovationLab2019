@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace matching_learning.api.Controllers.Common
 {
+    /// <summary>
+    /// Controller for best project candidates searching.
+    /// </summary>
     [Route("[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase

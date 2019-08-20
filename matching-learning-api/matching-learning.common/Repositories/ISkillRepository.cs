@@ -37,13 +37,13 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save
-        void SaveBusinessArea(BusinessArea ba);
+        int SaveBusinessArea(BusinessArea ba);
 
-        void SaveSoftSkill(SoftSkill ss);
+        int SaveSoftSkill(SoftSkill ss);
 
-        void SaveTechnology(Technology tech);
+        int SaveTechnology(Technology tech);
 
-        void SaveTechnologyRole(TechnologyRole tr);
+        int SaveTechnologyRole(TechnologyRole tr);
         #endregion
     }
 }
