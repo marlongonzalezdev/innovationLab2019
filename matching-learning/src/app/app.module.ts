@@ -19,11 +19,12 @@ import { SkilldetailsComponent } from './components/skilldetails/skilldetails.co
 
 import { CandidatesComponent } from './components/candidates/candidates.component';
 import { CandidateComponent } from './components/candidates/candidate/candidate.component';
-import {CandidateService} from './shared/candidate.service';
-import {DeliveryUnitService} from './shared/delivery-unit.service';
+
 
 import {MaterialModule} from './material/material.module';
-import {RelationTypeService} from './shared/relation-type.service';
+import { RelationTypeService } from './shared/services/relation-type.service';
+import { CandidateService } from './shared/services/candidate.service';
+import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 
 
 @NgModule({

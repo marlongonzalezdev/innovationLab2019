@@ -15,13 +15,13 @@
           <input formControlName="email" matInput placeholder="Email">
           <mat-error>Invalid email address</mat-error>
         </mat-form-field>
-        <div class="add-bottom-padding">
+        <!-- <div class="add-bottom-padding">
           <mat-radio-group formControlName="gender">
             <mat-radio-button value="1">Male</mat-radio-button>
             <mat-radio-button value="2">Female</mat-radio-button>
             <mat-radio-button value="3">Other</mat-radio-button>
           </mat-radio-group>
-        </div>
+        </div> -->
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
@@ -29,8 +29,16 @@
         <mat-form-field>
           <mat-select formControlName="du" placeholder="DU">
             <mat-option>None</mat-option>
-            <ng-container *ngFor="let deliveryUnit of deliveryUnits">
-              <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.value}}</mat-option>
+            <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
+              <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select formControlName="relationType" placeholder="Relation Type">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let relationType of relationTypes | async">
+              <mat-option value="{{relationType.id}}">{{relationType.name}}</mat-option>
             </ng-container>
           </mat-select>
         </mat-form-field>
