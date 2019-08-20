@@ -1,7 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Skills} from '../../mock-skills';
-import {Skill} from '../../skill';
-import {Project} from '../../project';
+import { Skills } from './../../models/skills';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { SkillServiceBase } from './services/skill-servie-base';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
     selector: 'app-skills',
@@ -9,47 +11,32 @@ import {Project} from '../../project';
     styleUrls: ['./skills.component.css']
 })
 export class SkillsComponent implements OnInit {
-    project: Project;
-    display: boolean;
-    skillList = Skills;
-
-    selectedSkill: Skill;
-    expectedScore: number;
+    skillList: Skills[] = [];
+    displayedColumns = ['name', 'category', 'defaultExpertise', 'code'];
+    selectedSkill: Skills;
     showContent: boolean;
+    source: any;
 
-    constructor() {
-        this.project = new Project();
-        this.project.name = 'Example';
-        this.project.skills = [];
-        this.display = false;
-        this.showContent = false;
+    constructor(private skillService: SkillServiceBase) {
     }
+
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     ngOnInit() {
+      this.skillService.getSkill()
+      .subscribe ( response => {
+         this.skillList = response;
+        //  this.source = new MatTableDataSource<Skills>(this.skillList);        
+         /* this.source.paginator = this.paginator;
+         this.source.sort = this.sort; */
+      });
     }
+    applyFilter(filterValue: string) {
+      this.source.filter = filterValue.trim().toLowerCase();
 
-    add(skill: Skill): void {
-
-        if (!skill || !this.expectedScore || this.expectedScore > 100) {
-            return;
-        }
-        if (!this.project.skills.find(s => s === skill)) {
-            skill.weight = this.expectedScore / 100;
-            this.project.skills.push(skill);
-            this.selectedSkill = undefined;
-            this.expectedScore = undefined;
-        }
-        this.display = true;
-    }
-
-    delete(skill: Skill): void {
-      const index = this.project.skills.indexOf(skill, 0);
-      if (index > -1) {
-        this.project.skills.splice(index, 1);
-        if (this.project.skills.length === 0) {
-          this.display = false;
-          this.showContent = false;
-        }
+      if (this.source.paginator) {
+        this.source.paginator.firstPage();
       }
     }
 }

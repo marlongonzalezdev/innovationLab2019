@@ -8,6 +8,8 @@ using matching_learning.common.Domain.DTOs;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.ML.Data;
+using System.Dynamic;
 
 namespace matching_learning_algorithm
 {
@@ -31,11 +33,7 @@ namespace matching_learning_algorithm
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
         }
-        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
         {
             var predictionData = PredictValue(candidateRequirement);
@@ -43,7 +41,7 @@ namespace matching_learning_algorithm
             var candidates = predictionData.userData
                 .Where(p => p.SelectedClusterId.Equals(predictionData.prediction.SelectedClusterId))
                 .OrderBy(x => x.Distance[x.SelectedClusterId])
-                .Select(Candidate.FromPrediction)
+                .Select(c => c.CandidateId)
                 .ToList();
 
             return Task.FromResult(new RecommendationResponse
@@ -98,22 +96,21 @@ namespace matching_learning_algorithm
                 string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
                 if (File.Exists(modelPath))
                 {
-                    Logger.LogInformation($"Trained model found at {inputPath}. Skipping training.");
+                    Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
                     return;
                 }
-                var texLoaderFields = CsvHeaders.Where(header => !header.Equals("candidateId")).Select(
-                    (text, index) => new TextLoader.Column(text, DataKind.Single, index)
-                    ).ToList();
-                var textLoader = context.Data.CreateTextLoader(textLoaderFields, hasHeader: true, separatorChar: ',');
+                var texLoaderFields = CsvHeaders.Where(header => !header.Equals("candidateId"))
+                    .Select((text, index) => new TextLoader.Column(text, DataKind.Single, index)).ToArray();
+                var textLoader = MLContext.Data.CreateTextLoader(texLoaderFields, hasHeader: true, separatorChar: ',');
                 IDataView data = textLoader.Load(InputPath);
-                var dataProcessPipeline = MLContext.Transforms.Concatenate("Features", CsvHeaders.Where(header => !header.Equals("candidateId")).ToArray())
-                .Append(MLContext.Clustering.Trainers.KMeans(
-                    "Features",
-                    numberOfClusters: NumberOfClusters));
-                var trainedModel = dataProcessPipeline.Fit(trainingData);
+                var dataProcessPipeline =  MLContext
+                    .Transforms
+                    .Concatenate("Features", CsvHeaders.Where(header => !header.Equals("candidateId")).ToArray())
+                    .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: NumberOfClusters));
+                var trainedModel = dataProcessPipeline.Fit(data);
 
                 // Save/persist the trained model to a .ZIP file
-                MLContext.Model.Save(trainedModel, trainingData.Schema, modelPath);
+                MLContext.Model.Save(trainedModel, data.Schema, modelPath);
 
                 Logger.LogInformation($"The model was saved to {modelPath}");
 
@@ -140,14 +137,14 @@ namespace matching_learning_algorithm
 
                 var transformedDataView = trainedModel.Transform(data);
                 var predictionEngine = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
-                var prediction = predictionEngine.Predict(ProcessRequest(recommendationRequest));
+                var prediction = predictionEngine.Predict(ProcessRequest(candidateRequirement));
 
                 ClusteringPrediction[] userData = MLContext.Data
                     .CreateEnumerable<ClusteringPrediction>(transformedDataView, false)
                     .ToArray();
                 if (candidateRequirement.Max != null)
                 {
-                    userData = userData.Take(candidateRequirement.Max);
+                    userData = userData.ToList().Take(candidateRequirement.Max).ToArray();
                 }
 
                 return (userData, prediction);
@@ -156,6 +153,16 @@ namespace matching_learning_algorithm
             {
                 throw ex;
             }
+        }
+
+        private ExpandoObject ProcessRequest(ProjectCandidateRequirement candidateRequirement)
+        {
+            var newPrediction = new ExpandoObject() as IDictionary<string, Object>;
+            foreach (var skill in candidateRequirement.SkillsFilter)
+            {
+                newPrediction.Add(skill.RequiredSkillId.ToString(), skill.Weight);
+            }
+            return newPrediction as ExpandoObject;
         }
     }
 }

@@ -4,7 +4,7 @@ import {SkillsComponent} from './components/skills/skills.component';
 import {CandidatesComponent} from './components/candidates/candidates.component';
 
 const routes: Routes = [
-  {path: 'build', component: SkillsComponent},
+  {path: 'skills', component: SkillsComponent},
   {path: 'candidates', component: CandidatesComponent}
 ];
 
