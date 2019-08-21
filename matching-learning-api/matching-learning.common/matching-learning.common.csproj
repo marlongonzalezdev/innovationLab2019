@@ -1,8 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>matching_learning.common</RootNamespace>
+    <Configurations>Debug;Release;Debug-LocalDefaultInstance;Debug-LocalSqlExpressInstance</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-LocalSqlExpressInstance|AnyCPU'">
+    <DefineConstants>TRACE;LOCAL_SQLEXPRESS_INSTANCE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-LocalDefaultInstance|AnyCPU'">
+    <DefineConstants>TRACE;LOCAL_DEFAULT_INSTANCE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

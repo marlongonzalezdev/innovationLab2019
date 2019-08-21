@@ -45,10 +45,6 @@ namespace matching_learning.common.Repositories
         {
             CandidateRole res = null;
 
-            var deliveryUnitsRepository = new DeliveryUnitRepository();
-
-            var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
-
             var query = "SELECT [CR].[Id], " +
                         "       [CR].[Code]," +
                         "       [CR].[Name] " +
