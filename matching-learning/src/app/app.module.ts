@@ -26,6 +26,7 @@ import { RelationTypeService } from './shared/services/relation-type.service';
 import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 import { NotificationService } from './shared/services/notification.service';
+import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { NotificationService } from './shared/services/notification.service';
     InputCriteriaComponent,
     CandidatesComponent,
     SkilldetailsComponent,
-    CandidateComponent
+    CandidateComponent,
+    CandidateListComponent
   ],
   imports: [
     BrowserModule,

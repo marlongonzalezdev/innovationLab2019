@@ -46,7 +46,7 @@ export class CandidateComponent implements OnInit {
         inBench: true
     };
 
-      this.service.addCandidateWithObservable(candidate).subscribe(
+      this.service.addCandidate(candidate).subscribe(
         candidate => {
           this.notificationService.sucess('Candidate added successfully.');
           this.onClear();

@@ -21,7 +21,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class CandidateService {
-  url = environment.dbConfig.baseUrl + environment.dbConfig.AddCandidate;
+  url: string;
 
 
   constructor(private http: HttpClient) { }
@@ -52,8 +52,14 @@ export class CandidateService {
     });
   }
 
-  addCandidateWithObservable(candidate: Candidate): Observable<Candidate> {
-    return this.http.post<Candidate>(this.url, candidate, httpOptions)
+  getWriterWithFavBooks(): Observable<Candidate> {
+    this.url = environment.dbConfig.baseUrl + environment.dbConfig.GetCandidates;
+    return this.http.get<Candidate>(this.url, {responseType: 'json'});
+  }
+
+  addCandidate(candidate: Candidate): Observable<Candidate> {
+   this.url = environment.dbConfig.baseUrl + environment.dbConfig.AddCandidate;
+   return this.http.post<Candidate>(this.url, candidate, httpOptions)
       .pipe(
         catchError(this.handleError)
       );
