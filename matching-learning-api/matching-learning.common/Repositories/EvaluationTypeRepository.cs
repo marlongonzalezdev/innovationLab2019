@@ -5,16 +5,16 @@ using matching_learning.common.Domain.DTOs;
 
 namespace matching_learning.common.Repositories
 {
-    public class CandidateRoleRepository : ICandidateRoleRepository
+    public class EvaluationTypeRepository : IEvaluationTypeRepository
     {
-        public List<CandidateRole> GetCandidateRoles()
+        public List<EvaluationType> GetEvaluationTypes()
         {
-            var res = new List<CandidateRole>();
-            
-            var query = "SELECT [CR].[Id], " +
-                        "       [CR].[Code]," +
-                        "       [CR].[Name] " +
-                        "FROM [dbo].[CandidateRole] AS [CR]";
+            var res = new List<EvaluationType>();
+
+            var query = "SELECT [ET].[Id], " +
+                        "       [ET].[Name]," +
+                        "       [ET].[Priority] " +
+                        "FROM [dbo].[EvaluationType] AS [ET]";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
             {
@@ -28,11 +28,11 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new CandidateRole()
+                        res.Add(new EvaluationType()
                         {
                             Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            Priority = dr.Db2Decimal("Priority"),
                         });
                     }
                 }
@@ -41,15 +41,15 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        public CandidateRole GetCandidateRoleById(int id)
+        public EvaluationType GetEvaluationTypeById(int id)
         {
-            CandidateRole res = null;
-
-            var query = "SELECT [CR].[Id], " +
-                        "       [CR].[Code]," +
-                        "       [CR].[Name] " +
-                        "FROM [dbo].[CandidateRole] AS [CR] " +
-                        "WHERE [CR].[Id] = @id";
+            EvaluationType res = null;
+            
+            var query = "SELECT [ET].[Id], " +
+                        "       [ET].[Name]," +
+                        "       [ET].[Priority] " +
+                        "FROM [dbo].[EvaluationType] AS [ET] " +
+                        "WHERE [ET].[Id] = @id";
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
             {
@@ -68,11 +68,11 @@ namespace matching_learning.common.Repositories
                     {
                         DataRow dr = dt.Rows[0];
 
-                        res = new CandidateRole()
+                        res = new EvaluationType()
                         {
                             Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
+                            Priority = dr.Db2Decimal("Priority"),
                         };
                     }
                 }
