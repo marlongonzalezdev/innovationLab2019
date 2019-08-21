@@ -15,7 +15,7 @@ export class SkillsComponent implements OnInit {
     displayedColumns = ['name', 'category', 'defaultExpertise', 'code'];
     selectedSkill: Skills;
     showContent: boolean;
-    source: any;
+    source: MatTableDataSource<Skills>;
 
     constructor(private skillService: SkillServiceBase) {
     }
@@ -27,9 +27,9 @@ export class SkillsComponent implements OnInit {
       this.skillService.getSkill()
       .subscribe ( response => {
          this.skillList = response;
-        //  this.source = new MatTableDataSource<Skills>(this.skillList);        
-         /* this.source.paginator = this.paginator;
-         this.source.sort = this.sort; */
+         this.source = new MatTableDataSource<Skills>(this.skillList);
+         setTimeout(() => this.source.paginator = this.paginator);
+         this.source.sort = this.sort;
       });
     }
     applyFilter(filterValue: string) {
