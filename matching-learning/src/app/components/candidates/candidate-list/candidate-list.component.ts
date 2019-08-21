@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CandidateService } from 'src/app/shared/services/candidate.service';
+import { Candidate } from 'src/app/shared/candidate';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-candidate-list',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CandidateListComponent implements OnInit {
 
-  constructor() { }
+  candidates: Observable<Candidate[]>;
+
+  constructor(private candidateService: CandidateService) { }
 
   ngOnInit() {
+    this.getCandidates();
   }
 
+  getCandidates() {
+    this.candidates = this.candidateService.getCandidates();
+  }
 }

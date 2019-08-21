@@ -52,9 +52,9 @@ export class CandidateService {
     });
   }
 
-  getWriterWithFavBooks(): Observable<Candidate> {
+  getCandidates(): Observable<Candidate[]> {
     this.url = environment.dbConfig.baseUrl + environment.dbConfig.GetCandidates;
-    return this.http.get<Candidate>(this.url, {responseType: 'json'});
+    return this.http.get<Candidate[]>(this.url, {responseType: 'json'});
   }
 
   addCandidate(candidate: Candidate): Observable<Candidate> {
