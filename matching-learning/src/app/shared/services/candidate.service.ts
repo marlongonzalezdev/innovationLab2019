@@ -1,24 +1,28 @@
 import { Injectable } from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError} from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 
 import { Candidate } from '../candidate';
+import { environment } from 'src/environments/environment';
+
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: 'my-auth-token'
+  })
+};
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CandidateService {
-  url = 'api/books';
+  url = environment.dbConfig.baseUrl + environment.dbConfig.AddCandidate;
 
-   httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type':  'application/json',
-      'Authorization': 'my-auth-token'
-    })
-  };
 
   constructor(private http: HttpClient) { }
 
@@ -49,7 +53,7 @@ export class CandidateService {
   }
 
   addCandidateWithObservable(candidate: Candidate): Observable<Candidate> {
-    return this.http.post<Candidate>(this.url, candidate, this.httpOptions)
+    return this.http.post<Candidate>(this.url, candidate, httpOptions)
       .pipe(
         catchError(this.handleError)
       );
@@ -70,13 +74,4 @@ export class CandidateService {
     return throwError(
       'Something bad happened; please try again later.');
   }
-
-
-  // addCandidateWithObservable(candidate: Candidate): Observable<Candidate> {
-  //   const headers = new Headers({ 'Content-Type': 'application/json' });
-  //   const options = new RequestOptions({ headers });
-  //   return this.http.post(this.url, candidate, options)
-  //              .map(this.extractData)
-  //              .catch(this.handleErrorPromise);
-  //  }
 }

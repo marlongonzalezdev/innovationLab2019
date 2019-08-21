@@ -25,6 +25,7 @@ import {MaterialModule} from './material/material.module';
 import { RelationTypeService } from './shared/services/relation-type.service';
 import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
+import { NotificationService } from './shared/services/notification.service';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
     { provide: SkillServiceBase, useClass: SkillService },
     CandidateService,
     DeliveryUnitService,
-    RelationTypeService
+    RelationTypeService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,11 @@
 export interface Candidate {
   id: number;
-  name: string;
+  firstName: string;
   lastName: string;
-  du: number;
+  deliveryUnitId: number;
   relationType: number;
-  email: string;
-  isInternal: boolean;
-  isInBench: boolean;
+  inBench: boolean;
+  docType: number;
+  docNumber: string;
+  employeeNumber: number;
 }
