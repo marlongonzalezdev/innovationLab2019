@@ -1,9 +1,9 @@
-import { Skills } from './../../../models/skills';
+import { Skill } from '../../../models/skill';
 
 import { Observable } from 'rxjs';
 
 export abstract class SkillServiceBase {
     public baseUrl: string;
-    public abstract getSkill: () => Observable<Skills[]>;
-    public abstract getSkillById: (skill: Skills) => Observable<Skills>;
+    public abstract getSkills: () => Observable<Skill[]>;
+    public abstract getSkillById: (skill: Skill) => Observable<Skill>;
 }
