@@ -34,8 +34,13 @@ namespace matching_learning_algorithm
             CsvHeaders = new List<string>();
         }
         
-        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
+        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet)
         {
+            if (createDataSet)
+            {
+                GenerateDataset(candidateRequirement);
+            }
+
             var predictionData = PredictValue(candidateRequirement);
 
             var candidates = predictionData.userData
