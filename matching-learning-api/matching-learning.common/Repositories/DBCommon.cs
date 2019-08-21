@@ -9,17 +9,34 @@ namespace matching_learning.common.Repositories
         public static string GetConnectionString()
         {
             string projectPath = AppDomain.CurrentDomain.BaseDirectory.Split(new String[] { @"bin\" }, StringSplitOptions.None)[0];
+
+#if LOCAL_DEFAULT_INSTANCE
+  IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(projectPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.LocalDefaultInstance.json", optional: false)
+                .Build();
+#elif LOCAL_SQLEXPRESS_INSTANCE
+  IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(projectPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.LocalSqlExpressInstance.json", optional: false)
+                .Build();
+#else
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
+
+#endif
+
             string connectionString = configuration.GetConnectionString("IL2019");
 
             return (connectionString);
         }
 
-        #region DB conversions
-        #region string conversions
+#region DB conversions
+#region string conversions
         public static string Db2String(this DataRow dr, string columnName)
         {
             if (dr[columnName] == DBNull.Value)
@@ -29,9 +46,9 @@ namespace matching_learning.common.Repositories
 
             return ((string)dr[columnName]);
         }
-        #endregion
+#endregion
 
-        #region int conversions
+#region int conversions
         public static int Db2Int(this DataRow dr, string columnName)
         {
             return ((int)dr[columnName]);
@@ -46,9 +63,9 @@ namespace matching_learning.common.Repositories
 
             return (dr.Db2Int(columnName));
         }
-        #endregion
+#endregion
 
-        #region long conversions
+#region long conversions
         public static long Db2Long(this DataRow dr, string columnName)
         {
             return ((long)dr[columnName]);
@@ -63,9 +80,9 @@ namespace matching_learning.common.Repositories
 
             return (dr.Db2Long(columnName));
         }
-        #endregion
+#endregion
 
-        #region bool conversions
+#region bool conversions
         public static bool Db2Bool(this DataRow dr, string columnName)
         {
             return ((bool)dr[columnName]);
@@ -80,9 +97,9 @@ namespace matching_learning.common.Repositories
 
             return (dr.Db2Bool(columnName));
         }
-        #endregion
+#endregion
 
-        #region datetime conversions
+#region datetime conversions
         public static DateTime Db2DateTime(this DataRow dr, string columnName)
         {
             return ((DateTime)dr[columnName]);
@@ -97,9 +114,9 @@ namespace matching_learning.common.Repositories
 
             return (dr.Db2DateTime(columnName));
         }
-        #endregion
+#endregion
 
-        #region decimal conversions
+#region decimal conversions
         public static decimal Db2Decimal(this DataRow dr, string columnName)
         {
             return ((decimal)dr[columnName]);
@@ -114,7 +131,7 @@ namespace matching_learning.common.Repositories
 
             return (dr.Db2Decimal(columnName));
         }
-        #endregion
-        #endregion
+#endregion
+#endregion
     }
 }
