@@ -5,7 +5,7 @@
       <mat-label>Select skills:</mat-label>
       <mat-select [(value)]="selectedSkill">
         <mat-option *ngFor="let skill of skillList" [value]="skill">
-          {{skill.show}}
+          {{skill.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -29,7 +29,7 @@
   <div class="selected-skills__container">
     <ul class="list-group skills__selected">
       <li class="list-group-item" *ngFor="let skill of project.skills">
-        <span class="badge">{{skill.tag}}</span> --- <span class="badge">{{skill.weight * 100 | number}} %</span>
+        <span class="badge">{{skill.name}}</span> --- <span class="badge">{{skill.weight * 100 | number}} %</span>
         <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
           <mat-icon>delete</mat-icon>
         </button>

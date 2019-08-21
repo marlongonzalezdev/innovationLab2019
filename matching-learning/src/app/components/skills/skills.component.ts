@@ -1,8 +1,7 @@
-import { Skills } from './../../models/skills';
+import { Skill } from '../../models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { SkillServiceBase } from './services/skill-servie-base';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
 @Component({
@@ -11,9 +10,9 @@ import { MatSort } from '@angular/material/sort';
     styleUrls: ['./skills.component.css']
 })
 export class SkillsComponent implements OnInit {
-    skillList: Skills[] = [];
+    skillList: Skill[] = [];
     displayedColumns = ['name', 'category', 'defaultExpertise', 'code'];
-    selectedSkill: Skills;
+    selectedSkill: Skill;
     showContent: boolean;
     source: any;
 
@@ -24,10 +23,10 @@ export class SkillsComponent implements OnInit {
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     ngOnInit() {
-      this.skillService.getSkill()
+      this.skillService.getSkills()
       .subscribe ( response => {
          this.skillList = response;
-        //  this.source = new MatTableDataSource<Skills>(this.skillList);        
+        //  this.source = new MatTableDataSource<Skills>(this.skillList);
          /* this.source.paginator = this.paginator;
          this.source.sort = this.sort; */
       });

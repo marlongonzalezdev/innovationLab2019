@@ -10,7 +10,7 @@ import { catchError } from 'rxjs/operators';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json',
-    'Authorization': 'my-auth-token'
+    Authorization: 'my-auth-token'
   })
 };
 
@@ -33,10 +33,4 @@ export class MatchService {
       catchError(this.handleError<{matches: Match[]}>('getMatches', {matches: []}))
     );
   }
-
-
-  // getMatches(): Observable<User[]> {
-  //   return of(Users);
-  // }
-
 }
