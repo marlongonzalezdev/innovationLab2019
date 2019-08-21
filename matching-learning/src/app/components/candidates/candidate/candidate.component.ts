@@ -7,6 +7,7 @@ import { DeliveryUnit } from 'src/app/shared/deliveryUnit';
 import { CandidateService } from 'src/app/shared/services/candidate.service';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { RelationTypeService } from 'src/app/shared/services/relation-type.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-candidate',
@@ -19,7 +20,7 @@ export class CandidateComponent implements OnInit {
   relationTypes: Observable<DeliveryUnit[]>;
 
   constructor(private service: CandidateService, private  deliveryUnitService: DeliveryUnitService,
-              private relationTypeService: RelationTypeService) { }
+              private relationTypeService: RelationTypeService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
@@ -33,18 +34,25 @@ export class CandidateComponent implements OnInit {
 
   onSubmit() {
     if (this.service.form.valid) {
-      this.onClear();
       const candidate: Candidate = {
-        id: this.service.form.controls.$key.value,
-        name: this.service.form.controls.name.value,
-        lastName: this.service.form.controls.lastName.value,
-        du: this.service.form.controls.du.value,
-        relationType: this.service.form.controls.relationType.value,
-        email: this.service.form.controls.email.value,
-        isInternal: this.service.form.controls.isInternal.value,
-        isInBench: this.service.form.controls.isInBench.value
+        id: -1,
+        deliveryUnitId: 13,
+        relationType: 1,
+        firstName: 'Juan',
+        lastName: 'Perez',
+        docType: null,
+        docNumber: null,
+        employeeNumber: 43245,
+        inBench: true
     };
-      this.service.addCandidateWithObservable(candidate);
+
+      this.service.addCandidate(candidate).subscribe(
+        candidate => {
+          this.notificationService.sucess('Candidate added successfully.');
+          this.onClear();
+          console.log(candidate);
+        }
+    );
     }
   }
 }

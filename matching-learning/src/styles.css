@@ -50,5 +50,30 @@ mat-radio-group mat-radio-button{
   flex: 1 1 auto;
 }
 
+snack-bar-container.success
+{
+  background-color: green;
+  color: white;
+}
+
+snack-bar-container.notification simple-snack-bar
+{
+  font-size: 15px !important;
+  font-weight: bold;
+}
+
+.mat-slider-horizontal {
+  width: 200px;
+}
+
+.expected-core {
+  margin-top: 30px;
+}
+
+.mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb, .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb-label {
+  background-color: #3f51b5;
+}
+
+
 
 

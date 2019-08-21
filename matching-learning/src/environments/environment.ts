@@ -7,6 +7,7 @@ export const environment = {
   dbConfig: {
     baseUrl: 'https://localhost:44374',
     GetCandidates: '/Candidates/Candidates',
+    AddCandidate: '/Candidates/SaveCandidate',
     GetDeliveryUnits: '/DeliveryUnits/DeliveryUnits',
     GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
   }
