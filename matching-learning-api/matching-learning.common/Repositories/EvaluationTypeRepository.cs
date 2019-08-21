@@ -12,6 +12,7 @@ namespace matching_learning.common.Repositories
             var res = new List<EvaluationType>();
 
             var query = "SELECT [ET].[Id], " +
+                        "       [ET].[Code]," +
                         "       [ET].[Name]," +
                         "       [ET].[Priority] " +
                         "FROM [dbo].[EvaluationType] AS [ET]";
@@ -31,6 +32,7 @@ namespace matching_learning.common.Repositories
                         res.Add(new EvaluationType()
                         {
                             Id = dr.Db2Int("Id"),
+                            Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
                             Priority = dr.Db2Decimal("Priority"),
                         });
@@ -46,6 +48,7 @@ namespace matching_learning.common.Repositories
             EvaluationType res = null;
             
             var query = "SELECT [ET].[Id], " +
+                        "       [ET].[Code]," +
                         "       [ET].[Name]," +
                         "       [ET].[Priority] " +
                         "FROM [dbo].[EvaluationType] AS [ET] " +
@@ -71,6 +74,49 @@ namespace matching_learning.common.Repositories
                         res = new EvaluationType()
                         {
                             Id = dr.Db2Int("Id"),
+                            Code = dr.Db2String("Code"),
+                            Name = dr.Db2String("Name"),
+                            Priority = dr.Db2Decimal("Priority"),
+                        };
+                    }
+                }
+            }
+
+            return (res);
+        }
+        
+        public EvaluationType GetEvaluationTypeByCode(string code)
+        {
+            EvaluationType res = null;
+
+            var query = "SELECT [ET].[Id], " +
+                        "       [ET].[Code]," +
+                        "       [ET].[Name]," +
+                        "       [ET].[Priority] " +
+                        "FROM [dbo].[EvaluationType] AS [ET] " +
+                        "WHERE [ET].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 1)
+                    {
+                        DataRow dr = dt.Rows[0];
+
+                        res = new EvaluationType()
+                        {
+                            Id = dr.Db2Int("Id"),
+                            Code = dr.Db2String("Code"),
                             Name = dr.Db2String("Name"),
                             Priority = dr.Db2Decimal("Priority"),
                         };

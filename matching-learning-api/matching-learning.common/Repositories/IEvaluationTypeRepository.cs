@@ -8,5 +8,7 @@ namespace matching_learning.common.Repositories
         List<EvaluationType> GetEvaluationTypes();
 
         EvaluationType GetEvaluationTypeById(int id);
+
+        EvaluationType GetEvaluationTypeByCode(string code);
     }
 }

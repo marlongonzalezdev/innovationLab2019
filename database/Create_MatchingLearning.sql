@@ -255,10 +255,13 @@ GO
 
 CREATE TABLE [dbo].[EvaluationType] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
+  [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
   [Priority]                      [MLDecimal] NOT NULL CONSTRAINT [CH_EvaluationType_Priority] CHECK ([Priority] BETWEEN 0.0 AND 1.0),
 
   CONSTRAINT [PK_EvaluationType] PRIMARY KEY CLUSTERED ([Id] ASC),
+    
+  CONSTRAINT [UC_EvaluationType_Code] UNIQUE NONCLUSTERED ([Code] ASC),
 )
 GO
 
@@ -273,8 +276,6 @@ CREATE TABLE [dbo].[Evaluation] (
   [Notes]                         NVARCHAR(MAX) NULL,
 
   CONSTRAINT [PK_Evaluation] PRIMARY KEY CLUSTERED ([Id] ASC),
-
-  CONSTRAINT [UC_Evaluation_EvaluationKey] UNIQUE NONCLUSTERED ([EvaluationKey] ASC),
 
   CONSTRAINT [FK_Evaluation_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
@@ -413,14 +414,14 @@ GO
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('ExpertEvaluation', 0.9)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('LeaderEvaluation', 0.7)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('PairEvaluation', 0.5)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('Certification', 0.75)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('Curriculum Vitae', 0.25)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('LinkedIn', 0.1)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('PluralSight', 0.2)
-INSERT INTO [dbo].[EvaluationType] ([Name], [Priority]) VALUES ('HackerRank', 0.3)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('EXPERT', 'Expert Evaluation', 0.9)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('LEADER', 'Leader Evaluation', 0.7)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('PAIR', 'Pair Evaluation', 0.5)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('CERT', 'Certification', 0.75)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('CV', 'Curriculum Vitae', 0.25)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('LINKEDIN', 'LinkedIn', 0.1)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('PLURALSIGHT', 'PluralSight', 0.2)
+INSERT INTO [dbo].[EvaluationType] ([Code], [Name], [Priority]) VALUES ('HACKERRANK', 'HackerRank', 0.3)
 GO
 
 ----------------------------------------------------------------------------------------------------
@@ -795,10 +796,17 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 DECLARE @candidateId INT
 DECLARE @skillId INT
 
-DECLARE @rndExpertice FLOAT
-DECLARE @rndImpact FLOAT
+DECLARE @rndSeeExpertice FLOAT
+DECLARE @rndSeeImpact FLOAT
+DECLARE @limitSeeImpact FLOAT = 0.2
 
-DECLARE @limitImpact FLOAT = 0.2
+DECLARE @rndCvExpertice FLOAT
+DECLARE @rndCvImpact FLOAT
+DECLARE @limitCvImpact FLOAT = 0.2
+
+DECLARE @rndExpExpertice FLOAT
+DECLARE @rndExpImpact FLOAT
+DECLARE @limitExpImpact FLOAT = 0.2
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -822,10 +830,10 @@ WHILE @@FETCH_STATUS = 0
   
   WHILE @@FETCH_STATUS = 0  
    BEGIN
-    SET @rndExpertice = RAND()
-    SET @rndImpact = RAND()
+    SET @rndSeeExpertice = RAND()
+    SET @rndSeeImpact = RAND()
 
-    IF (@rndImpact < @limitImpact)
+    IF (@rndSeeImpact < @limitSeeImpact)
      BEGIN
       INSERT INTO [dbo].[SkillEstimatedExpertise] (
         [CandidateId],
@@ -835,10 +843,54 @@ WHILE @@FETCH_STATUS = 0
       VALUES (
         @candidateId,
         @skillId,
-        @rndExpertice
+        @rndSeeExpertice
       )
      END
 
+
+    SET @rndCvExpertice = RAND()
+    SET @rndCvImpact = RAND()
+
+    IF (@rndCvImpact < @limitCvImpact)
+     BEGIN
+      INSERT INTO [dbo].[Evaluation] (
+        [CandidateId],
+        [SkillId],
+        [EvaluationTypeId],
+        [Date],
+        [Expertise]
+      )
+      SELECT @candidateId,
+             @skillId,
+             [Id],
+             '2015-01-01',
+             @rndCvExpertice
+      FROM [dbo].[EvaluationType]
+      WHERE [Code] = 'CV'
+     END
+
+
+    SET @rndExpExpertice = RAND()
+    SET @rndExpImpact = RAND()
+
+    IF (@rndExpImpact < @limitExpImpact)
+     BEGIN
+      INSERT INTO [dbo].[Evaluation] (
+        [CandidateId],
+        [SkillId],
+        [EvaluationTypeId],
+        [Date],
+        [Expertise]
+      )
+      SELECT @candidateId,
+             @skillId,
+             [Id],
+             '2015-01-01',
+             @rndExpExpertice
+      FROM [dbo].[EvaluationType]
+      WHERE [Code] = 'EXPERT'
+     END
+     
     FETCH NEXT FROM skill_cursor   
     INTO @skillId 
    END   
