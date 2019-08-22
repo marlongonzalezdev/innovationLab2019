@@ -97,7 +97,7 @@ namespace matching_learning.common.Repositories
                     throw new NotSupportedException($"Error: skill category {skill.Category} is out of range.");
             }
 
-            return (null);
+            return (res);
         }
 
 
@@ -1053,7 +1053,49 @@ namespace matching_learning.common.Repositories
         #region Save SkillView
         public int SaveSkillView(SkillView sv)
         {
-            return (0);
+            int res = -1;
+
+            switch (sv.Category)
+            {
+                case SkillCategory.BusinessArea:
+                    //res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.SoftSkill:
+                    //res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.Technology:
+                    //res = getFromSkill(skill);
+
+                    //var tech = GetTechnologyById(skill.Id);
+
+                    //res.IsVersioned = tech.IsVersioned;
+                    //if (tech.IsVersioned && tech.Versions != null)
+                    //{
+                    //    res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
+                    //}
+
+                    break;
+
+                case SkillCategory.TechnologyRole:
+                    //res = getFromSkill(skill);
+
+                    //var tr = GetTechnologyRoleById(skill.Id);
+
+                    //res.ParentTechnologyId = tr.ParentTechnology.Id;
+
+                    break;
+
+                case SkillCategory.TechnologyVersion:
+                    //res = getFromSkill(skill);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Error: skill view category {sv.Category} is out of range.");
+            }
+
+            return (res);
         }
         #endregion
 
