@@ -31,8 +31,6 @@ namespace matching_learning.common.Repositories
                         res.Add(getCandidateRoleFromDataRow(dr));
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);
@@ -66,8 +64,6 @@ namespace matching_learning.common.Repositories
                         res = getCandidateRoleFromDataRow(dt.Rows[0]);
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);

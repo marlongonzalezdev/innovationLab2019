@@ -55,12 +55,10 @@ namespace matching_learning.common.Repositories
                         }
 
                         var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
-                        
+
                         res.Add(getCandidateFromDataRow(dr, deliveryUnit, rolesHistory));
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);
@@ -110,13 +108,11 @@ namespace matching_learning.common.Repositories
                         res = getCandidateFromDataRow(dr, deliveryUnit, candidateRolesHistory);
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);
         }
-        
+
         private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, List<CandidateRoleHistory> candidateRolesHistory)
         {
             Candidate res = null;
@@ -180,8 +176,6 @@ namespace matching_learning.common.Repositories
                         res[candidateId].Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);
@@ -223,8 +217,6 @@ namespace matching_learning.common.Repositories
                         res.Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
-
-                conn.Close();
             }
 
             return (res);
@@ -314,7 +306,7 @@ namespace matching_learning.common.Repositories
                         cmdId.Transaction = trans;
 
                         var id = cmdId.ExecuteScalar();
-                        
+
                         res = Convert.ToInt32(id);
                     }
 
@@ -371,13 +363,11 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
-
-                conn.Close();
             }
 
             return (ca.Id);
         }
-        
+
         private void setParamsCandidate(SqlCommand cmd, Candidate ca)
         {
             cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
