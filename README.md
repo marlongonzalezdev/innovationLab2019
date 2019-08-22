@@ -3,7 +3,7 @@
 This repo contains the sources and docs for the Innovation Lab 2019 @ Endava.
 
 ### UI Project
-The UI is an angular project inside *matching-learning* directory.
+The UI is an angular project inside *matching-learning* solution directory.
 
   1. Install Node.js version 10.9.0 or later. To get Node.js, go to [nodejs.org](https://nodejs.org/en/).
   2. Open cmd withing UI project folder and run npm install.
