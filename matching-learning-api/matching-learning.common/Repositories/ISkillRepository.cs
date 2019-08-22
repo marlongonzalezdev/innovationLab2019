@@ -36,9 +36,6 @@ namespace matching_learning.common.Repositories
         TechnologyRole GetTechnologyRoleById(int id);
         TechnologyRole GetTechnologyRoleByCode(string code);
 
-        List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id);
-        List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code);
-
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertises();
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids);
 
@@ -54,10 +51,6 @@ namespace matching_learning.common.Repositories
         int SaveSoftSkill(SoftSkill ss);
 
         int SaveTechnology(Technology tech);
-
-        int SaveTechnologyVersion(TechnologyVersion tv);
-
-        int SaveTechnologyRole(TechnologyRole tr);
         #endregion
     }
 }
