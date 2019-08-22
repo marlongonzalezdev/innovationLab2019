@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { HandleError, HttpErrorHandler } from './http-error-handler.service';
-import { Project } from './project';
-import { Match } from './match';
+
 import { catchError } from 'rxjs/operators';
+import { Project } from './shared/models/project';
+import { Match } from './shared/models/match';
 
 
 const httpOptions = {

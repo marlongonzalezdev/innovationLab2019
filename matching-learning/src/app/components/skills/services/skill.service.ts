@@ -1,5 +1,5 @@
 import { HttpErrorHandler, HandleError } from './../../../http-error-handler.service';
-import { Skill } from '../../../models/skill';
+import { Skill } from '../../../shared/models/skill';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SkillServiceBase } from './skill-servie-base';

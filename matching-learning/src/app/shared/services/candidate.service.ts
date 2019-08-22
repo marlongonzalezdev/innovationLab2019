@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 
-import { Candidate } from '../candidate';
+import { Candidate } from '../models/candidate';
 import { environment } from 'src/environments/environment';
 
 

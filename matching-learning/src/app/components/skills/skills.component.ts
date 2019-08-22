@@ -1,4 +1,4 @@
-import { Skill } from '../../models/skill';
+import { Skill } from '../../shared/models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { SkillServiceBase } from './services/skill-servie-base';
 import {MatPaginator} from '@angular/material/paginator';

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Project } from '../../project';
-import { SkillServiceBase } from '../skills/services/skill-servie-base';
-import { Skill } from 'src/app/models/skill';
+import { Project } from '../../shared/models/project';
+import { SkillServiceBase } from '../skills/services/skill-service-base';
+import { Skill } from 'src/app/shared/models/skill';
 
 @Component({
   selector: 'app-input-criteria',
