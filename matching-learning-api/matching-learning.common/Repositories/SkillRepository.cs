@@ -84,7 +84,7 @@ namespace matching_learning.common.Repositories
 
                     var tr = GetTechnologyRoleById(skill.Id);
 
-                    res.ParentTechnologyId = tr.ParentTechnology.Id;
+                    res.ParentTechnologyId = tr.ParentTechnologyId;
                     break;
 
                 case SkillCategory.TechnologyVersion:
@@ -665,15 +665,8 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
-
+        
         private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr)
-        {
-            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-            return (getTechnologyVersionFromDataRow(dr, parent));
-        }
-
-        private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr, Technology parent)
         {
             TechnologyVersion res = null;
 
@@ -685,7 +678,7 @@ namespace matching_learning.common.Repositories
                 Code = dr.Db2String("Code"),
                 Name = dr.Db2String("Name"),
                 DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                ParentTechnology = parent,
+                ParentTechnologyId = dr.Db2Int("TechnologyId"),
                 Version = dr.Db2String("Version"),
                 StartDate = dr.Db2DateTime("StartDate"),
             };
@@ -705,6 +698,7 @@ namespace matching_learning.common.Repositories
                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
                         "       [TV].[DefaultExpertise]," +
+                        "       [TV].[TechnologyId]," +
                         "       [TV].[Version]," +
                         "       [TV].[StartDate] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -730,7 +724,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
+                        res.Add(getTechnologyVersionFromDataRow(dr));
                     }
                 }
             }
@@ -741,15 +735,14 @@ namespace matching_learning.common.Repositories
         public List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code)
         {
             var res = new List<TechnologyVersion>();
-
-            var parent = GetTechnologyByCode(code);
-
+            
             var query = "SELECT [S].[Id] AS [SkillId], " +
                         "       [TV].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
                         "       [TV].[DefaultExpertise]," +
+                        "       [TV].[TechnologyId]," +
                         "       [TV].[Version]," +
                         "       [TV].[StartDate] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -775,7 +768,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
+                        res.Add(getTechnologyVersionFromDataRow(dr));
                     }
                 }
             }
@@ -870,9 +863,7 @@ namespace matching_learning.common.Repositories
         private TechnologyRole getTechnologyRoleFromDataRow(DataRow dr)
         {
             TechnologyRole res = null;
-
-            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
+            
             res = new TechnologyRole()
             {
                 Id = dr.Db2Int("SkillId"),
@@ -881,7 +872,7 @@ namespace matching_learning.common.Repositories
                 Code = dr.Db2String("Code"),
                 Name = dr.Db2String("Name"),
                 DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                ParentTechnology = parent,
+                ParentTechnologyId = dr.Db2Int("TechnologyId"),
             };
 
             return (res);
@@ -1084,6 +1075,27 @@ namespace matching_learning.common.Repositories
                     break;
 
                 case SkillCategory.Technology:
+                    List<TechnologyVersion> versions = null;
+
+                    if (sv.IsVersioned)
+                    {
+                        versions = new List<TechnologyVersion>();
+
+                        if (sv.Versions != null && sv.Versions.Count > 0)
+                        {
+                            foreach (var tv in sv.Versions)
+                            {
+                                versions.Add(new TechnologyVersion()
+                                {
+                                    Id = tv.Id,
+                                    ParentTechnologyId = tv.ParentTechnologyId,
+                                    Version = tv.Version,
+                                    StartDate = tv.StartDate,
+                                });
+                            }
+                        }
+                    }
+
                     var tech = new Technology()
                     {
                         Id = sv.Id,
@@ -1092,13 +1104,14 @@ namespace matching_learning.common.Repositories
                         Code = sv.Code,
                         Name = sv.Name,
                         DefaultExpertise = sv.DefaultExpertise,
+                        IsVersioned = sv.IsVersioned,
+                        Versions = versions,
                     };
 
                     res = SaveTechnology(tech);
                     break;
 
                 case SkillCategory.TechnologyRole:
-                    var parent = GetTechnologyById(sv.ParentTechnologyId);
                     var tr = new TechnologyRole()
                     {
                         Id = sv.Id,
@@ -1107,7 +1120,7 @@ namespace matching_learning.common.Repositories
                         Code = sv.Code,
                         Name = sv.Name,
                         DefaultExpertise = sv.DefaultExpertise,
-                        ParentTechnology = parent,
+                        ParentTechnologyId = sv.ParentTechnologyId,
                     };
 
                     res = SaveTechnologyRole(tr);
@@ -1631,7 +1644,7 @@ namespace matching_learning.common.Repositories
                         cmdSkill.Transaction = trans;
 
                         cmdSkill.Parameters.Add("@technologyId", SqlDbType.Int);
-                        cmdSkill.Parameters["@technologyId"].Value = tv.ParentTechnology.Id;
+                        cmdSkill.Parameters["@technologyId"].Value = tv.ParentTechnologyId;
 
                         cmdSkill.Parameters.Add("@version", SqlDbType.NVarChar);
                         cmdSkill.Parameters["@version"].Value = tv.Version;
@@ -1705,7 +1718,7 @@ namespace matching_learning.common.Repositories
         private void setParamsTechnologyVersion(SqlCommand cmd, TechnologyVersion tv)
         {
             cmd.Parameters.Add("@technologyId", SqlDbType.Int);
-            cmd.Parameters["@technologyId"].Value = tv.ParentTechnology.Id;
+            cmd.Parameters["@technologyId"].Value = tv.ParentTechnologyId;
 
             cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
             cmd.Parameters["@defaultExpertise"].Value = tv.DefaultExpertise;
@@ -1775,7 +1788,7 @@ namespace matching_learning.common.Repositories
                         cmdTR.Transaction = trans;
 
                         cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
-                        cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+                        cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
                         setParamsTechnologyRole(cmdTR, tr);
 
@@ -1836,7 +1849,7 @@ namespace matching_learning.common.Repositories
                         cmd.Transaction = trans;
 
                         cmd.Parameters.Add("@technologyId", SqlDbType.Int);
-                        cmd.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+                        cmd.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
                         cmd.Parameters.Add("@ssId", SqlDbType.Int);
                         cmd.Parameters["@ssId"].Value = tr.RelatedId;
