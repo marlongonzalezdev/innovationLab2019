@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../shared/models/project';
 import { SkillServiceBase } from '../skills/services/skill-service-base';
 import { Skill } from 'src/app/shared/models/skill';
+import {SkillsFilter} from '../../shared/models/skillsFilter';
 
 @Component({
   selector: 'app-input-criteria',
@@ -18,11 +19,17 @@ export class InputCriteriaComponent implements OnInit {
   showContent: boolean;
 
   constructor(private skillService: SkillServiceBase) {
-    this.project = new Project();
-    this.project.name = 'Example';
-    this.project.skills = [];
-    this.display = false;
-    this.showContent = false;
+      this.project = {
+      name: 'Example',
+      max: 10,
+      skillsFilter: [],
+      deliveryUnitIdFilter: null,
+      inBenchFilter: false,
+      relationTypeFilter: null,
+      roleIdFilter: null
+    };
+      this.display = false;
+      this.showContent = false;
   }
 
   ngOnInit() {
@@ -38,20 +45,26 @@ export class InputCriteriaComponent implements OnInit {
     if (!skill || !this.expectedScore) {
       return;
     }
-    if (!this.project.skills.find(s => s.id === skill.id)) {
-      skill.weight = this.expectedScore / 100;
-      this.project.skills.push(skill);
+    if (!this.project.skillsFilter.find(s => s.requiredSkillId === skill.id)) {
+      /*skill.weight = this.expectedScore / 100;*/
+      const skillsFilter: SkillsFilter = {
+        requiredSkillId: skill.id,
+        weight: this.expectedScore / 100,
+        minAccepted: null,
+        name: skill.name
+      };
+      this.project.skillsFilter.push(skillsFilter);
       this.selectedSkill = undefined;
       this.expectedScore = undefined;
     }
     this.display = true;
   }
 
-  delete(skill: Skill): void {
-    const index = this.project.skills.indexOf(skill, 0);
+  delete(skill: SkillsFilter): void {
+    const index = this.project.skillsFilter.indexOf(skill, 0);
     if (index > -1) {
-      this.project.skills.splice(index, 1);
-      if (this.project.skills.length === 0) {
+      this.project.skillsFilter.splice(index, 1);
+      if (this.project.skillsFilter.length === 0) {
         this.display = false;
         this.showContent = false;
       }

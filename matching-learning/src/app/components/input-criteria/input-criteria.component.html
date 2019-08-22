@@ -28,7 +28,7 @@
 
   <div class="selected-skills__container">
     <ul class="list-group skills__selected">
-      <li class="list-group-item" *ngFor="let skill of project.skills">
+      <li class="list-group-item" *ngFor="let skill of project.skillsFilter">
         <span class="badge">{{skill.name}}</span> --- <span class="badge">{{skill.weight * 100 | number}} %</span>
         <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
           <mat-icon>delete</mat-icon>

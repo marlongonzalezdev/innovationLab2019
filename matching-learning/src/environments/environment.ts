@@ -10,6 +10,7 @@ export const environment = {
     AddCandidate: '/Candidates/SaveCandidate',
     GetDeliveryUnits: '/DeliveryUnits/DeliveryUnits',
     GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
+    GetMatches: '/Projects/GetProjectCandidates',
   }
 };
 

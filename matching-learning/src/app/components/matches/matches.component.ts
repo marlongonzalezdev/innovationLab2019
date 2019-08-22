@@ -47,7 +47,7 @@ export class MatchesComponent implements OnInit {
 
         this.matchService.getMatches(project)
             .subscribe(response => {
-                this.matches = response.matches;
+                this.matches = response;
                 this.dataSource = new MatTableDataSource<Match>(this.matches);
                 this.dataSource.paginator = this.paginator;
                 this.loading = false;
