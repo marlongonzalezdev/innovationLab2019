@@ -77,7 +77,6 @@ namespace matching_learning.common.Repositories
                     {
                         res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
                     }
-
                     break;
 
                 case SkillCategory.TechnologyRole:
@@ -86,7 +85,6 @@ namespace matching_learning.common.Repositories
                     var tr = GetTechnologyRoleById(skill.Id);
 
                     res.ParentTechnologyId = tr.ParentTechnology.Id;
-
                     break;
 
                 case SkillCategory.TechnologyVersion:
@@ -1058,37 +1056,65 @@ namespace matching_learning.common.Repositories
             switch (sv.Category)
             {
                 case SkillCategory.BusinessArea:
-                    //res = getFromSkill(skill);
+                    var ba = new BusinessArea()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                    };
+
+                    res = SaveBusinessArea(ba);
                     break;
 
                 case SkillCategory.SoftSkill:
-                    //res = getFromSkill(skill);
+                    var ss = new SoftSkill()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                    };
+
+                    res = SaveSoftSkill(ss);
                     break;
 
                 case SkillCategory.Technology:
-                    //res = getFromSkill(skill);
+                    var tech = new Technology()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                    };
 
-                    //var tech = GetTechnologyById(skill.Id);
-
-                    //res.IsVersioned = tech.IsVersioned;
-                    //if (tech.IsVersioned && tech.Versions != null)
-                    //{
-                    //    res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
-                    //}
-
+                    res = SaveTechnology(tech);
                     break;
 
                 case SkillCategory.TechnologyRole:
-                    //res = getFromSkill(skill);
+                    var parent = GetTechnologyById(sv.ParentTechnologyId);
+                    var tr = new TechnologyRole()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                        ParentTechnology = parent,
+                    };
 
-                    //var tr = GetTechnologyRoleById(skill.Id);
-
-                    //res.ParentTechnologyId = tr.ParentTechnology.Id;
-
+                    res = SaveTechnologyRole(tr);
                     break;
 
                 case SkillCategory.TechnologyVersion:
-                    //res = getFromSkill(skill);
+                    throw new NotSupportedException($"Error: skill view technology version save is not supported. Skill views technology version can be saved only as part of Technology.");
                     break;
 
                 default:
