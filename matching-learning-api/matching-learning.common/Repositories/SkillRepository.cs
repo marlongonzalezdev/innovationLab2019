@@ -21,6 +21,8 @@ namespace matching_learning.common.Repositories
 
             if ((skills == null) || (skills.Count == 0)) { return (res); }
 
+            skills = skills.Where(s => s.Category != SkillCategory.TechnologyVersion && s.Category != SkillCategory.TechnologyRole).ToList();
+
             foreach (var skill in skills)
             {
                 res.Add(getSkillViewFromSkill(skill));
@@ -85,12 +87,8 @@ namespace matching_learning.common.Repositories
                     break;
 
                 case SkillCategory.TechnologyRole:
-                    res = getFromSkill(skill);
-                    break;
-
                 case SkillCategory.TechnologyVersion:
-                    res = getFromSkill(skill);
-                    break;
+                    throw new NotSupportedException($"Error: skill category {skill.Category} is part of technology view.");
 
                 default:
                     throw new NotSupportedException($"Error: skill category {skill.Category} is out of range.");
@@ -855,7 +853,7 @@ namespace matching_learning.common.Repositories
             var res = new List<TechnologyRole>();
 
             var query = "SELECT [S].[Id] AS [SkillId], " +
-                        "       [TV].[Id] AS [RelatedId]," +
+                        "       [TR].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +

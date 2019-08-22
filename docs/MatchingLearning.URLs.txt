@@ -180,11 +180,6 @@ http://localhost:62460/Skills/TechnologyRole?id=84
 
 
 GET
-https://localhost:44374/Skills/TechnologyVersionsByTechnology?id=10
-http://localhost:62460/Skills/TechnologyVersionsByTechnology?id=10
-
-
-GET
 https://localhost:44374/Skills/SkillEstimatedExpertises
 http://localhost:62460/Skills/SkillEstimatedExpertises
 
