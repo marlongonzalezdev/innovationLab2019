@@ -15,18 +15,140 @@ namespace matching_learning.common.Repositories
         #region SkillView
         public List<SkillView> GetSkillViews()
         {
-            return (null);
+            var res = new List<SkillView>();
+
+            var skills = GetSkills();
+
+            if ((skills == null) || (skills.Count == 0)) { return (res); }
+
+            foreach (var skill in skills)
+            {
+                res.Add(getSkillViewFromSkill(skill));
+            }
+
+            return (res);
         }
 
         public SkillView GetSkillViewById(int id)
         {
-            return (null);
+            SkillView res = null;
+
+            var skill = GetSkillById(id);
+
+            res = getSkillViewFromSkill(skill);
+
+            return (res);
         }
 
         public SkillView GetSkillViewByCode(string code)
         {
+            SkillView res = null;
+
+            var skill = GetSkillByCode(code);
+
+            res = getSkillViewFromSkill(skill);
+
+            return (res);
+        }
+
+        private SkillView getSkillViewFromSkill(Skill skill)
+        {
+            SkillView res = null;
+
+            if (skill == null) { return (null); }
+
+            switch (skill.Category)
+            {
+                case SkillCategory.BusinessArea:
+                    res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.SoftSkill:
+                    res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.Technology:
+                    res = getFromSkill(skill);
+
+                    var tech = GetTechnologyById(skill.Id);
+
+                    res.IsVersioned = tech.IsVersioned;
+                    if (tech.IsVersioned && tech.Versions != null)
+                    {
+                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
+                    }
+
+                    break;
+
+                case SkillCategory.TechnologyRole:
+                    res = getFromSkill(skill);
+
+                    var tr = GetTechnologyRoleById(skill.Id);
+
+                    res.ParentTechnologyId = tr.ParentTechnology.Id;
+
+                    break;
+
+                case SkillCategory.TechnologyVersion:
+                    res = getFromSkill(skill);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Error: skill category {skill.Category} is out of range.");
+            }
+
             return (null);
         }
+
+
+        private SkillView getFromSkill(Skill s)
+        {
+            SkillView res;
+
+            res = new SkillView()
+            {
+                Id = s.Id,
+                RelatedId = s.RelatedId,
+                Category = s.Category,
+                Code = s.Code,
+                Name = s.Name,
+                DefaultExpertise = s.DefaultExpertise,
+                IsVersioned = false,
+                ParentTechnologyId = -1,
+                Versions = null,
+            };
+
+            return (res);
+        }
+
+        private SkillVersionView getFromTechnologyVersion(TechnologyVersion tv, int parentId)
+        {
+            SkillVersionView res;
+
+            res = new SkillVersionView()
+            {
+                Id = tv.Id,
+                RelatedId = tv.RelatedId,
+                ParentTechnologyId = parentId,
+                DefaultExpertise = tv.DefaultExpertise,
+                Version = tv.Version,
+                StartDate = tv.StartDate,
+            };
+
+            return (res);
+        }
+
+        public int Id { get; set; }
+
+        public int RelatedId { get; set; }
+
+        public int ParentTechnologyId { get; set; }
+
+        public decimal DefaultExpertise { get; set; }
+
+        public string Version { get; set; }
+
+        public DateTime StartDate { get; set; }
         #endregion
 
         #region Skill
@@ -447,6 +569,11 @@ namespace matching_learning.common.Repositories
                 DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
                 IsVersioned = dr.Db2Bool("IsVersioned"),
             };
+
+            if (res.IsVersioned)
+            {
+                res.Versions = GetTechnologyVersionsByTechnologyId(res.Id);
+            }
 
             return (res);
         }
@@ -1368,7 +1495,7 @@ namespace matching_learning.common.Repositories
             cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
         }
         #endregion
-        
+
         #region Save TechnologyVersion
         public int SaveTechnologyVersion(TechnologyVersion tv)
         {
