@@ -1,7 +1,4 @@
-export enum SkillCategory {
-    Technology = 1,
-    TechnologyVersion,
-    TechnologyRole,
-    SoftSkill,
-    BusinessArea,
+export interface SkillCategory {
+    id: number;
+    name: string;
 }

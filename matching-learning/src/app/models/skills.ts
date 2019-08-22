@@ -1,8 +1,8 @@
 import { SkillCategory } from './skill-category';
-export class Skills {
+export interface Skills {
     id: number;
     relatedId: number;
-    category: number;
+    category: SkillCategory;
     code: string;
     name: string;
     defaultExpertise: number;
