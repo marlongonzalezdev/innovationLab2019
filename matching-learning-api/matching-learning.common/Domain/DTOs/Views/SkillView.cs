@@ -20,13 +20,9 @@ namespace matching_learning.common.Domain.DTOs.Views
 
         public bool IsVersioned { get; set; } // Only for Technology
 
-        public int ParentTechnologyId { get; set; } // Only for TechnologyRole and TechnologyVersion
+        public int ParentTechnologyId { get; set; } // Only for TechnologyRole
 
-        public string Version { get; set; } // Only for TechnologyVersion
-
-        public DateTime StartDate { get; set; } // Only for TechnologyVersion
-
-        public List<SkillView> Versions { get; set; }  // Only for Technology
+        public List<SkillVersionView> Versions { get; set; }  // Only for Technology
 
         public int CompareTo(SkillView other)
         {

@@ -55,6 +55,8 @@ namespace matching_learning.common.Repositories
 
         int SaveTechnology(Technology tech);
 
+        int SaveTechnologyVersion(TechnologyVersion tv);
+
         int SaveTechnologyRole(TechnologyRole tr);
         #endregion
     }

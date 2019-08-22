@@ -15,7 +15,7 @@ namespace matching_learning.common.Repositories
         #region SkillView
         public List<SkillView> GetSkillViews()
         {
-            return(null);
+            return (null);
         }
 
         public SkillView GetSkillViewById(int id)
@@ -28,7 +28,7 @@ namespace matching_learning.common.Repositories
             return (null);
         }
         #endregion
-        
+
         #region Skill
         public List<Skill> GetSkills()
         {
@@ -568,6 +568,95 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
+        {
+            var res = new List<TechnologyVersion>();
+
+            var parent = GetTechnologyById(id);
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [TV].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[DefaultExpertise]," +
+                        "       [TV].[Version]," +
+                        "       [TV].[StartDate] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
+                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
+                        "WHERE [S].[Id] = @skillId";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@skillId", SqlDbType.Int);
+                    cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code)
+        {
+            var res = new List<TechnologyVersion>();
+
+            var parent = GetTechnologyByCode(code);
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [TV].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[DefaultExpertise]," +
+                        "       [TV].[Version]," +
+                        "       [TV].[StartDate] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
+                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
+                        "WHERE [T].[Code] = @code";
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+                    cmd.Parameters["@code"].Value = code;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
+                    }
+                }
+            }
+
+            return (res);
+        }
         #endregion
 
         #region TechnologyRole
@@ -674,98 +763,6 @@ namespace matching_learning.common.Repositories
         }
         #endregion
 
-        #region TechnologyVersion others
-        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
-        {
-            var res = new List<TechnologyVersion>();
-
-            var parent = GetTechnologyById(id);
-
-            var query = "SELECT [S].[Id] AS [SkillId], " +
-                        "       [TV].[Id] AS [RelatedId]," +
-                        "       @category AS [Category]," +
-                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
-                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
-                        "       [TV].[DefaultExpertise]," +
-                        "       [TV].[Version]," +
-                        "       [TV].[StartDate] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
-                        "WHERE [S].[Id] = @skillId";
-
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
-            {
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.Add("@skillId", SqlDbType.Int);
-                    cmd.Parameters["@skillId"].Value = id;
-
-                    cmd.Parameters.Add("@category", SqlDbType.Int);
-                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
-
-                    conn.Open();
-
-                    var dt = new DataTable();
-                    var da = new SqlDataAdapter(cmd);
-                    da.Fill(dt);
-
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
-                    }
-                }
-            }
-
-            return (res);
-        }
-
-        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code)
-        {
-            var res = new List<TechnologyVersion>();
-
-            var parent = GetTechnologyByCode(code);
-
-            var query = "SELECT [S].[Id] AS [SkillId], " +
-                        "       [TV].[Id] AS [RelatedId]," +
-                        "       @category AS [Category]," +
-                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
-                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
-                        "       [TV].[DefaultExpertise]," +
-                        "       [TV].[Version]," +
-                        "       [TV].[StartDate] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
-                        "WHERE [T].[Code] = @code";
-
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
-            {
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                    cmd.Parameters["@code"].Value = code;
-
-                    cmd.Parameters.Add("@category", SqlDbType.Int);
-                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
-
-                    conn.Open();
-
-                    var dt = new DataTable();
-                    var da = new SqlDataAdapter(cmd);
-                    da.Fill(dt);
-
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
-                    }
-                }
-            }
-
-            return (res);
-        }
-        #endregion
-
         #region SkillEstimatedExpertise
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertises()
         {
@@ -816,8 +813,6 @@ namespace matching_learning.common.Repositories
         private SkillEstimatedExpertise getSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)
         {
             SkillEstimatedExpertise res = null;
-
-            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
 
             res = new SkillEstimatedExpertise()
             {
@@ -1371,6 +1366,160 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
             cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
+        }
+        #endregion
+        
+        #region Save TechnologyVersion
+        public int SaveTechnologyVersion(TechnologyVersion tv)
+        {
+            int res;
+
+            if (tv.Id < 0)
+            {
+                res = insertTechnologyVersion(tv);
+            }
+            else
+            {
+                res = updateTechnologyVersion(tv);
+            }
+
+            return (res);
+        }
+
+        private int insertTechnologyVersion(TechnologyVersion tv)
+        {
+            int res;
+
+            var stmntTech = "INSERT INTO [dbo].[TechnologyVersion] (" +
+                          " [TechnologyId]," +
+                          " [DefaultExpertise]," +
+                          " [Version]," +
+                          " [StartDate] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @technologyId," +
+                          "  @defaultExpertise," +
+                          "  @version," +
+                          "  @startDate" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [TechnologyId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[TechnologyVersion]" +
+                             "WHERE [TechnologyId] = @technologyId" +
+                             "  AND [Version] = @version";
+
+            var stmntId = "SELECT @@IDENTITY";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmdSS = new SqlCommand(stmntTech, conn))
+                    {
+                        cmdSS.Transaction = trans;
+
+                        setParamsTechnologyVersion(cmdSS, tv);
+
+                        cmdSS.ExecuteNonQuery();
+                    }
+
+                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+                    {
+                        cmdSkill.Transaction = trans;
+
+                        cmdSkill.Parameters.Add("@technologyId", SqlDbType.Int);
+                        cmdSkill.Parameters["@technologyId"].Value = tv.ParentTechnology.Id;
+
+                        cmdSkill.Parameters.Add("@version", SqlDbType.NVarChar);
+                        cmdSkill.Parameters["@version"].Value = tv.Version;
+
+                        cmdSkill.ExecuteNonQuery();
+                    }
+
+                    using (var cmdId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdId.Transaction = trans;
+
+                        var id = cmdId.ExecuteScalar();
+
+                        res = Convert.ToInt32(id);
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+
+            return (res);
+        }
+
+        private int updateTechnologyVersion(TechnologyVersion tv)
+        {
+            var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
+                        "SET [TechnologyId] = @technologyId," +
+                        "    [DefaultExpertise] = @defaultExpertise," +
+                        "    [Version] = @version," +
+                        "    [StartDate] = @startDate " +
+                        "WHERE [Id] = @tvId";
+
+            SqlTransaction trans;
+
+            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            {
+                conn.Open();
+                trans = conn.BeginTransaction();
+
+                try
+                {
+                    using (var cmd = new SqlCommand(stmnt, conn))
+                    {
+                        cmd.Transaction = trans;
+
+                        cmd.Parameters.Add("@tvId", SqlDbType.Int);
+                        cmd.Parameters["@tvId"].Value = tv.RelatedId;
+
+                        setParamsTechnologyVersion(cmd, tv);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+
+            return (tv.Id);
+        }
+
+        private void setParamsTechnologyVersion(SqlCommand cmd, TechnologyVersion tv)
+        {
+            cmd.Parameters.Add("@technologyId", SqlDbType.Int);
+            cmd.Parameters["@technologyId"].Value = tv.ParentTechnology.Id;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tv.DefaultExpertise;
+
+            cmd.Parameters.Add("@version", SqlDbType.NVarChar);
+            cmd.Parameters["@version"].Value = tv.Version;
+
+            cmd.Parameters.Add("@startDate", SqlDbType.DateTime);
+            cmd.Parameters["@startDate"].Value = tv.StartDate;
         }
         #endregion
 
