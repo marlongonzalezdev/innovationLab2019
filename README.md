@@ -6,8 +6,8 @@ This repo contains the sources and docs for the Innovation Lab 2019 @ Endava.
 The UI is an angular project inside *matching-learning* directory.
 
   1. Install Node.js version 10.9.0 or later. To get Node.js, go to [nodejs.org](https://nodejs.org/en/).
-  2. Open cmd and run npm install.
-  3. In the same cmd run ng serve --open to run the angular app.
+  2. Open cmd withing UI project folder and run npm install.
+  3. Launch the server by using the CLI command ng serve, with the --open option.
   
 ### API Project
 The API is a dotnet core 2.2 web api inside *matching-learning-api* directory.
