@@ -39,6 +39,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getDeliveryUnitFromDataRow(dr, region));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);

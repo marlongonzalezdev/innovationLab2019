@@ -60,7 +60,7 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetSkillViewById(id);
         }
-#endregion
+        #endregion
 
         #region Skill
         /// <summary>
@@ -84,7 +84,7 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetSkills().OrderBy(s => s.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
         }
-        
+
         /// <summary>
         /// Gets the skill with the specified skill identifier.
         /// </summary>

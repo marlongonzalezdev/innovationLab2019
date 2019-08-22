@@ -177,6 +177,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getSkillFromDataRow(dr));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -213,6 +215,8 @@ namespace matching_learning.common.Repositories
                         res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -249,6 +253,8 @@ namespace matching_learning.common.Repositories
                         res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -308,6 +314,8 @@ namespace matching_learning.common.Repositories
                         res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -348,6 +356,8 @@ namespace matching_learning.common.Repositories
                         res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -407,6 +417,8 @@ namespace matching_learning.common.Repositories
                         res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -447,6 +459,8 @@ namespace matching_learning.common.Repositories
                         res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -507,6 +521,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -548,6 +564,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -617,6 +635,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -661,6 +681,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -689,8 +711,6 @@ namespace matching_learning.common.Repositories
         public List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
         {
             var res = new List<TechnologyVersion>();
-
-            var parent = GetTechnologyById(id);
 
             var query = "SELECT [S].[Id] AS [SkillId], " +
                         "       [TV].[Id] AS [RelatedId]," +
@@ -727,6 +747,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getTechnologyVersionFromDataRow(dr));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -771,6 +793,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getTechnologyVersionFromDataRow(dr));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -814,6 +838,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -855,6 +881,8 @@ namespace matching_learning.common.Repositories
                         res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -912,6 +940,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -975,6 +1005,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1013,6 +1045,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1223,6 +1257,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1264,6 +1300,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (ba.Id);
@@ -1367,6 +1405,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1408,6 +1448,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (ss.Id);
@@ -1514,6 +1556,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1556,6 +1600,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (tech.Id);
@@ -1668,6 +1714,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1710,6 +1758,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (tv.Id);
@@ -1821,6 +1871,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -1866,6 +1918,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (tr.Id);

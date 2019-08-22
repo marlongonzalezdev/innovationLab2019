@@ -59,6 +59,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getCandidateFromDataRow(dr, deliveryUnit, rolesHistory));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -108,6 +110,8 @@ namespace matching_learning.common.Repositories
                         res = getCandidateFromDataRow(dr, deliveryUnit, candidateRolesHistory);
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -176,6 +180,8 @@ namespace matching_learning.common.Repositories
                         res[candidateId].Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -217,6 +223,8 @@ namespace matching_learning.common.Repositories
                         res.Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
+
+                conn.Close();
             }
 
             return (res);
@@ -363,6 +371,8 @@ namespace matching_learning.common.Repositories
                     trans.Rollback();
                     throw;
                 }
+
+                conn.Close();
             }
 
             return (ca.Id);

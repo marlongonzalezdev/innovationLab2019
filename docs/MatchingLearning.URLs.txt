@@ -131,6 +131,19 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 ----------------------------------------------------------------------------------------------------
 
 GET
+https://localhost:44374/Skills/SkillViews
+http://localhost:62460/Skills/SkillViews
+
+GET
+https://localhost:44374/Skills/SkillViewsPaginated?pageIdx=5&pageSize=10
+http://localhost:62460/Skills/SkillViewsPaginated?pageIdx=5&pageSize=10
+
+GET
+https://localhost:44374/Skills/SkillView?id=5
+http://localhost:62460/Skills/SkillView?id=5
+
+
+GET
 https://localhost:44374/Skills/Skills
 http://localhost:62460/Skills/Skills
 
@@ -141,6 +154,7 @@ http://localhost:62460/Skills/SkillsPaginated?pageIdx=5&pageSize=10
 GET
 https://localhost:44374/Skills/Skill?id=5
 http://localhost:62460/Skills/Skill?id=5
+
 
 GET
 https://localhost:44374/Skills/BusinessArea?id=102
