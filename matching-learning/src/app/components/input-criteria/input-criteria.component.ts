@@ -1,8 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Project } from '../../shared/models/project';
 import { SkillServiceBase } from '../skills/services/skill-service-base';
 import { Skill } from 'src/app/shared/models/skill';
 import {SkillsFilter} from '../../shared/models/skillsFilter';
+import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
+import { Observable } from 'rxjs';
+import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
+import { MatSelect, MatCheckbox } from '@angular/material';
 
 @Component({
   selector: 'app-input-criteria',
@@ -10,15 +14,20 @@ import {SkillsFilter} from '../../shared/models/skillsFilter';
   styleUrls: ['./input-criteria.component.css']
 })
 export class InputCriteriaComponent implements OnInit {
+  @ViewChild('bench', {static: true}) bench;
+
   project: Project;
   display: boolean;
   skillList: Skill[] = [];
 
   selectedSkill: Skill;
+  selectedDeliveryUnit: DeliveryUnit;
   expectedScore: number;
   showContent: boolean;
 
-  constructor(private skillService: SkillServiceBase) {
+  deliveryUnits: Observable<DeliveryUnit[]>;
+
+  constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService) {
       this.project = {
       name: 'Example',
       max: 10,
@@ -33,6 +42,7 @@ export class InputCriteriaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
 
     this.skillService.getSkills()
       .subscribe ( response => {
