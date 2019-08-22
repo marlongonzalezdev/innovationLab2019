@@ -94,6 +94,7 @@ CREATE TABLE [dbo].[Candidate] (
   [DocNumber]                     NVARCHAR(64) NULL,
   [EmployeeNumber]                INT NULL,
   [InBench]                       BIT NOT NULL,
+  [Picture]                       NVARCHAR(1024) NULL,
 
   CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED ([Id] ASC),
   
