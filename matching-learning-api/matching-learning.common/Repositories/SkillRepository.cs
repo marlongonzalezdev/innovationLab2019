@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Domain.DTOs.Views;
 using matching_learning.common.Domain.Enums;
 
 namespace matching_learning.common.Repositories
@@ -11,6 +12,23 @@ namespace matching_learning.common.Repositories
     public class SkillRepository : ISkillRepository
     {
         #region Retrieve
+        #region SkillView
+        public List<SkillView> GetSkillViews()
+        {
+            return(null);
+        }
+
+        public SkillView GetSkillViewById(int id)
+        {
+            return (null);
+        }
+
+        public SkillView GetSkillViewByCode(string code)
+        {
+            return (null);
+        }
+        #endregion
+        
         #region Skill
         public List<Skill> GetSkills()
         {
@@ -910,6 +928,13 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save
+        #region Save SkillView
+        public int SaveSkillView(SkillView sv)
+        {
+            return (0);
+        }
+        #endregion
+
         #region Save BusinessArea
         public int SaveBusinessArea(BusinessArea ba)
         {
