@@ -1,6 +1,7 @@
-import { Skill } from '../../../models/skill';
+
 
 import { Observable } from 'rxjs';
+import { Skill } from 'src/app/shared/models/skill';
 
 export abstract class SkillServiceBase {
     public baseUrl: string;

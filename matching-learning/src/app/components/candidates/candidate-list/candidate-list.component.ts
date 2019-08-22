@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CandidateService } from 'src/app/shared/services/candidate.service';
-import { Candidate } from 'src/app/shared/candidate';
+import { Candidate } from 'src/app/shared/models/candidate';
 import { Observable } from 'rxjs';
 
 @Component({

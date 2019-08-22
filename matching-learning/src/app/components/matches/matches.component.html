@@ -30,13 +30,13 @@
         <ng-container matColumnDef="userName">
             <th mat-header-cell *matHeaderCellDef> <b>Candidate</b> </th>
             <td mat-cell *matCellDef="let element" [class.selected]="element === selectedMatch"
-                (click)="onSelect(element)"> {{element.name}} {{element.lastName}}</td>
+                (click)="onSelect(element)"> {{element.candidate.firstName}} {{element.candidate.lastName}}</td>
         </ng-container>
 
         <!-- MatchingScore Column -->
         <ng-container matColumnDef="matchingScore">
             <th mat-header-cell *matHeaderCellDef> <b>Score</b></th>
-            <td mat-cell *matCellDef="let element"> {{element.matchingScore}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.ranking}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -46,6 +46,6 @@
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
 
-<div class="photo__container">
+<!--<div class="photo__container">
     <app-user-details [user]="selectedMatch"></app-user-details>
-</div>
+</div>-->

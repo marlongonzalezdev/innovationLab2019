@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { RelationType } from '../relationType';
+import { RelationType } from '../models/relationType';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
