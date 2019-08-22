@@ -11,6 +11,7 @@ namespace matching_learning.common.Repositories
     public class SkillRepository : ISkillRepository
     {
         #region Retrieve
+        #region Skill
         public List<Skill> GetSkills()
         {
             var res = new List<Skill>();
@@ -35,15 +36,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        });
+                        res.Add(getSkillFromDataRow(dr));
                     }
                 }
             }
@@ -79,17 +72,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -125,17 +108,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -143,6 +116,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private Skill getSkillFromDataRow(DataRow dr)
+        {
+            Skill res = null;
+
+            res = new Skill()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region BusinessArea
         public BusinessArea GetBusinessAreaById(int id)
         {
             BusinessArea res = null;
@@ -175,17 +167,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new BusinessArea()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -225,17 +207,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new BusinessArea()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -243,6 +215,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private BusinessArea getBusinessAreaFromDataRow(DataRow dr)
+        {
+            BusinessArea res = null;
+
+            res = new BusinessArea()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region SoftSkill
         public SoftSkill GetSoftSkillById(int id)
         {
             SoftSkill res = null;
@@ -275,17 +266,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new SoftSkill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -325,17 +306,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new SoftSkill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -343,6 +314,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private SoftSkill getSoftSkillFromDataRow(DataRow dr)
+        {
+            SoftSkill res = null;
+
+            res = new SoftSkill()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region Technology
         public Technology GetTechnologyById(int id)
         {
             Technology res = null;
@@ -376,18 +366,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Technology()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            IsVersioned = dr.Db2Bool("IsVersioned")
-                        };
+                        res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -428,18 +407,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Technology()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            IsVersioned = dr.Db2Bool("IsVersioned")
-                        };
+                        res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -447,6 +415,26 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private Technology getTechnologyFromDataRow(DataRow dr)
+        {
+            Technology res = null;
+
+            res = new Technology()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                IsVersioned = dr.Db2Bool("IsVersioned"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region TechnologyVersion
         public TechnologyVersion GetTechnologyVersionById(int id)
         {
             TechnologyVersion res = null;
@@ -483,22 +471,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        };
+                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -542,22 +515,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        };
+                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -565,6 +523,36 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr)
+        {
+            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
+            return (getTechnologyVersionFromDataRow(dr, parent));
+        }
+
+        private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr, Technology parent)
+        {
+            TechnologyVersion res = null;
+
+            res = new TechnologyVersion()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                ParentTechnology = parent,
+                Version = dr.Db2String("Version"),
+                StartDate = dr.Db2DateTime("StartDate"),
+            };
+
+            return (res);
+        }
+
+        #endregion
+
+        #region TechnologyRole
         public TechnologyRole GetTechnologyRoleById(int id)
         {
             TechnologyRole res = null;
@@ -598,20 +586,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyRole()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                        };
+                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -652,20 +627,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyRole()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                        };
+                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -673,6 +635,28 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private TechnologyRole getTechnologyRoleFromDataRow(DataRow dr)
+        {
+            TechnologyRole res = null;
+
+            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
+            res = new TechnologyRole()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                ParentTechnology = parent,
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region TechnologyVersion others
         public List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
         {
             var res = new List<TechnologyVersion>();
@@ -710,18 +694,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        });
+                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
                     }
                 }
             }
@@ -766,25 +739,16 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        });
+                        res.Add(getTechnologyVersionFromDataRow(dr, parent));
                     }
                 }
             }
 
             return (res);
         }
+        #endregion
 
+        #region SkillEstimatedExpertise
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertises()
         {
             var res = new List<SkillEstimatedExpertise>();
@@ -814,13 +778,7 @@ namespace matching_learning.common.Repositories
                         var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
                         var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
 
-                        res.Add(new SkillEstimatedExpertise()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Candidate = candidate,
-                            Skill = skill,
-                            Expertise = dr.Db2Decimal("Expertise"),
-                        });
+                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
                     }
                 }
             }
@@ -833,10 +791,29 @@ namespace matching_learning.common.Repositories
             var all = GetSkillEstimatedExpertises();
 
             var res = all.Where(see => ids.Contains(see.Skill.Id));
-               
+
             return (res.ToList());
         }
 
+        private SkillEstimatedExpertise getSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)
+        {
+            SkillEstimatedExpertise res = null;
+
+            var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
+
+            res = new SkillEstimatedExpertise()
+            {
+                Id = dr.Db2Int("Id"),
+                Candidate = candidate,
+                Skill = skill,
+                Expertise = dr.Db2Decimal("Expertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region SkillRelation
         public List<SkillRelation> GetSkillRelationsBySkillId(int id)
         {
             var res = new List<SkillRelation>();
@@ -866,16 +843,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
-
-                        res.Add(new SkillRelation()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Skill = mainSkill,
-                            AssociatedSkill = associatedSkill,
-                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
-                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
-                        });
+                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
@@ -913,22 +881,32 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
-
-                        res.Add(new SkillRelation()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Skill = mainSkill,
-                            AssociatedSkill = associatedSkill,
-                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
-                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
-                        });
+                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
 
             return (res);
         }
+
+        private SkillRelation getSkillRelationFromDataRow(DataRow dr, Skill mainSkill)
+        {
+            SkillRelation res = null;
+
+            var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
+
+            res = new SkillRelation()
+            {
+                Id = dr.Db2Int("Id"),
+                Skill = mainSkill,
+                AssociatedSkill = associatedSkill,
+                RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
+                ConversionFactor = dr.Db2Decimal("ConversionFactor"),
+            };
+
+            return (res);
+        }
+        #endregion
         #endregion
 
         #region Save
@@ -972,7 +950,7 @@ namespace matching_learning.common.Repositories
                              "WHERE [Code] = @code";
 
             var stmntId = "SELECT @@IDENTITY";
-            
+
             SqlTransaction trans;
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -986,14 +964,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdBA.Transaction = trans;
 
-                        cmdBA.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdBA.Parameters["@code"].Value = ba.Code;
-
-                        cmdBA.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdBA.Parameters["@name"].Value = ba.Name;
-
-                        cmdBA.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdBA.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+                        setParamsBusinessArea(cmdBA, ba);
 
                         cmdBA.ExecuteNonQuery();
                     }
@@ -1053,14 +1024,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@baId", SqlDbType.Int);
                         cmd.Parameters["@baId"].Value = ba.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = ba.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = ba.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+                        setParamsBusinessArea(cmd, ba);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1075,6 +1039,18 @@ namespace matching_learning.common.Repositories
             }
 
             return (ba.Id);
+        }
+
+        private void setParamsBusinessArea(SqlCommand cmd, BusinessArea ba)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = ba.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = ba.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
         }
         #endregion
 
@@ -1132,14 +1108,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdSS.Transaction = trans;
 
-                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@code"].Value = ss.Code;
-
-                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@name"].Value = ss.Name;
-
-                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdSS.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+                        setParamsSoftSkill(cmdSS, ss);
 
                         cmdSS.ExecuteNonQuery();
                     }
@@ -1199,14 +1168,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@ssId", SqlDbType.Int);
                         cmd.Parameters["@ssId"].Value = ss.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = ss.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = ss.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+                        setParamsSoftSkill(cmd, ss);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1221,6 +1183,19 @@ namespace matching_learning.common.Repositories
             }
 
             return (ss.Id);
+        }
+
+
+        private void setParamsSoftSkill(SqlCommand cmd, SoftSkill ss)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = ss.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = ss.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
         }
         #endregion
 
@@ -1280,17 +1255,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdSS.Transaction = trans;
 
-                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@code"].Value = tech.Code;
-
-                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@name"].Value = tech.Name;
-
-                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdSS.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
-
-                        cmdSS.Parameters.Add("@isVersioned", SqlDbType.Bit);
-                        cmdSS.Parameters["@isVersioned"].Value = tech.IsVersioned;
+                        setParamsTechnology(cmdSS, tech);
 
                         cmdSS.ExecuteNonQuery();
                     }
@@ -1351,17 +1316,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@techId", SqlDbType.Int);
                         cmd.Parameters["@techId"].Value = tech.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = tech.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = tech.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
-
-                        cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
-                        cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
+                        setParamsTechnology(cmd, tech);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1376,6 +1331,21 @@ namespace matching_learning.common.Repositories
             }
 
             return (tech.Id);
+        }
+
+        private void setParamsTechnology(SqlCommand cmd, Technology tech)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = tech.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = tech.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
+
+            cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
+            cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
         }
         #endregion
 
@@ -1421,7 +1391,7 @@ namespace matching_learning.common.Repositories
                              "WHERE [Code] = @code";
 
             var stmntId = "SELECT @@IDENTITY";
-            
+
             SqlTransaction trans;
 
             using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
@@ -1438,14 +1408,7 @@ namespace matching_learning.common.Repositories
                         cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
                         cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
 
-                        cmdTR.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdTR.Parameters["@code"].Value = tr.Code;
-
-                        cmdTR.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdTR.Parameters["@name"].Value = tr.Name;
-
-                        cmdTR.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdTR.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
+                        setParamsTechnologyRole(cmdTR, tr);
 
                         cmdTR.ExecuteNonQuery();
                     }
@@ -1509,14 +1472,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@ssId", SqlDbType.Int);
                         cmd.Parameters["@ssId"].Value = tr.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = tr.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = tr.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
+                        setParamsTechnologyRole(cmd, tr);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1531,6 +1487,18 @@ namespace matching_learning.common.Repositories
             }
 
             return (tr.Id);
+        }
+
+        private void setParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = tr.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = tr.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
         }
         #endregion
         #endregion

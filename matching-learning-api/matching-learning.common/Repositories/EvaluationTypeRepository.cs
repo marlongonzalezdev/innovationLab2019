@@ -29,13 +29,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new EvaluationType()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            Priority = dr.Db2Decimal("Priority"),
-                        });
+                        res.Add(getEvaluationTypeFromDataRow(dr));
                     }
                 }
             }
@@ -69,15 +63,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new EvaluationType()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            Priority = dr.Db2Decimal("Priority"),
-                        };
+                        res = getEvaluationTypeFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -111,18 +97,26 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new EvaluationType()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            Priority = dr.Db2Decimal("Priority"),
-                        };
+                        res = getEvaluationTypeFromDataRow(dt.Rows[0]);
                     }
                 }
             }
+
+            return (res);
+        }
+
+
+        private EvaluationType getEvaluationTypeFromDataRow(DataRow dr)
+        {
+            EvaluationType res = null;
+
+            res = new EvaluationType()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                Priority = dr.Db2Decimal("Priority"),
+            };
 
             return (res);
         }
