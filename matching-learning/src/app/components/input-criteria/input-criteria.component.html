@@ -1,4 +1,4 @@
-<!-- <form class="skills-form"> -->
+
 <div class="container">
   <div class="skills__selector">
     <mat-form-field>
@@ -21,18 +21,7 @@
     </button>
   </div>
 </div>
-<!-- </form> -->
-<div class="container">
-  <mat-form-field>
-    <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit">
-      <mat-option>None</mat-option>
-      <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
-        <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
-      </ng-container>
-    </mat-select>
-  </mat-form-field>
-  <mat-checkbox [(ngModel)] ="project.inBenchFilter">Only bench</mat-checkbox>
-</div>
+
 <div class="matches-container">
   <div class="selected-skills__container">
     <ul class="list-group skills__selected">
@@ -44,5 +33,18 @@
       </li>
     </ul>
   </div>
+
+  <div class="container">
+    <mat-form-field>
+      <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit">
+        <mat-option>None</mat-option>
+        <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
+          <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox [(ngModel)] ="project.inBenchFilter">Only bench</mat-checkbox>
+  </div>
+
   <app-matches [project]="project" [display]="display" [showContent]="showContent"></app-matches>
 </div>
