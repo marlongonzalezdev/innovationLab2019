@@ -7,7 +7,7 @@ The UI is an angular project inside *matching-learning* directory.
 
   1. Install Node.js version 10.9.0 or later. To get Node.js, go to [nodejs.org](https://nodejs.org/en/).
   2. Open cmd withing UI project folder and run npm install.
-  3. Launch the server by using the CLI command ng serve, with the --open option.
+  3. Launch the server by using the CLI command ng serve, with the --open option. ng serve --open
   
 ### API Project
 The API is a dotnet core 2.2 web api inside *matching-learning-api* directory.
