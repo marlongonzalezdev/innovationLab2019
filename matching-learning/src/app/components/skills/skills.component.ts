@@ -1,8 +1,9 @@
 import { Skill } from '../../shared/models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import { SkillServiceBase } from './services/skill-servie-base';
+
 import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import {SkillServiceBase} from './services/skill-service-base';
 
 @Component({
     selector: 'app-skills',

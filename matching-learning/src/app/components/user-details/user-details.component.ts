@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Match } from '../../shared/match';
+import {Match} from '../../shared/models/match';
+
 
 @Component({
   selector: 'app-user-details',

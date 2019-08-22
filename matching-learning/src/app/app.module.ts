@@ -13,7 +13,7 @@ import { MenuComponent } from './components/menu/menu.component';
 
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
-import { SkillServiceBase } from './components/skills/services/skill-servie-base';
+
 import { SkillService } from './components/skills/services/skill.service';
 import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
@@ -27,6 +27,7 @@ import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 import { NotificationService } from './shared/services/notification.service';
 import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
+import {SkillServiceBase} from './components/skills/services/skill-service-base';
 
 
 @NgModule({

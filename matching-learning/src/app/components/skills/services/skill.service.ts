@@ -2,9 +2,10 @@ import { HttpErrorHandler, HandleError } from './../../../http-error-handler.ser
 import { Skill } from '../../../shared/models/skill';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SkillServiceBase } from './skill-servie-base';
+
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import {SkillServiceBase} from './skill-service-base';
 
 const httpOptions = {
   headers: new HttpHeaders({
