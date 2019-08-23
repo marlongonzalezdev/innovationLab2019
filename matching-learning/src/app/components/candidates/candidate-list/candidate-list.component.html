@@ -33,6 +33,10 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Bench</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.inBench ? "&#10004;" : " "}}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="isActive">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Is Active</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.isActive ? "&#10004;" : " "}}</mat-cell>
+    </ng-container>
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
       <mat-cell *matCellDef="let row">
