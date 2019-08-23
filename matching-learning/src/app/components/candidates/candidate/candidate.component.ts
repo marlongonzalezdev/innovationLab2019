@@ -47,7 +47,9 @@ export class CandidateComponent implements OnInit {
         docType: null,
         docNumber: null,
         employeeNumber: 43245,
-        inBench: true
+        inBench: true,
+        picture: null,
+        isActive: true
     };
 
       this.service.addCandidate(candidate).subscribe(

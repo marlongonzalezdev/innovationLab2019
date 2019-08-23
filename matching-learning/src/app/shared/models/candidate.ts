@@ -16,4 +16,6 @@ export interface Candidate {
   employeeNumber: number;
   rolesHistory: RolesHistory[];
   activeRole: ActiveRole;
+  picture: string;
+  isActive: boolean;
 }
