@@ -30,6 +30,7 @@ import { CandidateListComponent } from './components/candidates/candidate-list/c
 import {SkillServiceBase} from './components/skills/services/skill-service-base';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
