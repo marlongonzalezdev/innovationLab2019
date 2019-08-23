@@ -1,40 +1,10 @@
 ﻿using System;
 using System.Data;
-using Microsoft.Extensions.Configuration;
 
 namespace matching_learning.common.Repositories
 {
     public static class DBCommon
     {
-        public static string GetConnectionString()
-        {
-            string projectPath = AppDomain.CurrentDomain.BaseDirectory.Split(new String[] { @"bin\" }, StringSplitOptions.None)[0];
-
-#if LOCAL_DEFAULT_INSTANCE
-  IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("appsettings.LocalDefaultInstance.json", optional: false)
-                .Build();
-#elif LOCAL_SQLEXPRESS_INSTANCE
-  IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("appsettings.LocalSqlExpressInstance.json", optional: false)
-                .Build();
-#else
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-#endif
-
-            string connectionString = configuration.GetConnectionString("IL2019");
-
-            return (connectionString);
-        }
-
 #region DB conversions
 #region string conversions
         public static string Db2String(this DataRow dr, string columnName)

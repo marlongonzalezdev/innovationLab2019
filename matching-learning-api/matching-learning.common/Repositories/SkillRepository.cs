@@ -6,6 +6,7 @@ using System.Linq;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Domain.DTOs.Views;
 using matching_learning.common.Domain.Enums;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -176,7 +177,7 @@ namespace matching_learning.common.Repositories
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -209,7 +210,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[SkillId] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -245,7 +246,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -301,7 +302,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -341,7 +342,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [BA].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -400,7 +401,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -440,7 +441,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
                         "WHERE [SK].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -500,7 +501,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -541,7 +542,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
                         "WHERE [T].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -612,7 +613,7 @@ namespace matching_learning.common.Repositories
                          "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
                          "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -656,7 +657,7 @@ namespace matching_learning.common.Repositories
                          "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
                          "WHERE [T].[Code] + ' v' + [TV].[Version] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -720,7 +721,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -763,7 +764,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -804,7 +805,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [TR].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -864,7 +865,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -906,7 +907,7 @@ namespace matching_learning.common.Repositories
             var candidates = candidateRepository.GetCandidates();
             var skills = GetSkills();
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -969,7 +970,7 @@ namespace matching_learning.common.Repositories
 
             var mainSkill = GetSkillById(id);
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -1007,7 +1008,7 @@ namespace matching_learning.common.Repositories
 
             var mainSkill = GetSkillByCode(code);
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -1202,7 +1203,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1259,7 +1260,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1346,7 +1347,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1403,7 +1404,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1493,7 +1494,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1553,7 +1554,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
