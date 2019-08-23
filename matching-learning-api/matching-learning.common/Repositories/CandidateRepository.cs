@@ -122,12 +122,13 @@ namespace matching_learning.common.Repositories
 
             string picturePath;
             string picturesRootFolder = Config.GetPicturesRootFolder();
-            string defaultPicture = Config.GetDefaultPicture();
-
+            
             var pictureUser = dr.Db2String("Picture");
 
             if (string.IsNullOrEmpty(pictureUser))
             {
+                string defaultPicture = Config.GetDefaultPicture();
+
                 picturePath = picturesRootFolder + defaultPicture;
             }
             else

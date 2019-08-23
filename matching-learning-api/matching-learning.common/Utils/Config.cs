@@ -6,6 +6,7 @@ namespace matching_learning.common.Utils
     public static class Config
     {
         private static IConfigurationRoot _configuration;
+        private static IConfigurationSection _appSettings;
 
         static Config()
         {
@@ -31,6 +32,7 @@ namespace matching_learning.common.Utils
 
 #endif
             _configuration = configuration;
+            _appSettings = _configuration.GetSection("AppSettings");
         }
 
         public static string GetConnectionString()
@@ -40,12 +42,12 @@ namespace matching_learning.common.Utils
 
         public static string GetPicturesRootFolder()
         {
-            return ("file:///C:/MatchingLearning/CandidatePictures/");
+            return (_appSettings["PicturesRootFolder"]);
         }
 
         public static string GetDefaultPicture()
         {
-            return ("DefaultPicture.jpg");
+            return (_appSettings["DefaultPicture"]);
         }
     }
 }
