@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -32,7 +33,7 @@ namespace matching_learning.common.Repositories
                         "       [E].[Notes] " +
                         "FROM [dbo].[Evaluation] AS [E]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -80,7 +81,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[Evaluation] AS [E] " +
                         "WHERE [E].[Id] = @id";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -184,7 +185,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -235,7 +236,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();

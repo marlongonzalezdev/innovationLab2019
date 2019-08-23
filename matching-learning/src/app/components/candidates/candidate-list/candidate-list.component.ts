@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { CandidateService } from 'src/app/shared/services/candidate.service';
-import { Candidate } from 'src/app/shared/models/candidate';
-import { Observable } from 'rxjs';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {CandidateService} from 'src/app/shared/services/candidate.service';
+import {Candidate} from 'src/app/shared/models/candidate';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 
 @Component({
   selector: 'app-candidate-list',
@@ -10,15 +10,33 @@ import { Observable } from 'rxjs';
 })
 export class CandidateListComponent implements OnInit {
 
-  candidates: Observable<Candidate[]>;
+  candidates: Candidate[] = [];
+  dataSource: any;
+  displayedColumns: string[] = ['name', 'picture', 'deliveryUnit', 'activeRole', 'inBench', 'isActive', 'actions'];
+  searchKey: string;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  constructor(private candidateService: CandidateService) { }
-
-  ngOnInit() {
-    this.getCandidates();
+  constructor(private candidateService: CandidateService) {
   }
 
-  getCandidates() {
-    this.candidates = this.candidateService.getCandidates();
+  onSearchClear() {
+    this.searchKey = '';
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    this.dataSource.filter = this.searchKey.trim().toLowerCase();
+  }
+
+  ngOnInit() {
+
+    this.candidateService.getCandidates()
+      .subscribe(response => {
+        this.candidates = response;
+        this.dataSource = new MatTableDataSource<Candidate>(this.candidates);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
   }
 }

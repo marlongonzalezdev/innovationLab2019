@@ -19,12 +19,12 @@ export class CandidateComponent implements OnInit {
   deliveryUnits: Observable<DeliveryUnit[]>;
   relationTypes: Observable<RelationType[]>;
 
-  constructor(private service: CandidateService, private  deliveryUnitService: DeliveryUnitService,
+  constructor(private service: CandidateService, private deliveryUnitService: DeliveryUnitService,
               private relationTypeService: RelationTypeService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
-    this.relationTypes =  this.relationTypeService.getRelationTypes();
+    this.relationTypes = this.relationTypeService.getRelationTypes();
   }
 
   onClear() {
@@ -47,8 +47,10 @@ export class CandidateComponent implements OnInit {
         docType: null,
         docNumber: null,
         employeeNumber: 43245,
-        inBench: true
-    };
+        inBench: true,
+        picture: null,
+        isActive: true
+      };
 
       this.service.addCandidate(candidate).subscribe(
         candidate => {
@@ -56,7 +58,7 @@ export class CandidateComponent implements OnInit {
           this.onClear();
           console.log(candidate);
         }
-    );
+      );
     }
   }
 }

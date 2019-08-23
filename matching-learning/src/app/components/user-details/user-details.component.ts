@@ -8,7 +8,7 @@ import {Match} from '../../shared/models/match';
   styleUrls: ['./user-details.component.css']
 })
 export class UserDetailsComponent implements OnInit {
-  @Input() user: Match;
+  @Input() match: Match;
   constructor() { }
 
   ngOnInit() {

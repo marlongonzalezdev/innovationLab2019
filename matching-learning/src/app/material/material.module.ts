@@ -23,7 +23,8 @@ import * as Material from '@angular/material';
     Material.MatCheckboxModule,
     Material.MatFormFieldModule,
     Material.MatSnackBarModule,
-    Material.MatSliderModule
+    Material.MatSliderModule,
+    Material.MatSortModule
   ],
   exports: [
     Material.MatSelectModule,
@@ -43,7 +44,8 @@ import * as Material from '@angular/material';
     Material.MatCheckboxModule,
     Material.MatFormFieldModule,
     Material.MatSnackBarModule,
-    Material.MatSliderModule
+    Material.MatSliderModule,
+    Material.MatSortModule
   ]
 })
 export class MaterialModule { }

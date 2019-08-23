@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Domain.Enums;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -30,10 +31,12 @@ namespace matching_learning.common.Repositories
                         "       [C].[DocType]," +
                         "       [C].[DocNumber]," +
                         "       [C].[EmployeeNumber]," +
-                        "       [C].[InBench] " +
+                        "       [C].[InBench]," +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
                         "FROM [dbo].[Candidate] AS [C]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -82,11 +85,13 @@ namespace matching_learning.common.Repositories
                         "       [C].[DocType]," +
                         "       [C].[DocNumber]," +
                         "       [C].[EmployeeNumber]," +
-                        "       [C].[InBench] " +
+                        "       [C].[InBench]," +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
                         "FROM [dbo].[Candidate] AS [C] " +
                         "WHERE [C].[Id] = @id";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -117,6 +122,22 @@ namespace matching_learning.common.Repositories
         {
             Candidate res = null;
 
+            string picturePath;
+            string picturesRootFolder = Config.GetPicturesRootFolder();
+            
+            var pictureUser = dr.Db2String("Picture");
+
+            if (string.IsNullOrEmpty(pictureUser))
+            {
+                string defaultPicture = Config.GetDefaultPicture();
+
+                picturePath = picturesRootFolder + defaultPicture;
+            }
+            else
+            {
+                picturePath = picturesRootFolder + pictureUser;
+            }
+
             res = new Candidate()
             {
                 Id = dr.Db2Int("Id"),
@@ -129,6 +150,8 @@ namespace matching_learning.common.Repositories
                 DocNumber = dr.Db2String("DocNumber"),
                 EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
                 InBench = dr.Db2Bool("InBench"),
+                Picture = picturePath,
+                IsActive = dr.Db2Bool("IsActive"),
                 RolesHistory = candidateRolesHistory,
             };
 
@@ -152,7 +175,7 @@ namespace matching_learning.common.Repositories
                         "       [CCR].[EndDate] " +
                         "FROM [dbo].[CandidateCandidateRole] AS [CCR]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -197,7 +220,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[CandidateCandidateRole] AS [CCR] " +
                         "WHERE [CCR].[CandidateId] = @candidateId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -268,7 +291,9 @@ namespace matching_learning.common.Repositories
                           " [DocType]," +
                           " [DocNumber]," +
                           " [EmployeeNumber]," +
-                          " [InBench] " +
+                          " [InBench]," +
+                          " [Picture]," +
+                          " [IsActive] " +
                           ") " +
                           "VALUES (" +
                           "  @deliveryUnitId," +
@@ -278,14 +303,16 @@ namespace matching_learning.common.Repositories
                           "  @docType," +
                           "  @docNumber," +
                           "  @employeeNumber," +
-                          "  @inBench" +
+                          "  @inBench," +
+                          "  @picture," +
+                          "  @isActive" +
                           ")";
 
             var stmntId = "SELECT @@IDENTITY";
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -332,12 +359,14 @@ namespace matching_learning.common.Repositories
                         "    [DocType] = @docType," +
                         "    [DocNumber] = @docNumber," +
                         "    [EmployeeNumber] = @employeeNumber," +
-                        "    [InBench] = @inBench " +
+                        "    [InBench] = @inBench," +
+                        "    [Picture] = @picture," +
+                        "    [IsActive] = @isActive " +
                         "WHERE [Id] = @id";
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -417,6 +446,20 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@inBench", SqlDbType.Bit);
             cmd.Parameters["@inBench"].Value = ca.InBench;
+
+            cmd.Parameters.Add("@picture", SqlDbType.NVarChar);
+            cmd.Parameters["@picture"].IsNullable = true;
+            if (!string.IsNullOrEmpty(ca.Picture))
+            {
+                cmd.Parameters["@picture"].Value = ca.Picture;
+            }
+            else
+            {
+                cmd.Parameters["@picture"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@isActive", SqlDbType.Bit);
+            cmd.Parameters["@isActive"].Value = ca.IsActive;
         }
         #endregion
     }

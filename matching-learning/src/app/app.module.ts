@@ -1,5 +1,4 @@
-import { SkillService } from './shared/services/skill.service';
-import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
+import { SkillService } from './shared/services/skill.service'
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // <-- NgModel lives here
@@ -28,6 +27,8 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 import { NotificationService } from './shared/services/notification.service';
 import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
 import { SkillServiceBase } from './shared/services/skill-service-base';
+import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
+
 
 
 

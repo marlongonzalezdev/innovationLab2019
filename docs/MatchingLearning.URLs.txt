@@ -1,4 +1,7 @@
 ----------------------------------------------------------------------------------------------------
+<img src="assets/candidatePictures/MVD/Pablo_Queirolo.jpg" alt="Pablo Queirolo" width="100px" height="133px">
+<td mat-cell *matCellDef="let element"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
+<td mat-cell *matCellDef="let element"> {{element.ranking | percent:'2.1-1'}} </td>
 ----------------------------------------------------------------------------------------------------
 
 GET
@@ -142,6 +145,8 @@ GET
 https://localhost:44374/Skills/SkillView?id=5
 http://localhost:62460/Skills/SkillView?id=5
 
+https://localhost:44374/Skills/SkillView?id=15
+http://localhost:62460/Skills/SkillView?id=15
 
 GET
 https://localhost:44374/Skills/Skills
@@ -178,11 +183,6 @@ http://localhost:62460/Skills/TechnologyRole?id=84
 
 
 GET
-https://localhost:44374/Skills/TechnologyVersionsByTechnology?id=10
-http://localhost:62460/Skills/TechnologyVersionsByTechnology?id=10
-
-
-GET
 https://localhost:44374/Skills/SkillEstimatedExpertises
 http://localhost:62460/Skills/SkillEstimatedExpertises
 
@@ -210,6 +210,35 @@ https://localhost:44374/Skills/SkillRelationsBySkillId?id=80
 http://localhost:62460/Skills/SkillRelationsBySkillId?id=80
 
 ----------------------------------------------------------------------------------------------------
+
+POST
+https://localhost:44374/Skills/SaveSkillView
+http://localhost:62460/Skills/SaveSkillView
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":5,"relatedId":2,"category":1,"code":"AZURE","name":"Microsoft Azure","defaultExpertise":0.4321,"isVersioned":false,"parentTechnologyId":-1,"versions":null}
+
+{"id":-1,"relatedId":-1,"category":1,"code":"TEST","name":"TEST","defaultExpertise":0.1234,"isVersioned":false,"parentTechnologyId":-1,"versions":null}
+
+
+
+
+{"id":15,"relatedId":5,"category":1,"code":"SQLServer","name":"MS SQL Server","defaultExpertise":0.2000,"isVersioned":true,"parentTechnologyId":-1,"versions":[{"id":15,"relatedId":4,"parentTechnologyId":15,"defaultExpertise":0.3333,"version":"2000","startDate":"2000-01-01T00:00:00"},{"id":15,"relatedId":5,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2005","startDate":"2005-11-01T00:00:00"},{"id":15,"relatedId":6,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2008","startDate":"2008-08-06T00:00:00"},{"id":15,"relatedId":7,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2008 R2","startDate":"2010-04-21T00:00:00"},{"id":15,"relatedId":8,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2012","startDate":"2012-03-06T00:00:00"},{"id":15,"relatedId":9,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2014","startDate":"2014-03-18T00:00:00"},{"id":15,"relatedId":10,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2016","startDate":"2016-06-01T00:00:00"},{"id":15,"relatedId":11,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2017","startDate":"2017-10-02T00:00:00"},{"id":15,"relatedId":1,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"6.0","startDate":"1995-01-01T00:00:00"},{"id":15,"relatedId":2,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"6.5","startDate":"1996-01-01T00:00:00"},{"id":15,"relatedId":3,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"7.0","startDate":"1998-01-01T00:00:00"}]}
+
+
+
+
+
 
 POST
 https://localhost:44374/Skills/SaveBusinessArea
@@ -265,24 +294,6 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 {"id":-1,"relatedId":-1,"category":1,"code":"TECHTST1","name":"TECH Test 01","defaultExpertise":0.1234,"isVersioned":true}
 
 
-
-POST
-https://localhost:44374/Skills/SaveTechnologyRole
-http://localhost:62460/Skills/SaveTechnologyRole
-
-Host: localhost:62460
-Connection: keep-alive
-Content-Length: 99
-Origin: http://localhost:4200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
-Content-Type: application/json
-Accept: application/json
-Referer: http://localhost:4200/
-Accept-Encoding: gzip, deflate, br
-Accept-Language: en,es-ES;q=0.9,es;q=0.8
-
-{"id":-1,"relatedId":-1,"category":3,"code":"TRTST1","name":"TR Test 01","defaultExpertise":0.1234,"parentTechnology":null}
-
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
@@ -305,6 +316,8 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 {"max":10,"SkillsFilter":[{"requiredSkillId":25,"weight":0.1,"minAccepted":null},{"requiredSkillId":65,"weight":0.9,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
 
+{"max":10,"SkillsFilter":[{"requiredSkillId":57,"weight":0.7,"minAccepted":null},{"requiredSkillId":25,"weight":0.3,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
+C# 7.3 - Sql 2017
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------

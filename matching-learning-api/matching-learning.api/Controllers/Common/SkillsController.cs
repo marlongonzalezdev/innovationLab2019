@@ -151,18 +151,7 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetTechnologyRoleById(id);
         }
-
-        /// <summary>
-        /// Gets the technology versions with the specified parent technology skill identifier.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns></returns>
-        [Route("TechnologyVersionsByTechnology")]
-        public ActionResult<List<TechnologyVersion>> GetTechnologyVersionsByTechnologyId(int id)
-        {
-            return _skillRepository.GetTechnologyVersionsByTechnologyId(id);
-        }
-
+        
         /// <summary>
         /// Gets the skill estimated expertise.
         /// </summary>
@@ -274,26 +263,6 @@ namespace matching_learning.api.Controllers.Common
             var id = _skillRepository.SaveTechnology(tech);
 
             var res = _skillRepository.GetTechnologyById(id);
-
-            return Ok(res);
-        }
-
-        /// <summary>
-        /// Save the technology role object in the database (insert/update).
-        /// </summary>
-        /// <param name="tr"></param>
-        [HttpPost("SaveTechnologyRole")]
-        [ProducesResponseType(typeof(TechnologyRole), 200)]
-        [Consumes("application/json")]
-        [ProducesResponseType(500)]
-        public IActionResult SaveTechnologyRole([FromBody] TechnologyRole tr)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var id = _skillRepository.SaveTechnologyRole(tr);
-
-            var res = _skillRepository.GetTechnologyRoleById(id);
 
             return Ok(res);
         }

@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -17,7 +18,7 @@ namespace matching_learning.common.Repositories
                         "       [ET].[Priority] " +
                         "FROM [dbo].[EvaluationType] AS [ET]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -48,7 +49,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[EvaluationType] AS [ET] " +
                         "WHERE [ET].[Id] = @id";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -82,7 +83,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[EvaluationType] AS [ET] " +
                         "WHERE [ET].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
