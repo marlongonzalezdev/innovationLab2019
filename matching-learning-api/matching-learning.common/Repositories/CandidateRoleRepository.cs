@@ -28,12 +28,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new CandidateRole()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        });
+                        res.Add(getCandidateRoleFromDataRow(dr));
                     }
                 }
             }
@@ -44,10 +39,6 @@ namespace matching_learning.common.Repositories
         public CandidateRole GetCandidateRoleById(int id)
         {
             CandidateRole res = null;
-
-            var deliveryUnitsRepository = new DeliveryUnitRepository();
-
-            var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
 
             var query = "SELECT [CR].[Id], " +
                         "       [CR].[Code]," +
@@ -70,17 +61,24 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new CandidateRole()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        };
+                        res = getCandidateRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
+
+            return (res);
+        }
+        
+        private CandidateRole getCandidateRoleFromDataRow(DataRow dr)
+        {
+            CandidateRole res = null;
+
+            res = new CandidateRole()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+            };
 
             return (res);
         }

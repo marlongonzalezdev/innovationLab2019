@@ -1,3 +1,4 @@
+import { SkillService } from './shared/services/skill.service';
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -13,8 +14,7 @@ import { MenuComponent } from './components/menu/menu.component';
 
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
-import { SkillServiceBase } from './components/skills/services/skill-servie-base';
-import { SkillService } from './components/skills/services/skill.service';
+
 import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
 import { CandidatesComponent } from './components/candidates/candidates.component';
@@ -25,6 +25,10 @@ import {MaterialModule} from './material/material.module';
 import { RelationTypeService } from './shared/services/relation-type.service';
 import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
+import { NotificationService } from './shared/services/notification.service';
+import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
+import { SkillServiceBase } from './shared/services/skill-service-base';
+
 
 
 @NgModule({
@@ -37,7 +41,8 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
     InputCriteriaComponent,
     CandidatesComponent,
     SkilldetailsComponent,
-    CandidateComponent
+    CandidateComponent,
+    CandidateListComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +59,8 @@ import { DeliveryUnitService } from './shared/services/delivery-unit.service';
     { provide: SkillServiceBase, useClass: SkillService },
     CandidateService,
     DeliveryUnitService,
-    RelationTypeService
+    RelationTypeService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

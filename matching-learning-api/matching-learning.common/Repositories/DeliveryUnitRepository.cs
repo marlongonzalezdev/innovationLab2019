@@ -34,17 +34,28 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new DeliveryUnit()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            RegionId = dr.Db2Int("RegionId"),
-                            Region = regions.FirstOrDefault(r => r.Id == dr.Db2Int("RegionId")),
-                        });
+                        var region = regions.FirstOrDefault(r => r.Id == dr.Db2Int("RegionId"));
+
+                        res.Add(getDeliveryUnitFromDataRow(dr, region));
                     }
                 }
             }
+
+            return (res);
+        }
+
+        private DeliveryUnit getDeliveryUnitFromDataRow(DataRow dr, Region region)
+        {
+            DeliveryUnit res = null;
+
+            res = new DeliveryUnit()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                RegionId = dr.Db2Int("RegionId"),
+                Region = region,
+            };
 
             return (res);
         }

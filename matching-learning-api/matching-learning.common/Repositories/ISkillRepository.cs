@@ -1,15 +1,25 @@
 ﻿using System.Collections.Generic;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Domain.DTOs.Views;
 
 namespace matching_learning.common.Repositories
 {
     public interface ISkillRepository
     {
         #region Retrieve
+        #region SkillView
+        List<SkillView> GetSkillViews();
+
+        SkillView GetSkillViewById(int id);
+        SkillView GetSkillViewByCode(string code);
+        #endregion
+
+        #region Skill
         List<Skill> GetSkills();
 
         Skill GetSkillById(int id);
         Skill GetSkillByCode(string code);
+        #endregion
 
         BusinessArea GetBusinessAreaById(int id);
         BusinessArea GetBusinessAreaByCode(string code);
@@ -37,11 +47,15 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save
+        int SaveSkillView(SkillView sv);
+
         int SaveBusinessArea(BusinessArea ba);
 
         int SaveSoftSkill(SoftSkill ss);
 
         int SaveTechnology(Technology tech);
+
+        int SaveTechnologyVersion(TechnologyVersion tv);
 
         int SaveTechnologyRole(TechnologyRole tr);
         #endregion

@@ -10,6 +10,8 @@ namespace matching_learning.common.Repositories
 {
     public class CandidateRepository : ICandidateRepository
     {
+        #region Retrieve
+        #region Candicate
         public List<Candidate> GetCandidates()
         {
             var res = new List<Candidate>();
@@ -52,20 +54,9 @@ namespace matching_learning.common.Repositories
                             rolesHistory = candidateRolesHistory[candidateId];
                         }
 
-                        res.Add(new Candidate()
-                        {
-                            Id = candidateId,
-                            DeliveryUnitId = dr.Db2Int("DeliveryUnitId"),
-                            DeliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId")),
-                            RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
-                            FirstName = dr.Db2String("FirstName"),
-                            LastName = dr.Db2String("LastName"),
-                            DocType = (DocumentType?)dr.Db2NullableInt("DocType"),
-                            DocNumber = dr.Db2String("DocNumber"),
-                            EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
-                            InBench = dr.Db2Bool("InBench"),
-                            RolesHistory = rolesHistory,
-                        });
+                        var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
+
+                        res.Add(getCandidateFromDataRow(dr, deliveryUnit, rolesHistory));
                     }
                 }
             }
@@ -112,26 +103,38 @@ namespace matching_learning.common.Repositories
                     {
                         DataRow dr = dt.Rows[0];
 
-                        res = new Candidate()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            DeliveryUnitId = dr.Db2Int("DeliveryUnitId"),
-                            DeliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId")),
-                            RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
-                            FirstName = dr.Db2String("FirstName"),
-                            LastName = dr.Db2String("LastName"),
-                            DocType = (DocumentType?)dr.Db2NullableInt("DocType"),
-                            DocNumber = dr.Db2String("DocNumber"),
-                            EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
-                            InBench = dr.Db2Bool("InBench"),
-                            RolesHistory = candidateRolesHistory,
-                        };
+                        var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
+
+                        res = getCandidateFromDataRow(dr, deliveryUnit, candidateRolesHistory);
                     }
                 }
             }
 
             return (res);
         }
+
+        private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, List<CandidateRoleHistory> candidateRolesHistory)
+        {
+            Candidate res = null;
+
+            res = new Candidate()
+            {
+                Id = dr.Db2Int("Id"),
+                DeliveryUnitId = dr.Db2Int("DeliveryUnitId"),
+                DeliveryUnit = deliveryUnit,
+                RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
+                FirstName = dr.Db2String("FirstName"),
+                LastName = dr.Db2String("LastName"),
+                DocType = (DocumentType?)dr.Db2NullableInt("DocType"),
+                DocNumber = dr.Db2String("DocNumber"),
+                EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
+                InBench = dr.Db2Bool("InBench"),
+                RolesHistory = candidateRolesHistory,
+            };
+
+            return (res);
+        }
+        #endregion
 
         #region Candicate Role History
         private Dictionary<int, List<CandidateRoleHistory>> getCandidatesRoleHistory()
@@ -168,13 +171,9 @@ namespace matching_learning.common.Repositories
                             res.Add(candidateId, new List<CandidateRoleHistory>());
                         }
 
-                        res[candidateId].Add(new CandidateRoleHistory()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Role = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId")),
-                            Start = dr.Db2DateTime("StartDate"),
-                            End = dr.Db2NullableDateTime("EndDate"),
-                        });
+                        var candidateRole = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId"));
+
+                        res[candidateId].Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
             }
@@ -213,19 +212,31 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new CandidateRoleHistory()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Role = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId")),
-                            Start = dr.Db2DateTime("StartDate"),
-                            End = dr.Db2NullableDateTime("EndDate"),
-                        });
+                        var candidateRole = candidateRoles.FirstOrDefault(du => du.Id == dr.Db2Int("CandidateRoleId"));
+
+                        res.Add(getCandidateRoleHistoryFromDataRow(dr, candidateRole));
                     }
                 }
             }
 
             return (res);
         }
+
+        private CandidateRoleHistory getCandidateRoleHistoryFromDataRow(DataRow dr, CandidateRole candidateRole)
+        {
+            CandidateRoleHistory res = null;
+
+            res = new CandidateRoleHistory()
+            {
+                Id = dr.Db2Int("Id"),
+                Role = candidateRole,
+                Start = dr.Db2DateTime("StartDate"),
+                End = dr.Db2NullableDateTime("EndDate"),
+            };
+
+            return (res);
+        }
+        #endregion
         #endregion
 
         #region Save
@@ -285,53 +296,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdIns.Transaction = trans;
 
-                        cmdIns.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
-                        cmdIns.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
-
-                        cmdIns.Parameters.Add("@relationType", SqlDbType.Int);
-                        cmdIns.Parameters["@relationType"].Value = ca.RelationType;
-
-                        cmdIns.Parameters.Add("@firstName", SqlDbType.NVarChar);
-                        cmdIns.Parameters["@firstName"].Value = ca.FirstName;
-
-                        cmdIns.Parameters.Add("@lastName", SqlDbType.NVarChar);
-                        cmdIns.Parameters["@lastName"].Value = ca.LastName;
-
-                        cmdIns.Parameters.Add("@docType", SqlDbType.Int);
-                        cmdIns.Parameters["@docType"].IsNullable = true;
-                        if (ca.DocType.HasValue)
-                        {
-                            cmdIns.Parameters["@docType"].Value = ca.DocType.Value;
-                        }
-                        else
-                        {
-                            cmdIns.Parameters["@docType"].Value = DBNull.Value;
-                        }
-
-                        cmdIns.Parameters.Add("@docNumber", SqlDbType.NVarChar);
-                        cmdIns.Parameters["@docNumber"].IsNullable = true;
-                        if (!string.IsNullOrEmpty(ca.DocNumber))
-                        {
-                            cmdIns.Parameters["@docNumber"].Value = ca.DocNumber;
-                        }
-                        else
-                        {
-                            cmdIns.Parameters["@docNumber"].Value = DBNull.Value;
-                        }
-
-                        cmdIns.Parameters.Add("@employeeNumber", SqlDbType.Int);
-                        cmdIns.Parameters["@employeeNumber"].IsNullable = true;
-                        if (ca.EmployeeNumber.HasValue)
-                        {
-                            cmdIns.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
-                        }
-                        else
-                        {
-                            cmdIns.Parameters["@employeeNumber"].Value = DBNull.Value;
-                        }
-
-                        cmdIns.Parameters.Add("@inBench", SqlDbType.Bit);
-                        cmdIns.Parameters["@inBench"].Value = ca.InBench;
+                        setParamsCandidate(cmdIns, ca);
 
                         cmdIns.ExecuteNonQuery();
                     }
@@ -341,7 +306,7 @@ namespace matching_learning.common.Repositories
                         cmdId.Transaction = trans;
 
                         var id = cmdId.ExecuteScalar();
-                        
+
                         res = Convert.ToInt32(id);
                     }
 
@@ -386,53 +351,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@id", SqlDbType.Int);
                         cmd.Parameters["@id"].Value = ca.Id;
 
-                        cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
-                        cmd.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
-
-                        cmd.Parameters.Add("@relationType", SqlDbType.Int);
-                        cmd.Parameters["@relationType"].Value = ca.RelationType;
-
-                        cmd.Parameters.Add("@firstName", SqlDbType.NVarChar);
-                        cmd.Parameters["@firstName"].Value = ca.FirstName;
-
-                        cmd.Parameters.Add("@lastName", SqlDbType.NVarChar);
-                        cmd.Parameters["@lastName"].Value = ca.LastName;
-
-                        cmd.Parameters.Add("@docType", SqlDbType.Int);
-                        cmd.Parameters["@docType"].IsNullable = true;
-                        if (ca.DocType.HasValue)
-                        {
-                            cmd.Parameters["@docType"].Value = ca.DocType.Value;
-                        }
-                        else
-                        {
-                            cmd.Parameters["@docType"].Value = DBNull.Value;
-                        }
-
-                        cmd.Parameters.Add("@docNumber", SqlDbType.NVarChar);
-                        cmd.Parameters["@docNumber"].IsNullable = true;
-                        if (!string.IsNullOrEmpty(ca.DocNumber))
-                        {
-                            cmd.Parameters["@docNumber"].Value = ca.DocNumber;
-                        }
-                        else
-                        {
-                            cmd.Parameters["@docNumber"].Value = DBNull.Value;
-                        }
-
-                        cmd.Parameters.Add("@employeeNumber", SqlDbType.Int);
-                        cmd.Parameters["@employeeNumber"].IsNullable = true;
-                        if (ca.EmployeeNumber.HasValue)
-                        {
-                            cmd.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
-                        }
-                        else
-                        {
-                            cmd.Parameters["@employeeNumber"].Value = DBNull.Value;
-                        }
-
-                        cmd.Parameters.Add("@inBench", SqlDbType.Bit);
-                        cmd.Parameters["@inBench"].Value = ca.InBench;
+                        setParamsCandidate(cmd, ca);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -447,6 +366,57 @@ namespace matching_learning.common.Repositories
             }
 
             return (ca.Id);
+        }
+
+        private void setParamsCandidate(SqlCommand cmd, Candidate ca)
+        {
+            cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
+            cmd.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
+
+            cmd.Parameters.Add("@relationType", SqlDbType.Int);
+            cmd.Parameters["@relationType"].Value = ca.RelationType;
+
+            cmd.Parameters.Add("@firstName", SqlDbType.NVarChar);
+            cmd.Parameters["@firstName"].Value = ca.FirstName;
+
+            cmd.Parameters.Add("@lastName", SqlDbType.NVarChar);
+            cmd.Parameters["@lastName"].Value = ca.LastName;
+
+            cmd.Parameters.Add("@docType", SqlDbType.Int);
+            cmd.Parameters["@docType"].IsNullable = true;
+            if (ca.DocType.HasValue)
+            {
+                cmd.Parameters["@docType"].Value = ca.DocType.Value;
+            }
+            else
+            {
+                cmd.Parameters["@docType"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@docNumber", SqlDbType.NVarChar);
+            cmd.Parameters["@docNumber"].IsNullable = true;
+            if (!string.IsNullOrEmpty(ca.DocNumber))
+            {
+                cmd.Parameters["@docNumber"].Value = ca.DocNumber;
+            }
+            else
+            {
+                cmd.Parameters["@docNumber"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@employeeNumber", SqlDbType.Int);
+            cmd.Parameters["@employeeNumber"].IsNullable = true;
+            if (ca.EmployeeNumber.HasValue)
+            {
+                cmd.Parameters["@employeeNumber"].Value = ca.EmployeeNumber.Value;
+            }
+            else
+            {
+                cmd.Parameters["@employeeNumber"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@inBench", SqlDbType.Bit);
+            cmd.Parameters["@inBench"].Value = ca.InBench;
         }
         #endregion
     }

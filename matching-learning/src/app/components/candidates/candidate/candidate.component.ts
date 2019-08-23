@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { RelationType } from 'src/app/shared/relationType';
-import { Candidate } from 'src/app/shared/candidate';
-import { DeliveryUnit } from 'src/app/shared/deliveryUnit';
+import { RelationType } from 'src/app/shared/models/relationType';
+import { Candidate } from 'src/app/shared/models/candidate';
+import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
 import { CandidateService } from 'src/app/shared/services/candidate.service';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { RelationTypeService } from 'src/app/shared/services/relation-type.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-candidate',
@@ -15,11 +16,11 @@ import { RelationTypeService } from 'src/app/shared/services/relation-type.servi
 })
 export class CandidateComponent implements OnInit {
 
-  deliveryUnits: Observable<RelationType[]>;
-  relationTypes: Observable<DeliveryUnit[]>;
+  deliveryUnits: Observable<DeliveryUnit[]>;
+  relationTypes: Observable<RelationType[]>;
 
   constructor(private service: CandidateService, private  deliveryUnitService: DeliveryUnitService,
-              private relationTypeService: RelationTypeService) { }
+              private relationTypeService: RelationTypeService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
@@ -33,18 +34,29 @@ export class CandidateComponent implements OnInit {
 
   onSubmit() {
     if (this.service.form.valid) {
-      this.onClear();
       const candidate: Candidate = {
-        id: this.service.form.controls.$key.value,
-        name: this.service.form.controls.name.value,
-        lastName: this.service.form.controls.lastName.value,
-        du: this.service.form.controls.du.value,
-        relationType: this.service.form.controls.relationType.value,
-        email: this.service.form.controls.email.value,
-        isInternal: this.service.form.controls.isInternal.value,
-        isInBench: this.service.form.controls.isInBench.value
+        id: -1,
+        deliveryUnitId: 13,
+        deliveryUnit: null,
+        relationType: 1,
+        firstName: 'Juan',
+        lastName: 'Perez',
+        name: '',
+        activeRole: null,
+        rolesHistory: null,
+        docType: null,
+        docNumber: null,
+        employeeNumber: 43245,
+        inBench: true
     };
-      this.service.addCandidateWithObservable(candidate);
+
+      this.service.addCandidate(candidate).subscribe(
+        candidate => {
+          this.notificationService.sucess('Candidate added successfully.');
+          this.onClear();
+          console.log(candidate);
+        }
+    );
     }
   }
 }

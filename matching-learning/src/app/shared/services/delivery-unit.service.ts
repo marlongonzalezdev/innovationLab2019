@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { DeliveryUnit } from '../deliveryUnit';
+import { DeliveryUnit } from '../models/deliveryUnit';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

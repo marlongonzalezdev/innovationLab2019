@@ -28,15 +28,25 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new Region()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        });
+                        res.Add(getRegionFromDataRow(dr));
                     }
                 }
             }
+
+            return (res);
+        }
+
+
+        private Region getRegionFromDataRow(DataRow dr)
+        {
+            Region res = null;
+
+            res = new Region()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+            };
 
             return (res);
         }
