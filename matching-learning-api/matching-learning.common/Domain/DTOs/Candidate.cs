@@ -37,6 +37,8 @@ namespace matching_learning.common.Domain.DTOs
 
         public string Picture { get; set; }
 
+        public bool IsActive { get; set; }
+
         public List<CandidateRoleHistory> RolesHistory { get; set; }
 
         public CandidateRole ActiveRole

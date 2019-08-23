@@ -32,7 +32,8 @@ namespace matching_learning.common.Repositories
                         "       [C].[DocNumber]," +
                         "       [C].[EmployeeNumber]," +
                         "       [C].[InBench]," +
-                        "       [C].[Picture] " +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
                         "FROM [dbo].[Candidate] AS [C]";
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
@@ -85,7 +86,8 @@ namespace matching_learning.common.Repositories
                         "       [C].[DocNumber]," +
                         "       [C].[EmployeeNumber]," +
                         "       [C].[InBench]," +
-                        "       [C].[Picture] " +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
                         "FROM [dbo].[Candidate] AS [C] " +
                         "WHERE [C].[Id] = @id";
 
@@ -149,6 +151,7 @@ namespace matching_learning.common.Repositories
                 EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
                 InBench = dr.Db2Bool("InBench"),
                 Picture = picturePath,
+                IsActive = dr.Db2Bool("IsActive"),
                 RolesHistory = candidateRolesHistory,
             };
 
@@ -289,7 +292,8 @@ namespace matching_learning.common.Repositories
                           " [DocNumber]," +
                           " [EmployeeNumber]," +
                           " [InBench]," +
-                          " [Picture] " +
+                          " [Picture]," +
+                          " [IsActive] " +
                           ") " +
                           "VALUES (" +
                           "  @deliveryUnitId," +
@@ -300,7 +304,8 @@ namespace matching_learning.common.Repositories
                           "  @docNumber," +
                           "  @employeeNumber," +
                           "  @inBench," +
-                          "  @picture" +
+                          "  @picture," +
+                          "  @isActive" +
                           ")";
 
             var stmntId = "SELECT @@IDENTITY";
@@ -355,7 +360,8 @@ namespace matching_learning.common.Repositories
                         "    [DocNumber] = @docNumber," +
                         "    [EmployeeNumber] = @employeeNumber," +
                         "    [InBench] = @inBench," +
-                        "    [Picture] = @picture " +
+                        "    [Picture] = @picture," +
+                        "    [IsActive] = @isActive " +
                         "WHERE [Id] = @id";
 
             SqlTransaction trans;
@@ -451,6 +457,9 @@ namespace matching_learning.common.Repositories
             {
                 cmd.Parameters["@picture"].Value = DBNull.Value;
             }
+
+            cmd.Parameters.Add("@isActive", SqlDbType.Bit);
+            cmd.Parameters["@isActive"].Value = ca.IsActive;
         }
         #endregion
     }

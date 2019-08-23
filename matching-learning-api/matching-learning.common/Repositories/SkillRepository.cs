@@ -901,7 +901,9 @@ namespace matching_learning.common.Repositories
                         "       [SEE].[CandidateId], " +
                         "       [SEE].[SkillId], " +
                         "       [SEE].[Expertise] " +
-                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]";
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]" +
+                        "INNER JOIN [dbo].[candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
+                        "                                   AND [C].[IsActive] = 1";
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
