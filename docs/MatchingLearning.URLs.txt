@@ -1,6 +1,7 @@
 ----------------------------------------------------------------------------------------------------
 <img src="assets/candidatePictures/MVD/Pablo_Queirolo.jpg" alt="Pablo Queirolo" width="100px" height="133px">
-&#10004;
+<td mat-cell *matCellDef="let element"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
+<td mat-cell *matCellDef="let element"> {{element.ranking | percent:'2.1-1'}} </td>
 ----------------------------------------------------------------------------------------------------
 
 GET

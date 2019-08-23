@@ -55,7 +55,7 @@ export class InputCriteriaComponent implements OnInit {
     if (!this.project.skillsFilter.find(s => s.requiredSkillId === skill.id)) {
         const skillsFilter: SkillsFilter = {
         requiredSkillId: skill.id,
-        weight: this.expectedScore / 100,
+        weight: this.expectedScore,
         minAccepted: null,
         name: skill.name
       };
