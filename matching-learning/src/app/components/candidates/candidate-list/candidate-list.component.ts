@@ -12,7 +12,7 @@ export class CandidateListComponent implements OnInit {
 
   candidates: Candidate[] = [];
   dataSource: any;
-  displayedColumns: string[] = ['name', 'deliveryUnit', 'activeRole', 'inBench', 'actions'];
+  displayedColumns: string[] = ['name', 'picture', 'deliveryUnit', 'activeRole', 'inBench', 'actions'];
   searchKey: string;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;

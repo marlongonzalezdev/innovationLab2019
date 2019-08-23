@@ -17,6 +17,10 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Full Name</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
     </ng-container>
+     <ng-container matColumnDef="picture">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Image</mat-header-cell>
+      <mat-cell *matCellDef="let element"><img src="{{element.picture}}" alt="{{element.name}}" width="50px" height="62px"></mat-cell>
+    </ng-container>
     <ng-container matColumnDef="deliveryUnit">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Unit</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.deliveryUnit.name}}</mat-cell>

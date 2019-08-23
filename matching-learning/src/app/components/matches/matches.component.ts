@@ -14,7 +14,7 @@ import { MatchService } from 'src/app/match.service';
 })
 export class MatchesComponent implements OnInit {
 
-    displayedColumns: string[] = ['userName', 'matchingScore'];
+    displayedColumns: string[] = ['userName', 'deliveryUnit', 'role', 'inBench', 'matchingScore'];
     dataSource: any;
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 

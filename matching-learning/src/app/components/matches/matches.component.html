@@ -26,17 +26,35 @@
 <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource">
 
-        <!-- User Column -->
+        <!-- Candidate Name Column -->
         <ng-container matColumnDef="userName">
             <th mat-header-cell *matHeaderCellDef> <b>Candidate</b> </th>
             <td mat-cell *matCellDef="let element" [class.selected]="element === selectedMatch"
-                (click)="onSelect(element)"> {{element.candidate.firstName}} {{element.candidate.lastName}}</td>
+                (click)="onSelect(element)"> {{element.candidate.name}}</td>
+        </ng-container>
+
+        <!-- Delivery Unit Column -->
+        <ng-container matColumnDef="deliveryUnit">
+            <th mat-header-cell *matHeaderCellDef> <b>Delivery Unit</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.candidate.deliveryUnit.name}}</td>
+        </ng-container>
+
+        <!-- Role Column -->
+        <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef> <b>Role</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.candidate.activeRole.name}}</td>
+        </ng-container>
+
+        <!-- In Bench Column -->
+        <ng-container matColumnDef="inBench">
+            <th mat-header-cell *matHeaderCellDef> <b>In Bench</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
         </ng-container>
 
         <!-- MatchingScore Column -->
         <ng-container matColumnDef="matchingScore">
             <th mat-header-cell *matHeaderCellDef> <b>Score</b></th>
-            <td mat-cell *matCellDef="let element"> {{element.ranking}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.ranking*100}}% </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

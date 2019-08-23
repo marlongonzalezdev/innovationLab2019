@@ -315,6 +315,8 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 {"max":10,"SkillsFilter":[{"requiredSkillId":25,"weight":0.1,"minAccepted":null},{"requiredSkillId":65,"weight":0.9,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
 
+{"max":10,"SkillsFilter":[{"requiredSkillId":57,"weight":0.7,"minAccepted":null},{"requiredSkillId":25,"weight":0.3,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
+C# 7.3 - Sql 2017
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
