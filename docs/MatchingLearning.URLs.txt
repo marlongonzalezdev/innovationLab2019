@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
-<img class="endava_footer" src="assets/candidatePictures/DefaultPicture.jpg" alt="Endava">
+<img src="assets/candidatePictures/MVD/Pablo_Queirolo.jpg" alt="Pablo Queirolo" width="100px" height="133px">
 ----------------------------------------------------------------------------------------------------
 
 GET
