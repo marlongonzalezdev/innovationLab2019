@@ -1,10 +1,14 @@
+import { SkillVersion } from './skillversion';
 import { SkillCategory } from './skill-category';
-export class Skill {
+export interface Skill {
     id: number;
     relatedId: number;
-    category: number;
+    category: SkillCategory;
     code: string;
     name: string;
     defaultExpertise: number;
+    isVersioned: boolean;
+    parentTechnologyId: number;
+    versions: SkillVersion;
     weight: number;
 }

@@ -1,1 +1,46 @@
+<div class="form-container">
+        <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit()">
+                <mat-grid-list cols="2" rowHeight="300px">       
+                    <mat-card>
+                            <div class="controls-container">                                
+                                <mat-form-field class="select-width">
+                                    <mat-select formControlName="category" placeholder="Category">
+                                          <mat-option>None</mat-option>
+                                          <ng-container *ngFor="let skillCategory of skillCategories">
+                                            <mat-option (onSelectionChange)="onSelect($event)" value="{{skillCategory.id}}">{{skillCategory.name}}</mat-option>
+                                          </ng-container>
+                                        </mat-select>
+                                      </mat-form-field>
+                                      <mat-form-field class="input-field">
+                                            <input formControlName="name" matInput placeholder="skill Name">
+                                            <mat-error>Skill name field is mandatory</mat-error>
+                                     </mat-form-field>
+                                      <div class="add-bottom-padding" *ngIf="isTechnology">
+                                        <mat-checkbox  formControlName="isVersioned" (change)="toggleSelection($event)">Is Versioned</mat-checkbox>
+                                      </div>  
+                                      <div *ngIf="isVersioned">
+                                            <mat-form-field class="input-field">
+                                                    <input formControlName="version" matInput placeholder="version">                                            
+                                             </mat-form-field>                        
+                                             <button mat-mini-fab color="accent" (click)="addVersion()">
+                                               <mat-icon>add</mat-icon>
+                                              </button>  
+                                              <ul>
+                                                    <li class="list-group-item" *ngFor="let version of versions">
+                                                      <span class="badge">{{version.version}}</span>
+                                                      <button mat-icon-button aria-label="delete" (click)="deleteVersion(version)" color="primary">
+                                                        <mat-icon>delete</mat-icon>
+                                                      </button>
+                                                    </li>
+                                                  </ul>  
+                                      </div>                                                                                                                                                
+                                      <div class="button-row">
+                                        <button mat-raised-button color="primary" type="submit" [disabled]="skillservice.form.invalid">Submit</button>
+                                        <button mat-raised-button color="warn" (click)="onClear()">Clear</button>
+                                      </div>
+                                    </div>
+                                    </mat-card>            
+                </mat-grid-list>
+              </form>
+</div>
 

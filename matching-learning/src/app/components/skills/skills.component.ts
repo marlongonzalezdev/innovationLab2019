@@ -1,9 +1,11 @@
+import { MatTableDataSource } from '@angular/material/table';
 import { Skill } from '../../shared/models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 
 import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import {SkillServiceBase} from './services/skill-service-base';
+import { SkilldetailsComponent } from '../skilldetails/skilldetails.component';
+import {SkillServiceBase} from '../../shared/services/skill-service-base';
 
 @Component({
     selector: 'app-skills',
@@ -12,18 +14,17 @@ import {SkillServiceBase} from './services/skill-service-base';
 })
 export class SkillsComponent implements OnInit {
     skillList: Skill[] = [];
-    displayedColumns = ['name', 'category', 'defaultExpertise', 'code'];
+    displayedColumns = ['name', 'category', 'editAction'];
     selectedSkill: Skill;
     showContent: boolean;
-    source: any;
-
+    source: MatTableDataSource<Skill>;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
     constructor(private skillService: SkillServiceBase) {
     }
 
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
-
     ngOnInit() {
+      this.showContent = false;
       this.skillService.getSkills()
       .subscribe ( response => {
          this.skillList = response;
@@ -38,5 +39,13 @@ export class SkillsComponent implements OnInit {
       if (this.source.paginator) {
         this.source.paginator.firstPage();
       }
+    }
+      protected addDevice(): void {
+       this.selectedSkill = null;
+       this.showContent = true;
+    }
+
+    onChangedShowContent(displayContent: boolean) {
+      this.showContent = displayContent;
     }
 }

@@ -1,10 +1,9 @@
-
+<!-- <form class="skills-form"> -->
 <div class="container">
   <div class="skills__selector">
     <mat-form-field>
-      <mat-label>Skills</mat-label>
+      <mat-label>Select skills:</mat-label>
       <mat-select [(value)]="selectedSkill">
-        <mat-option>None</mat-option>
         <mat-option *ngFor="let skill of skillList" [value]="skill">
           {{skill.name}}
         </mat-option>
@@ -12,9 +11,10 @@
     </mat-form-field>
   </div>
   <div class="skills__score">
-    <mat-slider color="primary" class="expected-core" min="0" max="1" thumbLabel step="0.1" tickInterval="0.1"
-      name="expectedScore" [(ngModel)]="expectedScore"></mat-slider>
+    <mat-slider color="primary" class="expected-core" min="0" max="1" thumbLabel step="0.1" tickInterval="0.1" name="expectedScore"
+      [(ngModel)]="expectedScore"></mat-slider>
   </div>
+
   <div class="skills__add">
     <button mat-mini-fab color="primary" (click)="add(selectedSkill)">
       <mat-icon>add</mat-icon>
@@ -22,7 +22,10 @@
   </div>
 </div>
 
+<!-- </form> -->
+
 <div class="matches-container">
+
   <div class="selected-skills__container">
     <ul class="list-group skills__selected">
       <li class="list-group-item" *ngFor="let skill of project.skillsFilter">
@@ -33,18 +36,5 @@
       </li>
     </ul>
   </div>
-
-  <div class="container">
-    <mat-form-field>
-      <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit">
-        <mat-option>None</mat-option>
-        <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
-          <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
-    <mat-checkbox [(ngModel)] ="project.inBenchFilter">Only bench</mat-checkbox>
-  </div>
-
   <app-matches [project]="project" [display]="display" [showContent]="showContent"></app-matches>
 </div>
