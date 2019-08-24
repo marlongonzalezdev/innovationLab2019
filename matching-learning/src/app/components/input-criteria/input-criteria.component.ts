@@ -30,7 +30,7 @@ export class InputCriteriaComponent implements OnInit {
   constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
       this.project = {
       name: 'Example',
-      max: 0,
+      max: 10,
       skillsFilter: [],
       deliveryUnitIdFilter: null,
       inBenchFilter: false,
