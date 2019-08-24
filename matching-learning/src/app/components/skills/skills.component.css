@@ -14,3 +14,17 @@ table {
 td, th {
   width: 25%;
 }
+
+.filter-container{
+  width: 40%;   
+}
+
+.button-container{
+  text-align: right;
+  margin-right: 65px;
+  margin-top: 25px;
+}
+
+.button-background{
+  background-color: #3f51b5;
+}
