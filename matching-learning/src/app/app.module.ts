@@ -1,4 +1,4 @@
-import { SkillService } from './shared/services/skill.service'
+import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // <-- NgModel lives here

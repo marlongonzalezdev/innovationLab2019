@@ -14,7 +14,7 @@ import {SkillServiceBase} from '../../shared/services/skill-service-base';
 })
 export class SkillsComponent implements OnInit {
     skillList: Skill[] = [];
-    displayedColumns = ['name', 'category', 'code', 'editAction'];
+    displayedColumns = ['name', 'category', 'editAction'];
     selectedSkill: Skill;
     showContent: boolean;
     source: MatTableDataSource<Skill>;
