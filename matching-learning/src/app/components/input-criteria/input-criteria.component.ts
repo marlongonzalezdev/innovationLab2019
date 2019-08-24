@@ -6,6 +6,7 @@ import {SkillsFilter} from '../../shared/models/skillsFilter';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { Observable } from 'rxjs';
 import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-input-criteria',
@@ -22,9 +23,11 @@ export class InputCriteriaComponent implements OnInit {
   expectedScore: number;
   showContent: boolean;
 
+  options: FormGroup;
+
   deliveryUnits: Observable<DeliveryUnit[]>;
 
-  constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService) {
+  constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
       this.project = {
       name: 'Example',
       max: 10,
@@ -36,6 +39,11 @@ export class InputCriteriaComponent implements OnInit {
     };
       this.display = false;
       this.showContent = false;
+
+      this.options = fb.group({
+      hideRequired: false,
+      floatLabel: 'auto',
+    });
   }
 
   ngOnInit() {
