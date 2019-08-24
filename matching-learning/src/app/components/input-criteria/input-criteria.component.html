@@ -32,8 +32,21 @@
   <button mat-mini-fab color="primary" (click)="add(selectedSkill)">
     <mat-icon>add</mat-icon>
   </button>
+
+  <ul class="list-group skills__selected">
+    <li class="list-group-item" *ngFor="let skill of project.skillsFilter">
+      <span class="badge">{{skill.name}}</span> -&#45;&#45; <span class="badge">{{skill.weight * 100 | number}} %</span>
+      <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+
 </mat-card>
 
+
+
+<app-matches [project]="project" [display]="display" [showContent]="showContent"></app-matches>
 
 <!--
 <div class="container">
