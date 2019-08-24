@@ -25,10 +25,10 @@ export class MatchesComponent implements OnInit {
 
     @Input() project: Project;
     @Input() display: boolean;
-    @Input() showContent: boolean;
+    showContent = false;
 
     processData() {
-        this.showContent = false;
+      /*  this.showContent = false;*/
         this.loading = true;
         this.getUsers(this.project);
     }

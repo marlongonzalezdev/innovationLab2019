@@ -28,10 +28,23 @@
     !*display: none;*!
 }
 
-.spinner-container {
-    margin: 20px
-}
+
 
 table {
     width: 100%;
   }*/
+
+.spinner-container {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.get-matches{
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
