@@ -70,7 +70,11 @@ namespace matching_learning.api.Controllers.Common
         [Route("Skills")]
         public ActionResult<List<Skill>> GetSkills()
         {
-            return _skillRepository.GetSkills();
+            var skills = _skillRepository.GetSkills();
+
+            var sortedSkills = skills.OrderBy(s => s.Name).ToList();
+
+            return sortedSkills;
         }
 
         /// <summary>
