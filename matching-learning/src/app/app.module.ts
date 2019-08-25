@@ -64,6 +64,6 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     NotificationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent]
 })
 export class AppModule { }
