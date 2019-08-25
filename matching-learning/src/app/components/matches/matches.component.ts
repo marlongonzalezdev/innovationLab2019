@@ -16,7 +16,7 @@ export class MatchesComponent implements OnInit {
 
     displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'inBench', 'matchingScore'];
     dataSource: any;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     matches: Match[] = [];
     selectedMatch: Match;
@@ -25,10 +25,10 @@ export class MatchesComponent implements OnInit {
 
     @Input() project: Project;
     @Input() display: boolean;
-    @Input() showContent: boolean;
+    showContent = false;
 
     processData() {
-        this.showContent = false;
+      /*  this.showContent = false;*/
         this.loading = true;
         this.getUsers(this.project);
     }

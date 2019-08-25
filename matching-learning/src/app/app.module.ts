@@ -63,6 +63,7 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     RelationTypeService,
     NotificationService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [CandidateComponent]
 })
 export class AppModule { }

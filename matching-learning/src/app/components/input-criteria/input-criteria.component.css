@@ -1,36 +1,48 @@
-.skills-form {
+/*.skills-form {
     border: 1px solid gray;
-}
+}*/
 
-.skills__container {
+/*.skills__container {
     width: 80%;
     margin: auto;
-}
+}*/
 
 .skills_selector {
     display: inline-block;
 }
 
-.skills__score {
+/*.skills__score {
     padding-left: 50px;
     display: inline-block;
-}
+}*/
 
-.skills__add {
+/*.skills__add {
     padding-left: 30px;
     display: inline-block;
-}
+}*/
 
-.selected-skills__container {
+/*.selected-skills__container {
     padding-top: 30px;
-    width: 60%;
+    width: 80%;
     display: inline-block;
-}
+}*/
 
 .criteria-card {
-  max-width: 80%;
+  /*max-width: 70%;*/
   margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px !important;
 }
+
+.selected_skills
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
 
 /*.skills__selected {*/
 /*    width: 100%;*/

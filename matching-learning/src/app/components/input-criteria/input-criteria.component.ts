@@ -1,12 +1,12 @@
 import { Component, Input, OnInit} from '@angular/core';
 import { Project } from '../../shared/models/project';
-import { SkillServiceBase } from '../skills/services/skill-service-base';
 import { Skill } from 'src/app/shared/models/skill';
 import {SkillsFilter} from '../../shared/models/skillsFilter';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { Observable } from 'rxjs';
 import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {SkillServiceBase} from '../../shared/services/skill-service-base';
 
 @Component({
   selector: 'app-input-criteria',
