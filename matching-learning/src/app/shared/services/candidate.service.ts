@@ -28,26 +28,26 @@ export class CandidateService {
 
   form: FormGroup = new FormGroup({
     $key: new FormControl(null),
-    name: new FormControl('', Validators.required),
+    name: new FormControl(''),
+    firstName: new FormControl('', Validators.required),
     lastName: new FormControl('', Validators.required),
     du: new FormControl(0),
     relationType: new FormControl(0),
-    email: new FormControl('', Validators.email),
-    gender: new FormControl(0),
-    isInternal: new FormControl(false),
+   /* email: new FormControl('', Validators.email),
+    gender: new FormControl(0),*/
+    isActive: new FormControl(false),
     isInBench: new FormControl(false)
   });
 
   InitializeFormGroup() {
     this.form.setValue({
-      $key: null,
+      $key: -1,
       name: '',
+      firstName: '',
       lastName: '',
-      du: 0,
-      relationType: 0,
-      email: '',
-      gender: 0,
-      isInternal: false,
+      du: 2,
+      relationType: 1,
+      isActive: true,
       isInBench: false
     });
   }
@@ -79,5 +79,18 @@ export class CandidateService {
     // return an observable with a user-facing error message
     return throwError(
       'Something bad happened; please try again later.');
+  }
+
+  populateForm(candidate) {
+    this.form.setValue({
+      $key: candidate.id,
+      name: '',
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      du: candidate.deliveryUnitId,
+      relationType: candidate.relationType,
+      isActive: candidate.isActive,
+      isInBench: candidate.inBench
+    });
   }
 }

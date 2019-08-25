@@ -1,7 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {CandidateService} from 'src/app/shared/services/candidate.service';
 import {Candidate} from 'src/app/shared/models/candidate';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {CandidateComponent} from '../candidate/candidate.component';
 
 @Component({
   selector: 'app-candidate-list',
@@ -14,10 +15,10 @@ export class CandidateListComponent implements OnInit {
   dataSource: any;
   displayedColumns: string[] = ['name', 'picture', 'deliveryUnit', 'activeRole', 'inBench', 'isActive', 'actions'];
   searchKey: string;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
-  constructor(private candidateService: CandidateService) {
+  constructor(private candidateService: CandidateService, private dialog: MatDialog) {
   }
 
   onSearchClear() {
@@ -38,5 +39,23 @@ export class CandidateListComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       });
+  }
+
+  onCreate() {
+    this.candidateService.InitializeFormGroup();
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '40%';
+    this.dialog.open(CandidateComponent, dialogConfig);
+  }
+
+  onEdit(row) {
+    this.candidateService.populateForm(row);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '40%';
+    this.dialog.open(CandidateComponent, dialogConfig);
   }
 }

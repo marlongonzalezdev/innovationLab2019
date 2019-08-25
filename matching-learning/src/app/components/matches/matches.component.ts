@@ -16,7 +16,7 @@ export class MatchesComponent implements OnInit {
 
     displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'inBench', 'matchingScore'];
     dataSource: any;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     matches: Match[] = [];
     selectedMatch: Match;

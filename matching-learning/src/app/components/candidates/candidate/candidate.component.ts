@@ -8,6 +8,7 @@ import { CandidateService } from 'src/app/shared/services/candidate.service';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { RelationTypeService } from 'src/app/shared/services/relation-type.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-candidate',
@@ -20,7 +21,8 @@ export class CandidateComponent implements OnInit {
   relationTypes: Observable<RelationType[]>;
 
   constructor(private service: CandidateService, private deliveryUnitService: DeliveryUnitService,
-              private relationTypeService: RelationTypeService, private notificationService: NotificationService) { }
+              private relationTypeService: RelationTypeService, private notificationService: NotificationService,
+              public dialogRef: MatDialogRef<CandidateComponent>) { }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
@@ -53,12 +55,18 @@ export class CandidateComponent implements OnInit {
       };
 
       this.service.addCandidate(candidate).subscribe(
-        candidate => {
+        elem => {
           this.notificationService.sucess('Candidate added successfully.');
           this.onClear();
-          console.log(candidate);
+          console.log(elem);
+          this.onClose();
         }
       );
     }
+  }
+
+  onClose() {
+    this.onClear();
+    this.dialogRef.close();
   }
 }
