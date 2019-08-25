@@ -15,7 +15,7 @@ namespace matching_learning.common.Domain.BusinessLogic
 
             var estimated = skillRepository.GetSkillEstimatedExpertisesBySkillIds(reqSkills);
 
-            if (pcr.InBenchFilter.HasValue)
+            if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
             {
                 estimated = estimated.Where(e => e.Candidate.InBench == pcr.InBenchFilter.Value).ToList();
             }

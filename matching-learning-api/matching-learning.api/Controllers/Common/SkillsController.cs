@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Domain.DTOs.Views;
 using matching_learning.common.Repositories;
@@ -70,11 +71,7 @@ namespace matching_learning.api.Controllers.Common
         [Route("Skills")]
         public ActionResult<List<Skill>> GetSkills()
         {
-            var skills = _skillRepository.GetSkills();
-
-            var sortedSkills = skills.OrderBy(s => s.Name).ToList();
-
-            return sortedSkills;
+            return _skillRepository.GetSkills();
         }
 
         /// <summary>
@@ -89,6 +86,22 @@ namespace matching_learning.api.Controllers.Common
             return _skillRepository.GetSkills().OrderBy(s => s.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
         }
 
+        /// <summary>
+        /// Gets the skills sorted for selection.
+        /// </summary>
+        /// <returns></returns>
+        [Route("SkillsSorted")]
+        public ActionResult<List<Skill>> GetSkillsSorted()
+        {
+            var skills = _skillRepository.GetSkills();
+
+            var comp = new SkillSelectorComparer();
+
+            skills.Sort(comp);
+
+            return skills;
+        }
+        
         /// <summary>
         /// Gets the skill with the specified skill identifier.
         /// </summary>

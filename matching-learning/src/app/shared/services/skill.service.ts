@@ -33,6 +33,13 @@ export class SkillService implements SkillServiceBase {
     version: new FormControl('')
   });
 
+  getSkillsSorted(): Observable<Skill[]> {
+    const route = '/Skills/SkillsSorted';
+    return this.http.get<Skill[]>(`${this.baseUrl}${route}`, httpOptions)
+    .pipe(
+      catchError(this.handleError<Skill[]>('getSkill', []))
+    );
+  } 
   getSkills(): Observable<Skill[]> {
     const route = '/Skills/Skills';
     return this.http.get<Skill[]>(`${this.baseUrl}${route}`, httpOptions)
