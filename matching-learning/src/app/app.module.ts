@@ -1,3 +1,4 @@
+import { Skill } from 'src/app/shared/models/skill';
 import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -43,7 +44,8 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     CandidatesComponent,
     SkilldetailsComponent,
     CandidateComponent,
-    CandidateListComponent
+    CandidateListComponent,
+    SkilldetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +66,6 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     NotificationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent]
+  entryComponents: [CandidateComponent, SkilldetailsComponent]
 })
 export class AppModule { }

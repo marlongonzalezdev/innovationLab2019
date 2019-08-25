@@ -8,6 +8,7 @@ import { MatSort } from '@angular/material/sort';
 import { SkilldetailsComponent } from '../skilldetails/skilldetails.component';
 import {SkillServiceBase} from '../../shared/services/skill-service-base';
 import { NotificationService } from '../../shared/services/notification.service';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-skills',
@@ -20,10 +21,11 @@ export class SkillsComponent implements OnInit {
     selectedSkill: Skill;
     showContent: boolean;
     source: MatTableDataSource<Skill>;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    searchKey: string;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     constructor(private skillService: SkillServiceBase,
-                private notificationService: NotificationService) {
+                private notificationService: NotificationService, private dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -31,21 +33,26 @@ export class SkillsComponent implements OnInit {
       this.skillService.getSkills()
       .subscribe ( response => {
          this.skillList = response;
-        //  this.source = new MatTableDataSource<Skills>(this.skillList);
-         /* this.source.paginator = this.paginator;
-         this.source.sort = this.sort; */
+         this.source = new MatTableDataSource<Skill>(this.skillList);
+         this.source.sort = this.sort;
+         this.source.paginator = this.paginator;
       });
     }
-    applyFilter(filterValue: string) {
-      this.source.filter = filterValue.trim().toLowerCase();
 
-      if (this.source.paginator) {
-        this.source.paginator.firstPage();
-      }
+    onSearchClear() {
+      this.searchKey = '';
+      this.applyFilter();
     }
-      protected addDevice(): void {
-       this.selectedSkill = null;
-       this.showContent = true;
+    applyFilter() {
+      this.source.filter = this.searchKey.trim().toLowerCase();
+    }
+    addSkill(): void {
+       this.skillService.InitializeFormGroup();
+       const dialogConfig = new MatDialogConfig();
+       dialogConfig.disableClose = true;
+       dialogConfig.autoFocus = true;
+       dialogConfig.width = '40%';
+       this.dialog.open(SkilldetailsComponent, dialogConfig);
     }
 
     onChangedShowContent(displayContent: boolean) {
@@ -53,7 +60,7 @@ export class SkillsComponent implements OnInit {
     }
 
     onSaveSkillComplete(result: SaveResult) {
-      if (result.recordId != null) {
+      if (result.recordId) {
          this.notificationService.sucess('Skill saved successfully');
       } else {
          this.notificationService.fail(result.error);

@@ -1,3 +1,8 @@
+<mat-toolbar>
+    <span>{{skillservice.form.controls['$key'].value?"Modify Candidate":"Add Candidate"}}</span>
+    <span class="fill-remaining-space"></span>
+    <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
+  </mat-toolbar>
 <div class="form-container">
         <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit(skillservice.form.value)">
                 <mat-grid-list cols="2" rowHeight="300px">       

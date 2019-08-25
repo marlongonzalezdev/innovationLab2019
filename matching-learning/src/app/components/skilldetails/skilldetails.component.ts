@@ -6,7 +6,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { SkillCategory } from '../../shared/models/skill-category';
 import { SkillServiceBase } from '../../shared/services/skill-service-base';
-import { MatCheckboxChange } from '@angular/material';
+import { MatCheckboxChange, MatDialogRef } from '@angular/material';
 
 
 @Component({
@@ -15,7 +15,7 @@ import { MatCheckboxChange } from '@angular/material';
   styleUrls: ['./skilldetails.component.css']
 })
 export class SkilldetailsComponent implements OnInit {
-  constructor(public skillservice: SkillServiceBase) { }
+  constructor(public skillservice: SkillServiceBase, public dialogRef: MatDialogRef<SkilldetailsComponent>) { }
 
   @Input()
   set skill(skill: Skill) {}
@@ -58,16 +58,23 @@ export class SkilldetailsComponent implements OnInit {
     let result: SaveResult;
     this.skillservice.saveSkill(skill)
     .subscribe(response => {
-       result = {
-        recordId: response.id,
-        error: null
-      };
-       this.onSaveComplete.emit(result);
+      if (response.id) {
+        result = {
+          recordId: response.id,
+          error: null
+        };
+      } else {
+        result = {
+          recordId: null,
+          error: 'An error ocurred. Skill could not be saved'
+        };
+        this.onSaveComplete.emit(result);
+      }
     },
     (error: any) => {
       result = {
         recordId: null,
-        error
+        error: 'An error ocurred. Skill could not be saved'
       };
     });
     this.onSaveComplete.emit(result);
@@ -114,5 +121,9 @@ export class SkilldetailsComponent implements OnInit {
   if (index > -1) {
     this.versionList.splice(index, 1);
   }
+}
+onClose() {
+  this.onClear();
+  this.dialogRef.close();
 }
 }

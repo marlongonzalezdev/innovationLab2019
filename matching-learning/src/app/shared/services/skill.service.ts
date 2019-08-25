@@ -34,7 +34,7 @@ export class SkillService implements SkillServiceBase {
   });
 
   getSkills(): Observable<Skill[]> {
-    const route = '/Skills/Skills';
+    const route = '/Skills/SkillViews';
     return this.http.get<Skill[]>(`${this.baseUrl}${route}`, httpOptions)
     .pipe(
       catchError(this.handleError<Skill[]>('getSkill', []))
@@ -58,4 +58,14 @@ export class SkillService implements SkillServiceBase {
        catchError(this.handleError<Skill>('saveSkill'))
      );
    }
+
+   InitializeFormGroup() {
+    this.form.setValue({
+      $key: -1,
+      name: '',
+      category: '',
+      isVersioned: false,
+      version: []
+    });
+  }
 }
