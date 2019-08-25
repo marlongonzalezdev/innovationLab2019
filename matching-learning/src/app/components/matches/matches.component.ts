@@ -4,7 +4,7 @@ import {MatTableDataSource} from '@angular/material/table';
 
 import { Match } from 'src/app/shared/models/match';
 import { Project } from 'src/app/shared/models/project';
-import { MatchService } from 'src/app/match.service';
+import { MatchService } from 'src/app/shared/services/match.service';
 
 
 @Component({
