@@ -1,5 +1,5 @@
 <div class="form-container">
-        <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit()">
+        <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit(skillservice.form.value)">
                 <mat-grid-list cols="2" rowHeight="300px">       
                     <mat-card>
                             <div class="controls-container">                                
@@ -7,7 +7,7 @@
                                     <mat-select formControlName="category" placeholder="Category">
                                           <mat-option>None</mat-option>
                                           <ng-container *ngFor="let skillCategory of skillCategories">
-                                            <mat-option (onSelectionChange)="onSelect($event)" value="{{skillCategory.id}}">{{skillCategory.name}}</mat-option>
+                                            <mat-option (onSelectionChange)="onSelect($event)" [value]="skillCategory">{{skillCategory.name}}</mat-option>
                                           </ng-container>
                                         </mat-select>
                                       </mat-form-field>
@@ -22,11 +22,11 @@
                                             <mat-form-field class="input-field">
                                                     <input formControlName="version" matInput placeholder="version">                                            
                                              </mat-form-field>                        
-                                             <button mat-mini-fab color="accent" (click)="addVersion()">
+                                             <button type="button" mat-mini-fab color="accent" (click)="addVersion()">
                                                <mat-icon>add</mat-icon>
                                               </button>  
                                               <ul>
-                                                    <li class="list-group-item" *ngFor="let version of versions">
+                                                    <li class="list-group-item" *ngFor="let version of versionList">
                                                       <span class="badge">{{version.version}}</span>
                                                       <button mat-icon-button aria-label="delete" (click)="deleteVersion(version)" color="primary">
                                                         <mat-icon>delete</mat-icon>

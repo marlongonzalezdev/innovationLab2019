@@ -8,7 +8,7 @@
      </div> 
      <div *ngIf="showContent">
         <app-skilldetails
-        [skill]="selectedSkill" (updateShowContent)="onChangedShowContent($event)"></app-skilldetails> 
+        [skill]="selectedSkill" (onSaveComplete)="onSaveSkillComplete($event)" (updateShowContent)="onChangedShowContent($event)"></app-skilldetails> 
     </div>      
   </div>     
   <div class="container">

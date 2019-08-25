@@ -19,7 +19,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class SkillService implements SkillServiceBase {
-     constructor(
+       constructor(
     private http: HttpClient, httpErrorHandler: HttpErrorHandler
   ) { this.handleError = httpErrorHandler.createHandleError('SkillService');  }
   baseUrl = 'https://localhost:44374';
@@ -51,4 +51,11 @@ export class SkillService implements SkillServiceBase {
       catchError(this.handleError<SkillCategory>('getSkillCategory'))
     );
   }
+   saveSkill(skill: Skill): Observable<Skill> {
+     const route = '/Skills/SaveSkillView';
+     return this.http.post<Skill>(`${this.baseUrl}${route}`, skill, httpOptions)
+     .pipe(
+       catchError(this.handleError<Skill>('saveSkill'))
+     );
+   }
 }

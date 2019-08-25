@@ -1,3 +1,5 @@
+import { FormGroup } from '@angular/forms';
+import { SaveResult } from './../../shared/models/saveResult';
 import { SkillVersion } from './../../shared/models/skillversion';
 import { Skill } from './../../shared/models/skill';
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
@@ -5,7 +7,7 @@ import { MatOptionSelectionChange } from '@angular/material/core';
 import { SkillCategory } from '../../shared/models/skill-category';
 import { SkillServiceBase } from '../../shared/services/skill-service-base';
 import { MatCheckboxChange } from '@angular/material';
-import { getLocaleDateFormat } from '@angular/common';
+
 
 @Component({
   selector: 'app-skilldetails',
@@ -22,10 +24,13 @@ export class SkilldetailsComponent implements OnInit {
   selectedCategory: SkillCategory;
   isTechnology: boolean;
   isVersioned: boolean;
-  versions: SkillVersion[] = [];
+  versionList: SkillVersion[] = [];
   private skillOrigin: Skill;
   @Output()
-    public updateShowContent = new EventEmitter<boolean>();
+  public updateShowContent = new EventEmitter<boolean>();
+  // tslint:disable-next-line: no-output-on-prefix
+  @Output()
+  public onSaveComplete = new EventEmitter<SaveResult>();
 
   ngOnInit() {
     this.skillservice.getSkillCategory()
@@ -35,7 +40,37 @@ export class SkilldetailsComponent implements OnInit {
       );
   }
 
-  onSubmit() {
+  onSubmit(skillData) {
+    const defaultExpertiseValue = 0.0;
+    const skill: Skill = {
+      id: -1,
+      relatedId: -1,
+      category: skillData.category.id,
+      code: skillData.name,
+      name: skillData.name,
+      defaultExpertise: defaultExpertiseValue,
+      isVersioned: skillData.isVersioned,
+      parentTechnologyId: -1,
+      versions: this.versionList,
+      weight: null
+
+    };
+    let result: SaveResult;
+    this.skillservice.saveSkill(skill)
+    .subscribe(response => {
+       result = {
+        recordId: response.id,
+        error: null
+      };
+       this.onSaveComplete.emit(result);
+    },
+    (error: any) => {
+      result = {
+        recordId: null,
+        error
+      };
+    });
+    this.onSaveComplete.emit(result);
   }
 
   onClear() {
@@ -62,22 +97,22 @@ export class SkilldetailsComponent implements OnInit {
 
   addVersion(): void {
     const versionValue = this.skillservice.form.controls.version.value;
-    if (!this.versions.find(s => s.version === versionValue)) {
+    if (!this.versionList.find(s => s.version === versionValue)) {
        const skillVersion: SkillVersion = {
         id: -1,
         relatedId: -1,
-        defaultExpertise: -1,
+        defaultExpertise: 0.0,
         parentTechnologyId: -1,
         version: versionValue,
         startDate: new Date()
       };
-       this.versions.push(skillVersion);
+       this.versionList.push(skillVersion);
   }
 }
  deleteVersion(version: SkillVersion): void {
-  const index = this.versions.indexOf(version, 0);
+  const index = this.versionList.indexOf(version, 0);
   if (index > -1) {
-    this.versions.splice(index, 1);
+    this.versionList.splice(index, 1);
   }
 }
 }

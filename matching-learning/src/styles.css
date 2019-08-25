@@ -60,6 +60,11 @@ snack-bar-container.notification simple-snack-bar {
   font-weight: bold;
 }
 
+snack-bar-container.error {
+  background-color: indianred;
+  color: white
+}
+
 .mat-slider-horizontal {
   width: 200px;
 }

@@ -1,3 +1,4 @@
+import { SaveResult } from './../../shared/models/saveResult';
 import { MatTableDataSource } from '@angular/material/table';
 import { Skill } from '../../shared/models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
@@ -6,6 +7,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { SkilldetailsComponent } from '../skilldetails/skilldetails.component';
 import {SkillServiceBase} from '../../shared/services/skill-service-base';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
     selector: 'app-skills',
@@ -20,7 +22,8 @@ export class SkillsComponent implements OnInit {
     source: MatTableDataSource<Skill>;
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort: MatSort;
-    constructor(private skillService: SkillServiceBase) {
+    constructor(private skillService: SkillServiceBase,
+                private notificationService: NotificationService) {
     }
 
     ngOnInit() {
@@ -47,5 +50,13 @@ export class SkillsComponent implements OnInit {
 
     onChangedShowContent(displayContent: boolean) {
       this.showContent = displayContent;
+    }
+
+    onSaveSkillComplete(result: SaveResult) {
+      if (result.recordId != null) {
+         this.notificationService.sucess('Skill saved successfully');
+      } else {
+         this.notificationService.fail(result.error);
+      }
     }
 }
