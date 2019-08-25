@@ -4,9 +4,98 @@
       <mat-card-title>{{match.candidate.name}}</mat-card-title>
       <!-- <mat-card-subtitle>{{user.role}}</mat-card-subtitle> -->
     </mat-card-header>
-    <img mat-card-image src="{{match.candidate.picture}}" alt="{{match.candidate.name}}" title="{{match.candidate.name}}" width="200px" height="266px">
     <mat-card-content>
-      <!--            Curriculum Vitae Resume-->
+      <table width="100%">
+        <tr>
+          <td width="25%">
+            <img mat-card-image src="{{match.candidate.picture}}" alt="{{match.candidate.name}}" title="{{match.candidate.name}}" width="200px" height="266px">
+          </td>
+          <td width="75%">
+            <table width="100%">
+              <tr>
+                <td width="25%">
+                  <mat-label>Delivery Unit:</mat-label>
+                </td>
+                <td width="75%">
+                  <mat-label>{{match.candidate.deliveryUnit.name}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Role:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.activeRole.name}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Relation:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.relationType === 1 ? "Employee" : (match.candidate.relationType === 2 ? "Candidate" : (match.candidate.relationType === 3 ? "External" : " "))}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Bench:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.inBench ? "&#10004;" : " "}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Doc. Type:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.docType === 1 ? "National Identity" : (match.candidate.docType === 2 ? "Passport" : " ")}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Doc. Number:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.docNumber}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Employee Number:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.candidate.employeeNumber}}</mat-label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <mat-label>Skills Rankings:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.skillRankingsSummary}}</mat-label>
+                </td>
+              </tr>      
+
+              <tr>
+                <td>
+                  <mat-label>Ranking:</mat-label>
+                </td>
+                <td>
+                  <mat-label>{{match.ranking | percent:'2.1-1'}}</mat-label>
+                </td>
+              </tr>      
+            </table>
+          </td>
+        </tr>
+     </table>
     </mat-card-content>
   </mat-card>
 </div>

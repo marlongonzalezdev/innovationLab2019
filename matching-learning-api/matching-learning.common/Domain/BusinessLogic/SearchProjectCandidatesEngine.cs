@@ -15,7 +15,7 @@ namespace matching_learning.common.Domain.BusinessLogic
 
             var estimated = skillRepository.GetSkillEstimatedExpertisesBySkillIds(reqSkills);
 
-            if (pcr.InBenchFilter.HasValue)
+            if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
             {
                 estimated = estimated.Where(e => e.Candidate.InBench == pcr.InBenchFilter.Value).ToList();
             }
@@ -41,6 +41,7 @@ namespace matching_learning.common.Domain.BusinessLogic
             {
                 Candidate = fc,
                 Ranking = getRanking(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
+                SkillRankings = getSkillRankings(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
             }).Where(pc => pc.Ranking > 0).OrderByDescending(pc => pc.Ranking).Take(pcr.Max).ToList();
 
             return (res);
@@ -62,6 +63,27 @@ namespace matching_learning.common.Domain.BusinessLogic
                 if (ce != null)
                 {
                     res += sf.Weight * ce.Expertise;
+                }
+            }
+
+            return (res);
+        }
+
+        private static List<ProjectCandidateSkill> getSkillRankings(List<ProjectSkillRequirement> skillsFilter, List<SkillEstimatedExpertise> candidateExpertise)
+        {
+            var res = new List<ProjectCandidateSkill>();
+
+            foreach (var sf in skillsFilter)
+            {
+                var ce = candidateExpertise.FirstOrDefault(cexp => cexp.Skill.Id == sf.RequiredSkillId);
+
+                if (ce != null)
+                {
+                    res.Add(new ProjectCandidateSkill()
+                    {
+                        Skill = ce.Skill,
+                        Ranking = ce.Expertise,
+                    });
                 }
             }
 
