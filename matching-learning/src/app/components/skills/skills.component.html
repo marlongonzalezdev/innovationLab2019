@@ -30,13 +30,13 @@
       <!-- Category Column -->
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef> Category </th>
-        <td mat-cell *matCellDef="let row"> {{row.category}} </td>
+        <td mat-cell *matCellDef="let row"> {{row.categoryDescription}} </td>
       </ng-container>
     
       <!-- Default expertise Column -->
       <ng-container matColumnDef="defaultExpertise">
         <th mat-header-cell *matHeaderCellDef> Default Expertise </th>
-        <td mat-cell *matCellDef="let row"> {{row.defaultExpertise * 100}}% </td>
+        <td mat-cell *matCellDef="let row"> {{row.defaultExpertise | percent:'2.1-1'}} </td>
       </ng-container>  
       
       <ng-container matColumnDef="editAction">
