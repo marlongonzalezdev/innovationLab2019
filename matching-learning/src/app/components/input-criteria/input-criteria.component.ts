@@ -49,7 +49,7 @@ export class InputCriteriaComponent implements OnInit {
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
 
-    this.skillService.getSkills()
+    this.skillService.getSkillsSorted()
       .subscribe ( response => {
          this.skillList = response;
       });
