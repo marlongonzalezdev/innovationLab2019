@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using matching_learning.common.Domain.Enums;
 
 namespace matching_learning.common.Domain.DTOs
@@ -10,6 +13,23 @@ namespace matching_learning.common.Domain.DTOs
         public int RelatedId { get; set; }
 
         public SkillCategory Category { get; set; }
+
+        public string CategoryDescription
+        {
+            get
+            {
+                FieldInfo fi = this.Category.GetType().GetField(this.Category.ToString());
+
+                DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+                if (attributes != null && attributes.Any())
+                {
+                    return attributes.First().Description;
+                }
+
+                return this.Category.ToString();
+            }
+        }
 
         public string Code { get; set; }
 
