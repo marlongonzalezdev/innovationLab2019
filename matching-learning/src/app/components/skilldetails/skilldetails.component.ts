@@ -44,7 +44,7 @@ export class SkilldetailsComponent implements OnInit {
     const skill: Skill = {
       id: -1,
       relatedId: -1,
-      category: skillData.id,
+      category: skillData.category,
       code: skillData.name,
       name: skillData.name,
       defaultExpertise: defaultExpertiseValue,
