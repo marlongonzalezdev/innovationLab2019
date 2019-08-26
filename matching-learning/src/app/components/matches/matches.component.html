@@ -1,8 +1,12 @@
 <div class="get-matches" *ngIf="display">
-    <button mat-button (click)="processData()">
-        <mat-icon>cached</mat-icon>
+    <button mat-button color="warn" (click)="processData()">
+        <mat-icon>find_in_page</mat-icon>
         Get matches
     </button>
+<!--    <button class="matches-go" mat-button (click)="processData()" color="warn">-->
+<!--        <mat-icon>cached</mat-icon>-->
+<!--        Get matches-->
+<!--    </button>-->
 </div>
 
 <div class="spinner-container">
@@ -23,7 +27,7 @@
     </div>
 </div> -->
 
-<div class="mat-elevation-z8">
+<div class="matches-result mat-elevation-z8" *ngIf="showContent">
     <table mat-table [dataSource]="dataSource">
 
         <!-- User Column -->

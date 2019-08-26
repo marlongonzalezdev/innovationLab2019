@@ -1,0 +1,60 @@
+.mat-sidenav {
+    min-width: 200px;
+    background-color: rgb(239, 239, 240);
+}
+
+mat-toolbar-row {
+    background-color: rgb(222, 65, 27);
+    color: white;
+    font-family: roboto_condensedbold, Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: -.028em;
+}
+
+.brand {
+    margin: auto;
+    font-size: 40px;
+    padding: 20px;
+}
+
+.logo-container {
+    float: right;
+    position: absolute;
+    right: 80px;
+    top: 6px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+}
+
+.sub-menu {
+    padding-left: 16px;
+}
+
+a.mat-list-item {
+    padding-left: 20px;
+}
+
+a.mat-list-item:hover {
+    background-color: gray;
+    opacity: 0.8;
+}
+
+a.mat-list-item-content {
+    padding: 0px;
+}
+
+a.mat-subheader {
+    font-size: 16px;
+}
+
+a.mat-list-item .mat-icon, .mat-subheader .mat-icon {
+    padding-right: 30px;
+    color: rgb(222, 65, 27);
+}
+
+.mat-list-base .mat-list-item, .mat-list-base .mat-list-option {
+    min-width: 200px;
+}

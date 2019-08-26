@@ -1,83 +1,116 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-table
-{
-  width: 100%;
+body {
+    background-color: rgb(100, 102, 109);
 }
 
-html, body
-{
-  margin: 0;
+table {
+    width: 100%;
 }
 
-div.container
-{
-  margin: 0px 40px;
+html, body {
+    margin: 0;
 }
 
-.fill-remaining-space
-{
-  flex: 1 1 auto;
+.app {
+    padding: 0px 40px;
 }
 
-.normal-form
-{
-  margin: 10px;
+.main-content {
+    height: calc(100vh - 152px);
+    margin: 20px 30px 0px;
 }
 
-.controls-container
-{
-  width: 100%;
-  padding: 5%;
+footer {
+    height: 64px;
+    background-color: white;
+    padding: 0px 40px;
+    margin: 0px 40px;
+
 }
 
-.controls-container > *,.full-width {
-  width: 100%;
+.footer {
+
 }
 
-/* radio group */
-.add-bottom-padding{
-  padding-bottom: 10px;
+.endava_footer {
+    float: right;
+    padding: 16px 80px;
 }
 
-/* add gap b/w adjacent button */
-.button-row button{
-  margin: 5px;
-}
-mat-radio-group mat-radio-button{
-  margin-left: 5px;
+.endava_footer img {
+    max-height: 32px;
 }
 
-.fill-remaining-space {
-  /* This fills the remaining space, by using flexbox.
-     Every toolbar row uses a flexbox row layout. */
-  flex: 1 1 auto;
+.copyright {
+    padding: 16px 80px;
+    position: absolute;
+    bottom: 0px;
 }
 
-snack-bar-container.success
-{
-  background-color: green;
-  color: white;
-}
+/*.fill-remaining-space*/
+/*{*/
+/*  flex: 1 1 auto;*/
+/*}*/
 
-snack-bar-container.notification simple-snack-bar
-{
-  font-size: 15px !important;
-  font-weight: bold;
-}
+/*.normal-form*/
+/*{*/
+/*  margin: 10px;*/
+/*}*/
 
-.mat-slider-horizontal {
-  width: 200px;
-}
+/*.controls-container*/
+/*{*/
+/*  width: 100%;*/
+/*  padding: 5%;*/
+/*}*/
 
-.expected-core {
-  margin-top: 30px;
-}
+/*.controls-container > *,.full-width {*/
+/*  width: 100%;*/
+/*}*/
 
-.mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb, .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb-label {
-  background-color: #3f51b5;
-}
+/*!* radio group *!*/
+/*.add-bottom-padding{*/
+/*  padding-bottom: 10px;*/
+/*}*/
+
+/*!* add gap b/w adjacent button *!*/
+/*.button-row button{*/
+/*  margin: 5px;*/
+/*}*/
+/*mat-radio-group mat-radio-button{*/
+/*  margin-left: 5px;*/
+/*}*/
+
+/*.fill-remaining-space {*/
+/*  !* This fills the remaining space, by using flexbox.*/
+/*     Every toolbar row uses a flexbox row layout. *!*/
+/*  flex: 1 1 auto;*/
+/*}*/
+
+/*snack-bar-container.success*/
+/*{*/
+/*  background-color: green;*/
+/*  color: white;*/
+/*}*/
+
+/*snack-bar-container.notification simple-snack-bar*/
+/*{*/
+/*  font-size: 15px !important;*/
+/*  font-weight: bold;*/
+/*}*/
+
+/*.mat-slider-horizontal {*/
+/*  width: 200px;*/
+/*}*/
+
+/*.expected-core {*/
+/*  margin-top: 30px;*/
+/*}*/
+
+/*.mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb, .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb-label {*/
+/*  background-color: #3f51b5;*/
+/*}*/
 
 
 

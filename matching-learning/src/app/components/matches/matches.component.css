@@ -1,6 +1,6 @@
-/*.matches__items {
+__items {
     display: inline-block;
-    !*width: 100%;*!
+    width: 100%;
     color: black;
     vertical-align: top;
     min-width: 500px;
@@ -22,16 +22,26 @@
 }
 
 .get-matches {
-    float: right;
-    padding-left: 30px;
-    padding-top: 30px;
-    !*display: none;*!
-}
-
-.spinner-container {
-    margin: 20px
-}
-
-table {
     width: 100%;
-  }*/
+    text-align: center;
+}
+
+.get-matches button{
+    padding: 10px;
+    margin: 20px;
+    border-radius: 10px;
+    border-color: gray;
+}
+
+.matches-result {
+    width: 80%;
+    margin: auto;
+}
+
+/*.spinner-container {*/
+/*    margin: 20px*/
+/*}*/
+
+/*table {*/
+/*    width: 100%;*/
+/*  }*/

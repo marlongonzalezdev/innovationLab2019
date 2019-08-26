@@ -1,5 +1,12 @@
-.skills-form {
-    border: 1px solid gray;
+.skills__form {
+    border: 1px solid rgb(239, 239, 240);
+    text-align: center;
+}
+
+.skills__form .container {
+    display: inline-block;
+    padding: 20px;
+    width: 100%;
 }
 
 .skills__container {
@@ -16,15 +23,40 @@
     display: inline-block;
 }
 
+mat-label {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
 .skills__add {
     padding-left: 30px;
     display: inline-block;
 }
 
+.skills__add button{
+    background-color: rgb(222, 65, 27);
+}
+
 .selected-skills__container {
-    padding-top: 30px;
-    width: 60%;
+    width: 80%;
     display: inline-block;
+}
+
+.skills__selected {
+    display: inline-block;
+    width: 100%;
+}
+
+.list-group-item{
+    float: left;
+    width: 50%;
+    padding: 5px;
+}
+
+.delivery-unit, .bench{
+    display: inline-block;
+    padding-left: 30px;
 }
 
 /*.skills__selected {*/
