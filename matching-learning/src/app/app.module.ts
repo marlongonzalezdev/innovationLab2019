@@ -29,13 +29,15 @@ import { CandidateListComponent } from './components/candidates/candidate-list/c
 import { SkillServiceBase } from './shared/services/skill-service-base';
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { EvaluationsComponent } from './components/evaluations/evaluations.component';
-import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
+import { EvaluationListComponent } from './components/evaluations/evaluation-list/evaluation-list.component';
 import { EvaluationComponent } from './components/evaluations/evaluation/evaluation.component';
-import {EvaluationService} from './shared/services/evaluation.service';
-import {DeliveryUnitComponent} from './components/delivery-units/delivery-unit/delivery-unit.component';
-import {DeliveryUnitListComponent} from './components/delivery-units/delivery-unit-list/delivery-unit-list.component';
-import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units.component';
-
+import { EvaluationService } from './shared/services/evaluation.service';
+import { DeliveryUnitComponent } from './components/delivery-units/delivery-unit/delivery-unit.component';
+import { DeliveryUnitListComponent } from './components/delivery-units/delivery-unit-list/delivery-unit-list.component';
+import { DeliveryUnitsComponent } from './components/delivery-units/delivery-units.component';
+import { RegionComponent } from './components/regions/region/region.component';
+import { RegionListComponent } from './components/regions/region-list/region-list.component';
+import { RegionsComponent } from './components/regions/regions.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,9 @@ import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units
     DeliveryUnitComponent,
     DeliveryUnitsComponent,
     DeliveryUnitListComponent,
+    RegionComponent,
+    RegionsComponent,
+    RegionListComponent,
 
   ],
   imports: [
