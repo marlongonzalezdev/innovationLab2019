@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
+using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.Enums;
 
 namespace matching_learning.common.Domain.DTOs.Views
@@ -15,22 +13,7 @@ namespace matching_learning.common.Domain.DTOs.Views
 
         public SkillCategory Category { get; set; }
 
-        public string CategoryDescription
-        {
-            get
-            {
-                FieldInfo fi = this.Category.GetType().GetField(this.Category.ToString());
-
-                DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-                if (attributes != null && attributes.Any())
-                {
-                    return attributes.First().Description;
-                }
-
-                return this.Category.ToString();
-            }
-        }
+        public string CategoryDescription { get { return EnumHelper.GetEnumDescription(this.Category); } }
 
         public string Code { get; set; }
 

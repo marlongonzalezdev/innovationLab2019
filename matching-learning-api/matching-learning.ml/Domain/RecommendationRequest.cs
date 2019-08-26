@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using matching_learning.ml.Domain;
 
 namespace matching_learning.ml.Domain
 {

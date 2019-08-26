@@ -1,7 +1,4 @@
-﻿using matching_learning.common.Domain.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace matching_learning_algorithm.Domain
 {
