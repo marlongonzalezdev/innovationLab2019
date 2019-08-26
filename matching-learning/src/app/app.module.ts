@@ -49,6 +49,7 @@ import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units
     SkilldetailsComponent,
     CandidateComponent,
     CandidateListComponent,
+    SkilldetailsComponent,
     EvaluationsComponent,
     EvaluationListComponent,
     EvaluationComponent,
@@ -77,6 +78,6 @@ import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units
     EvaluationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent, UserDetailsComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent]
 })
 export class AppModule { }
