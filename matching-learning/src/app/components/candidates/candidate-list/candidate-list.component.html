@@ -40,8 +40,10 @@
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <button mat-icon-button (click)="onEdit(row)"><mat-icon>launch</mat-icon></button>
-        <button mat-icon-button color="warn"><mat-icon>delete_outline</mat-icon></button>
+        <button mat-icon-button (click)="onEdit(row)" matTooltip="Edit"><mat-icon>launch</mat-icon></button>
+        <button mat-icon-button color="warn" matTooltip="Delete"><mat-icon>delete_outline</mat-icon></button>
+        <button mat-icon-button color="primary" matTooltip="Evaluations"><mat-icon>assignment</mat-icon></button>
+
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="loading">
