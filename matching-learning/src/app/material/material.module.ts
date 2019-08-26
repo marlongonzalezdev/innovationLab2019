@@ -25,7 +25,8 @@ import * as Material from '@angular/material';
     Material.MatSnackBarModule,
     Material.MatSliderModule,
     Material.MatSortModule,
-    Material.MatDialogModule
+    Material.MatDialogModule,
+    Material.MatTooltipModule
   ],
   exports: [
     Material.MatSelectModule,
@@ -47,7 +48,8 @@ import * as Material from '@angular/material';
     Material.MatSnackBarModule,
     Material.MatSliderModule,
     Material.MatSortModule,
-    Material.MatDialogModule
+    Material.MatDialogModule,
+    Material.MatTooltipModule
   ]
 })
 export class MaterialModule { }
