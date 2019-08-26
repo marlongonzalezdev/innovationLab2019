@@ -1,12 +1,12 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../shared/models/project';
 import { Skill } from 'src/app/shared/models/skill';
-import {SkillsFilter} from '../../shared/models/skillsFilter';
+import { SkillsFilter } from '../../shared/models/skillsFilter';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { Observable } from 'rxjs';
 import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {SkillServiceBase} from '../../shared/services/skill-service-base';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SkillServiceBase } from '../../shared/services/skill-service-base';
 
 @Component({
   selector: 'app-input-criteria',
@@ -26,6 +26,7 @@ export class InputCriteriaComponent implements OnInit {
   options: FormGroup;
 
   deliveryUnits: Observable<DeliveryUnit[]>;
+  defaultDeliveryUnit: Observable<DeliveryUnit>;
 
   constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
       this.project = {
@@ -49,6 +50,10 @@ export class InputCriteriaComponent implements OnInit {
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
 
+    //this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();	
+	//this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
+    //this.project.deliveryUnitIdFilter = 13;
+	
     this.skillService.getSkillsSorted()
       .subscribe ( response => {
          this.skillList = response;

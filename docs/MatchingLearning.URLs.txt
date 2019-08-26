@@ -52,6 +52,10 @@ GET
 https://localhost:44374/DeliveryUnits/DeliveryUnitsPaginated?pageIdx=5&pageSize=10
 http://localhost:62460/DeliveryUnits/DeliveryUnitsPaginated?pageIdx=5&pageSize=10
 
+GET
+https://localhost:44374/DeliveryUnits/DefaultDeliveryUnit
+http://localhost:62460/DeliveryUnits/DefaultDeliveryUnit
+
 ----------------------------------------------------------------------------------------------------
 
 GET

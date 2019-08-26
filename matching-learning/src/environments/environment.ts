@@ -8,6 +8,7 @@ export const environment = {
     baseUrl: 'https://localhost:44374',
     GetCandidates: '/Candidates/Candidates',
     AddCandidate: '/Candidates/SaveCandidate',
+    GetDefaultDeliveryUnit: '/DeliveryUnits/DefaultDeliveryUnit',
     GetDeliveryUnits: '/DeliveryUnits/DeliveryUnits',
     GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
     GetMatches: '/Projects/GetProjectCandidates',
