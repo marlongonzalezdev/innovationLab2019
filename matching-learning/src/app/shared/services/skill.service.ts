@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {SkillServiceBase} from './skill-service-base';
 import { Skill } from '../models/skill';
+import { version } from 'punycode';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -30,7 +31,8 @@ export class SkillService implements SkillServiceBase {
     name: new FormControl('', Validators.required),
     category: new FormControl('', Validators.required),
     isVersioned: new FormControl(false),
-    versions: new FormControl('')
+    versions: new FormControl(''),
+    version: new FormControl('')
   });
 
   getSkillsSorted(): Observable<Skill[]> {
@@ -72,7 +74,8 @@ export class SkillService implements SkillServiceBase {
       name: '',
       category: '',
       isVersioned: false,
-      versions: []
+      versions: [],
+      version: ''
     });
   }
 
@@ -82,7 +85,8 @@ export class SkillService implements SkillServiceBase {
       name: skill.name,
       category: skill.category,
       isVersioned: skill.isVersioned,
-      versions: skill.versions
+      versions: skill.versions,
+      version: ''
     });
   }
 }

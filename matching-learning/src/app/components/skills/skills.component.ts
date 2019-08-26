@@ -70,19 +70,12 @@ export class SkillsComponent implements OnInit {
       this.showContent = displayContent;
     }
 
-    onSaveSkillComplete(result: SaveResult) {
-      if (result.recordId) {
-         this.notificationService.sucess('Skill saved successfully');
-      } else {
-         this.notificationService.fail(result.error);
-      }
-    }
     onEdit(row) {
       this.skillService.populateForm(row);
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
-      dialogConfig.width = '40%';
+      dialogConfig.width = '75%';
       this.dialog.open(SkilldetailsComponent, dialogConfig);
     }
 }
