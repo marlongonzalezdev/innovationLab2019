@@ -1512,6 +1512,15 @@ namespace matching_learning.common.Repositories
                         cmdSS.ExecuteNonQuery();
                     }
 
+                    using (var cmdTechId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdTechId.Transaction = trans;
+
+                        var techId = cmdTechId.ExecuteScalar();
+
+                        tech.RelatedId = Convert.ToInt32(techId);
+                    }
+
                     using (var cmdSkill = new SqlCommand(stmntSkill, conn))
                     {
                         cmdSkill.Transaction = trans;
@@ -1526,9 +1535,9 @@ namespace matching_learning.common.Repositories
                     {
                         cmdId.Transaction = trans;
 
-                        var id = cmdId.ExecuteScalar();
+                        var skillId = cmdId.ExecuteScalar();
 
-                        res = Convert.ToInt32(id);
+                        res = Convert.ToInt32(skillId);
                     }
 
                     saveRelatedEntities(tech, conn, trans);
@@ -1610,7 +1619,7 @@ namespace matching_learning.common.Repositories
             {
                 foreach (var tv in tech.Versions)
                 {
-                    saveTechnologyVersion(tv, conn, trans);
+                    saveTechnologyVersion(tv, tech.RelatedId, conn, trans);
                 }
             }
 
@@ -1618,16 +1627,19 @@ namespace matching_learning.common.Repositories
             {
                 foreach (var tr in tech.Roles)
                 {
-                    saveTechnologyRole(tr, conn, trans);
+                    saveTechnologyRole(tr, tech.RelatedId, conn, trans);
                 }
             }
         }
         #endregion
 
         #region Save TechnologyVersion
-        private int saveTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        private int saveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
+
+            // Set new techId as parent.
+            if (tv.ParentTechnologyId == -1) { tv.ParentTechnologyId = techId; }
 
             if (tv.Id < 0)
             {
@@ -1659,7 +1671,7 @@ namespace matching_learning.common.Repositories
                           ")";
 
             var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
-                             "  [TechnologyId] " +
+                             "  [TechnologyVersionId] " +
                              ") " +
                              "SELECT [Id] " +
                              "FROM [dbo].[TechnologyVersion]" +
@@ -1743,9 +1755,12 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save TechnologyRole
-        private int saveTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        private int saveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
+
+            // Set new techId as parent.
+            if (tr.ParentTechnologyId == -1) { tr.ParentTechnologyId = techId; }
 
             if (tr.Id < 0)
             {
