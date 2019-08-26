@@ -60,6 +60,13 @@ export class SkillService implements SkillServiceBase {
       catchError(this.handleError<SkillCategory>('getSkillCategory'))
     );
   }
+   getMainSkillCategory(): Observable<SkillCategory> {
+    const route = '/EnumEntities/MainSkillCategories';
+    return this.http.get<SkillCategory>(`${this.baseUrl}${route}`, httpOptions)
+    .pipe(
+      catchError(this.handleError<SkillCategory>('getMainSkillCategory'))
+    );
+  }
    saveSkill(skill: Skill): Observable<Skill> {
      const route = '/Skills/SaveSkillView';
      return this.http.post<Skill>(`${this.baseUrl}${route}`, skill, httpOptions)

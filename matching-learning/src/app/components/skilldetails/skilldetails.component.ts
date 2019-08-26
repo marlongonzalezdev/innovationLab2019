@@ -31,7 +31,7 @@ export class SkilldetailsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   // tslint:disable-next-line: no-output-on-prefix
   ngOnInit() {
-    this.skillservice.getSkillCategory()
+    this.skillservice.getMainSkillCategory()
     .subscribe(response => {
       this.skillCategories = response;
     }

@@ -9,6 +9,8 @@ namespace matching_learning.common.Repositories
 
         Evaluation GetEvaluationById(int id);
 
+        List<Evaluation> GetEvaluationsByCandidateId(int candidateId);
+
         int SaveEvaluation(Evaluation ev);
     }
 }
