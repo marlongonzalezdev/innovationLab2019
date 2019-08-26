@@ -36,7 +36,7 @@ export class SkilldetailsComponent implements OnInit {
     }
       );
     this.versionList = this.skillservice.form.controls.versions.value;
-    this.source = new MatTableDataSource<SkillVersion>(this.versionList);
+    this.source = new MatTableDataSource(this.versionList);
   }
 
   onSubmit(skillData) {
