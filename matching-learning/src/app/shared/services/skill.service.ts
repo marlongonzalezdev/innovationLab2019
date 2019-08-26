@@ -1,6 +1,5 @@
 import { SkillCategory } from '../models/skill-category';
 import { HttpErrorHandler, HandleError } from '../../http-error-handler.service';
-import { Skill } from '../models/skill';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -8,6 +7,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {SkillServiceBase} from './skill-service-base';
+import { Skill } from '../models/skill';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -30,7 +30,7 @@ export class SkillService implements SkillServiceBase {
     name: new FormControl('', Validators.required),
     category: new FormControl('', Validators.required),
     isVersioned: new FormControl(false),
-    version: new FormControl('')
+    versions: new FormControl('')
   });
 
   getSkillsSorted(): Observable<Skill[]> {
@@ -66,13 +66,23 @@ export class SkillService implements SkillServiceBase {
      );
    }
 
-   InitializeFormGroup() {
+   initializeFormGroup() {
     this.form.setValue({
-      $key: -1,
+      $key: null,
       name: '',
       category: '',
       isVersioned: false,
-      version: []
+      versions: []
+    });
+  }
+
+  populateForm(skill) {
+    this.form.setValue({
+      $key: skill.id,
+      name: skill.name,
+      category: skill.category,
+      isVersioned: skill.isVersioned,
+      versions: skill.versions
     });
   }
 }

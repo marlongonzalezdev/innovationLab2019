@@ -17,11 +17,12 @@ import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 })
 export class SkillsComponent implements OnInit {
     skillList: Skill[] = [];
-    displayedColumns = ['name', 'category', 'editAction'];
+    displayedColumns = ['name', 'category', 'actions'];
     selectedSkill: Skill;
     showContent: boolean;
     source: MatTableDataSource<Skill>;
     searchKey: string;
+    skillCategories: any;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     constructor(private skillService: SkillServiceBase,
@@ -37,8 +38,18 @@ export class SkillsComponent implements OnInit {
          this.source.sort = this.sort;
          this.source.paginator = this.paginator;
       });
+      this.skillService.getSkillCategory()
+      .subscribe(response => {
+      this.skillCategories = response;
     }
-
+      );
+    }
+    findCategoryName(categoryId: number) {
+      const category = this.skillCategories.find((c: { id: number; }) => {
+        return c.id === categoryId;
+      });
+      return category.name;
+    }
     onSearchClear() {
       this.searchKey = '';
       this.applyFilter();
@@ -47,7 +58,7 @@ export class SkillsComponent implements OnInit {
       this.source.filter = this.searchKey.trim().toLowerCase();
     }
     addSkill(): void {
-       this.skillService.InitializeFormGroup();
+       this.skillService.initializeFormGroup();
        const dialogConfig = new MatDialogConfig();
        dialogConfig.disableClose = true;
        dialogConfig.autoFocus = true;
@@ -65,5 +76,13 @@ export class SkillsComponent implements OnInit {
       } else {
          this.notificationService.fail(result.error);
       }
+    }
+    onEdit(row) {
+      this.skillService.populateForm(row);
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = true;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = '40%';
+      this.dialog.open(SkilldetailsComponent, dialogConfig);
     }
 }

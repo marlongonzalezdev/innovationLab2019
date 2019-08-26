@@ -1,4 +1,3 @@
-import { Skill } from 'src/app/shared/models/skill';
 import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';

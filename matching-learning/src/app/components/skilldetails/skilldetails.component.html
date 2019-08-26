@@ -1,18 +1,18 @@
 <mat-toolbar>
-    <span>{{skillservice.form.controls['$key'].value?"Modify Candidate":"Add Candidate"}}</span>
+    <span>{{skillservice.form.controls['$key'].value?"Modify Skill":"Add Skill"}}</span>
     <span class="fill-remaining-space"></span>
     <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
   </mat-toolbar>
 <div class="form-container">
         <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit(skillservice.form.value)">
                 <mat-grid-list cols="2" rowHeight="300px">       
-                    <mat-card>
-                            <div class="controls-container">                                
+                    <mat-card>                            
+                      <div class="controls-container">                                
                                 <mat-form-field class="select-width">
                                     <mat-select formControlName="category" placeholder="Category">
                                           <mat-option>None</mat-option>
                                           <ng-container *ngFor="let skillCategory of skillCategories">
-                                            <mat-option (onSelectionChange)="onSelect($event)" [value]="skillCategory">{{skillCategory.name}}</mat-option>
+                                            <mat-option (onSelectionChange)="onSelect($event)" [value]="skillCategory.id">{{skillCategory.name}}</mat-option>
                                           </ng-container>
                                         </mat-select>
                                       </mat-form-field>
@@ -29,15 +29,22 @@
                                              </mat-form-field>                        
                                              <button type="button" mat-mini-fab color="accent" (click)="addVersion()">
                                                <mat-icon>add</mat-icon>
-                                              </button>  
-                                              <ul>
-                                                    <li class="list-group-item" *ngFor="let version of versionList">
-                                                      <span class="badge">{{version.version}}</span>
-                                                      <button mat-icon-button aria-label="delete" (click)="deleteVersion(version)" color="primary">
-                                                        <mat-icon>delete</mat-icon>
-                                                      </button>
-                                                    </li>
-                                                  </ul>  
+                                              </button> 
+                                              <mat-table [dataSource]="source" matSort>
+                                                  <ng-container matColumnDef="name">
+                                                      <mat-header-cell *matHeaderCellDef mat-sort-header>Version</mat-header-cell>
+                                                      <mat-cell *matCellDef="let element">{{element.version}}</mat-cell>
+                                                  </ng-container>                                                          
+                                                    <ng-container matColumnDef="actions">
+                                                      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                                      <mat-cell *matCellDef="let row">
+                                                        <button type="button"><mat-icon>launch</mat-icon></button>
+                                                        <button type="button" (click)="deleteVersion(row)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+                                                      </mat-cell>
+                                                    </ng-container>                                                    
+                                                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                                    <mat-row *matRowDef="let row; columns:displayedColumns"></mat-row>                                                 
+                                        </mat-table>                                               
                                       </div>                                                                                                                                                
                                       <div class="button-row">
                                         <button mat-raised-button color="primary" type="submit" [disabled]="skillservice.form.invalid">Save</button>

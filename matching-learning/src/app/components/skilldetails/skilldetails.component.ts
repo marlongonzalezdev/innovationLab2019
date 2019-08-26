@@ -6,7 +6,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { SkillCategory } from '../../shared/models/skill-category';
 import { SkillServiceBase } from '../../shared/services/skill-service-base';
-import { MatCheckboxChange, MatDialogRef } from '@angular/material';
+import { MatCheckboxChange, MatDialogRef, MatTableDataSource } from '@angular/material';
 
 
 @Component({
@@ -18,16 +18,13 @@ export class SkilldetailsComponent implements OnInit {
   constructor(public skillservice: SkillServiceBase, public dialogRef: MatDialogRef<SkilldetailsComponent>) { }
 
   @Input()
-  set skill(skill: Skill) {}
-  get skill(): Skill { return this.skillOrigin; }
   skillCategories: any;
   selectedCategory: SkillCategory;
   isTechnology: boolean;
   isVersioned: boolean;
   versionList: SkillVersion[] = [];
-  private skillOrigin: Skill;
-  @Output()
-  public updateShowContent = new EventEmitter<boolean>();
+  source: MatTableDataSource<SkillVersion>;
+  displayedColumns = ['name', 'actions'];
   // tslint:disable-next-line: no-output-on-prefix
   @Output()
   public onSaveComplete = new EventEmitter<SaveResult>();
@@ -38,6 +35,8 @@ export class SkilldetailsComponent implements OnInit {
       this.skillCategories = response;
     }
       );
+    this.versionList = this.skillservice.form.controls.versions.value;
+    this.source = new MatTableDataSource<SkillVersion>(this.versionList);
   }
 
   onSubmit(skillData) {
@@ -45,7 +44,7 @@ export class SkilldetailsComponent implements OnInit {
     const skill: Skill = {
       id: -1,
       relatedId: -1,
-      category: skillData.category.id,
+      category: skillData.id,
       code: skillData.name,
       name: skillData.name,
       defaultExpertise: defaultExpertiseValue,
@@ -82,8 +81,6 @@ export class SkilldetailsComponent implements OnInit {
 
   onClear() {
     this.skillservice.form.reset();
-    const displayContent = false;
-    this.updateShowContent.emit(displayContent);
   }
 
   onSelect(change: MatOptionSelectionChange) {
@@ -115,11 +112,13 @@ export class SkilldetailsComponent implements OnInit {
       };
        this.versionList.push(skillVersion);
   }
+    this.source = new MatTableDataSource<SkillVersion>(this.versionList);
 }
- deleteVersion(version: SkillVersion): void {
+ deleteVersion(version): void {
   const index = this.versionList.indexOf(version, 0);
   if (index > -1) {
     this.versionList.splice(index, 1);
+    this.source = new MatTableDataSource<SkillVersion>(this.versionList);
   }
 }
 onClose() {
