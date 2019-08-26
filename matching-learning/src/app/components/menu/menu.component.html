@@ -27,6 +27,12 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
         <mat-nav-list>
+            <a mat-list-item (click)="sidenav.toggle()" href="" mat-list-item>
+                <mat-icon>home</mat-icon>
+                &nbsp;
+                Home
+            </a>
+
             <a mat-list-item [routerLink]="'/build'">
                 <mat-icon>search</mat-icon>
                 &nbsp;
@@ -34,7 +40,7 @@
             </a>
 
             <a mat-list-item [routerLink]="'/candidates'">
-                <mat-icon>supervisor_account</mat-icon>
+                <mat-icon>people</mat-icon>
                 &nbsp;
                 People
             </a>
@@ -44,16 +50,23 @@
                 &nbsp;
                 Skills
             </a>
+        
+            <!--
+            <a mat-list-item [routerLink]="'/evaluations'>
+                <mat-icon>assessment</mat-icon>
+                Evaluation
+            </a>
+            -->
         </mat-nav-list>
 
-        <a mat-menu-item [matMenuTriggerFor]="people">
+        <a mat-menu-item [matMenuTriggerFor]="geography">
             <mat-icon>language</mat-icon>
             Geography
         </a>
 
-        <mat-menu #people="matMenu">
+        <mat-menu #geography="matMenu">
             <button mat-menu-item [routerLink]="'/dus'">
-                <mat-icon>domain</mat-icon>
+                <mat-icon>location_city</mat-icon>
                 Delivery Units
             </button>
 
@@ -62,12 +75,6 @@
                 Regions
             </button>
             
-            <!--
-            <button mat-menu-item>
-                <mat-icon>assessment</mat-icon>
-                Evaluation
-            </button>
-            -->
         </mat-menu>
 
         <mat-nav-list>
@@ -78,10 +85,12 @@
             </a>
             -->
 
+            <!--
             <a mat-list-item (click)="sidenav.toggle()" href="" mat-list-item>
                 <mat-icon>close</mat-icon>
                 Close
             </a>
+            -->
         </mat-nav-list>
     </mat-sidenav>
 
