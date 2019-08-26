@@ -1,6 +1,5 @@
 import { SkillCategory } from '../models/skill-category';
 import { HttpErrorHandler, HandleError } from '../../http-error-handler.service';
-import { Skill } from '../models/skill';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -8,6 +7,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {SkillServiceBase} from './skill-service-base';
+import { Skill } from '../models/skill';
+import { version } from 'punycode';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -19,7 +20,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class SkillService implements SkillServiceBase {
-     constructor(
+       constructor(
     private http: HttpClient, httpErrorHandler: HttpErrorHandler
   ) { this.handleError = httpErrorHandler.createHandleError('SkillService');  }
   baseUrl = 'https://localhost:44374';
@@ -30,6 +31,7 @@ export class SkillService implements SkillServiceBase {
     name: new FormControl('', Validators.required),
     category: new FormControl('', Validators.required),
     isVersioned: new FormControl(false),
+    versions: new FormControl(''),
     version: new FormControl('')
   });
 
@@ -41,7 +43,7 @@ export class SkillService implements SkillServiceBase {
     );
   } 
   getSkills(): Observable<Skill[]> {
-    const route = '/Skills/Skills';
+    const route = '/Skills/SkillViews';
     return this.http.get<Skill[]>(`${this.baseUrl}${route}`, httpOptions)
     .pipe(
       catchError(this.handleError<Skill[]>('getSkill', []))
@@ -57,5 +59,34 @@ export class SkillService implements SkillServiceBase {
     .pipe(
       catchError(this.handleError<SkillCategory>('getSkillCategory'))
     );
+  }
+   saveSkill(skill: Skill): Observable<Skill> {
+     const route = '/Skills/SaveSkillView';
+     return this.http.post<Skill>(`${this.baseUrl}${route}`, skill, httpOptions)
+     .pipe(
+       catchError(this.handleError<Skill>('saveSkill'))
+     );
+   }
+
+   initializeFormGroup() {
+    this.form.setValue({
+      $key: null,
+      name: '',
+      category: '',
+      isVersioned: false,
+      versions: [],
+      version: ''
+    });
+  }
+
+  populateForm(skill) {
+    this.form.setValue({
+      $key: skill.id,
+      name: skill.name,
+      category: skill.category,
+      isVersioned: skill.isVersioned,
+      versions: skill.versions,
+      version: ''
+    });
   }
 }

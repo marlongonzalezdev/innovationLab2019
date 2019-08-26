@@ -31,7 +31,10 @@ export class CandidateListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.fillDataSource();
+  }
 
+  fillDataSource() {
     this.candidateService.getCandidates()
       .subscribe(response => {
         this.candidates = response;
@@ -43,19 +46,24 @@ export class CandidateListComponent implements OnInit {
 
   onCreate() {
     this.candidateService.InitializeFormGroup();
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '40%';
-    this.dialog.open(CandidateComponent, dialogConfig);
+    this.openDialog();
   }
 
   onEdit(row) {
     this.candidateService.populateForm(row);
+    this.openDialog();
+  }
+
+  openDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '40%';
-    this.dialog.open(CandidateComponent, dialogConfig);
+    const dialogRef = this.dialog.open(CandidateComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.fillDataSource();
+    });
   }
 }

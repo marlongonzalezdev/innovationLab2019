@@ -28,8 +28,13 @@ import { NotificationService } from './shared/services/notification.service';
 import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
 import { SkillServiceBase } from './shared/services/skill-service-base';
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
-
-
+import { EvaluationsComponent } from './components/evaluations/evaluations.component';
+import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
+import { EvaluationComponent } from './components/evaluations/evaluation/evaluation.component';
+import {EvaluationService} from './shared/services/evaluation.service';
+import {DeliveryUnitComponent} from './components/delivery-units/delivery-unit/delivery-unit.component';
+import {DeliveryUnitListComponent} from './components/delivery-units/delivery-unit-list/delivery-unit-list.component';
+import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units.component';
 
 
 @NgModule({
@@ -43,7 +48,15 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     CandidatesComponent,
     SkilldetailsComponent,
     CandidateComponent,
-    CandidateListComponent
+    CandidateListComponent,
+    SkilldetailsComponent,
+    EvaluationsComponent,
+    EvaluationListComponent,
+    EvaluationComponent,
+    DeliveryUnitComponent,
+    DeliveryUnitsComponent,
+    DeliveryUnitListComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -61,9 +74,10 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
     CandidateService,
     DeliveryUnitService,
     RelationTypeService,
-    NotificationService
+    NotificationService,
+    EvaluationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent]
 })
 export class AppModule { }

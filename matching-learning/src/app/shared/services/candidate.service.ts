@@ -45,8 +45,8 @@ export class CandidateService {
       name: '',
       firstName: '',
       lastName: '',
-      du: 2,
-      relationType: 1,
+      du: 0,
+      relationType: 0,
       isActive: true,
       isInBench: false
     });

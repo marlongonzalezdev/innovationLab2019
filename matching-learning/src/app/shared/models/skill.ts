@@ -9,6 +9,6 @@ export interface Skill {
     defaultExpertise: number;
     isVersioned: boolean;
     parentTechnologyId: number;
-    versions: SkillVersion;
+    versions: SkillVersion[];
     weight: number;
 }

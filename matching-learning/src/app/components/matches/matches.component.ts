@@ -5,6 +5,8 @@ import {MatTableDataSource} from '@angular/material/table';
 import { Match } from 'src/app/shared/models/match';
 import { Project } from 'src/app/shared/models/project';
 import { MatchService } from 'src/app/shared/services/match.service';
+import {MatDialog, MatDialogConfig} from '@angular/material';
+import {UserDetailsComponent} from '../user-details/user-details.component';
 
 
 @Component({
@@ -33,15 +35,42 @@ export class MatchesComponent implements OnInit {
         this.getUsers(this.project);
     }
 
-    onSelect(match: Match): void {
+ /*   onSelect(match: Match): void {
         this.selectedMatch = match;
     }
-
-    constructor(private matchService: MatchService) {
+*/
+    constructor(private matchService: MatchService, private dialog: MatDialog) {
     }
 
     ngOnInit() {
     }
+
+  openDialog(match: Match) {
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '50%';
+    dialogConfig.data = {
+      name: match.candidate.name,
+      picture: match.candidate.picture,
+      deliveryUnit: match.candidate.deliveryUnit.name,
+      role: match.candidate.activeRole.name,
+      relationType: match.candidate.relationType,
+      inBench: match.candidate.inBench,
+      ranking: match.ranking,
+      docType: match.candidate.docType,
+      docNumber: match.candidate.docNumber,
+      employeeNumber: match.candidate.employeeNumber,
+    };
+
+    const dialogRef = this.dialog.open(UserDetailsComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+     /* this.animal = result;*/
+    });
+  }
 
     getUsers(project: Project): void {
 
