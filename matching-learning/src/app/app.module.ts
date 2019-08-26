@@ -32,6 +32,10 @@ import { EvaluationsComponent } from './components/evaluations/evaluations.compo
 import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
 import { EvaluationComponent } from './components/evaluations/evaluation/evaluation.component';
 import {EvaluationService} from './shared/services/evaluation.service';
+import {DeliveryUnitComponent} from './components/delivery-units/delivery-unit/delivery-unit.component';
+import {DeliveryUnitListComponent} from './components/delivery-units/delivery-unit-list/delivery-unit-list.component';
+import {DeliveryUnitsComponent} from './components/delivery-units/delivery-units.component';
+
 
 @NgModule({
   declarations: [
@@ -47,7 +51,11 @@ import {EvaluationService} from './shared/services/evaluation.service';
     CandidateListComponent,
     EvaluationsComponent,
     EvaluationListComponent,
-    EvaluationComponent
+    EvaluationComponent,
+    DeliveryUnitComponent,
+    DeliveryUnitsComponent,
+    DeliveryUnitListComponent,
+
   ],
   imports: [
     BrowserModule,
