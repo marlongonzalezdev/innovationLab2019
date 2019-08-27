@@ -45,7 +45,7 @@ export class CandidateService {
       name: '',
       firstName: '',
       lastName: '',
-      du: 0,
+      du: 13, // Montevideo
       relationType: 0,
       isActive: true,
       isInBench: false

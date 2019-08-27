@@ -26,14 +26,12 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.id = +params.id; // (+) converts string 'id' to a number
-      console.log(this.id);
       this.evaluationService.getEvaluations(this.id)
         .subscribe(response => {
           this.candidate = response;
           this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-          console.log(this.candidate);
         });
     });
   }
@@ -50,10 +48,11 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-
+    this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
 
   onSearchClear() {
-
+    this.searchKey = '';
+    this.applyFilter();
   }
 }
