@@ -1537,7 +1537,8 @@ namespace matching_learning.common.Repositories
 
                         var skillId = cmdId.ExecuteScalar();
 
-                        res = Convert.ToInt32(skillId);
+                        tech.Id = Convert.ToInt32(skillId);
+                        res = tech.Id;
                     }
 
                     saveRelatedEntities(tech, conn, trans);

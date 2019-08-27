@@ -8,6 +8,7 @@ namespace matching_learning.common.Repositories
 {
     public class CandidateRoleRepository : ICandidateRoleRepository
     {
+        #region Retrieve
         public List<CandidateRole> GetCandidateRoles()
         {
             var res = new List<CandidateRole>();
@@ -83,5 +84,6 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
+        #endregion
     }
 }

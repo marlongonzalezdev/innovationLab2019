@@ -28,7 +28,6 @@ import { NotificationService } from './shared/services/notification.service';
 import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
 import { SkillServiceBase } from './shared/services/skill-service-base';
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
-import { EvaluationsComponent } from './components/evaluations/evaluations.component';
 import { EvaluationListComponent } from './components/evaluations/evaluation-list/evaluation-list.component';
 import { EvaluationComponent } from './components/evaluations/evaluation/evaluation.component';
 import { EvaluationService } from './shared/services/evaluation.service';
@@ -39,6 +38,7 @@ import { RegionComponent } from './components/regions/region/region.component';
 import { RegionListComponent } from './components/regions/region-list/region-list.component';
 import { RegionsComponent } from './components/regions/regions.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +53,6 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     CandidateComponent,
     CandidateListComponent,
     SkilldetailsComponent,
-    EvaluationsComponent,
     EvaluationListComponent,
     EvaluationComponent,
     DeliveryUnitComponent,
@@ -62,6 +61,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     RegionComponent,
     RegionsComponent,
     RegionListComponent,
+    PageNotFoundComponent,
 
   ],
   imports: [

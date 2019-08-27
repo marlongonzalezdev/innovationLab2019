@@ -21,6 +21,7 @@ namespace matching_learning.common.Repositories
 
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
 
+            var candidateEvaluations = getCandidatesEvaluations();
             var candidateRolesHistory = getCandidatesRoleHistory();
 
             var query = "SELECT [C].[Id], " +
@@ -50,6 +51,13 @@ namespace matching_learning.common.Repositories
                     {
                         var candidateId = dr.Db2Int("Id");
 
+                        var evaluations = new List<Evaluation>();
+
+                        if (candidateEvaluations.Any(ev => ev.CandidateId == candidateId))
+                        {
+                            evaluations = candidateEvaluations.Where(ev => ev.CandidateId == candidateId).ToList();
+                        }
+
                         var rolesHistory = new List<CandidateRoleHistory>();
 
                         if (candidateRolesHistory.ContainsKey(candidateId))
@@ -59,7 +67,7 @@ namespace matching_learning.common.Repositories
 
                         var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
 
-                        res.Add(getCandidateFromDataRow(dr, deliveryUnit, rolesHistory));
+                        res.Add(getCandidateFromDataRow(dr, deliveryUnit, evaluations, rolesHistory));
                     }
                 }
             }
@@ -75,6 +83,7 @@ namespace matching_learning.common.Repositories
 
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
 
+            var evaluations = getCandidatesEvaluationsByCandidateId(id);
             var candidateRolesHistory = getCandidatesRoleHistoryByCandidateId(id);
 
             var query = "SELECT [C].[Id], " +
@@ -110,7 +119,7 @@ namespace matching_learning.common.Repositories
 
                         var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
 
-                        res = getCandidateFromDataRow(dr, deliveryUnit, candidateRolesHistory);
+                        res = getCandidateFromDataRow(dr, deliveryUnit, evaluations, candidateRolesHistory);
                     }
                 }
             }
@@ -118,13 +127,13 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, List<CandidateRoleHistory> candidateRolesHistory)
+        private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, List<Evaluation> evaluations, List<CandidateRoleHistory> candidateRolesHistory)
         {
             Candidate res = null;
 
             string picturePath;
             string picturesRootFolder = Config.GetPicturesRootFolder();
-            
+
             var pictureUser = dr.Db2String("Picture");
 
             if (string.IsNullOrEmpty(pictureUser))
@@ -152,8 +161,29 @@ namespace matching_learning.common.Repositories
                 InBench = dr.Db2Bool("InBench"),
                 Picture = picturePath,
                 IsActive = dr.Db2Bool("IsActive"),
+                Evaluations = evaluations,
                 RolesHistory = candidateRolesHistory,
             };
+
+            return (res);
+        }
+        #endregion
+
+        #region Candicate Evaluations
+        private List<Evaluation> getCandidatesEvaluations()
+        {
+            var evaluationsRepository = new EvaluationRepository();
+
+            var res = evaluationsRepository.GetEvaluations();
+
+            return (res);
+        }
+
+        private List<Evaluation> getCandidatesEvaluationsByCandidateId(int candidateId)
+        {
+            var evaluationsRepository = new EvaluationRepository();
+
+            var res = evaluationsRepository.GetEvaluationsByCandidateId(candidateId);
 
             return (res);
         }
@@ -204,7 +234,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        public List<CandidateRoleHistory> getCandidatesRoleHistoryByCandidateId(int candidateId)
+        private List<CandidateRoleHistory> getCandidatesRoleHistoryByCandidateId(int candidateId)
         {
             var res = new List<CandidateRoleHistory>();
 
@@ -333,9 +363,13 @@ namespace matching_learning.common.Repositories
                         cmdId.Transaction = trans;
 
                         var id = cmdId.ExecuteScalar();
-
-                        res = Convert.ToInt32(id);
+                        ca.Id = Convert.ToInt32(id);
+                        res = ca.Id;
                     }
+
+                    SaveCandidateEvaluations(ca, conn, trans);
+
+                    SaveCandidateRoles(ca, conn, trans);
 
                     trans.Commit();
                 }
@@ -384,6 +418,10 @@ namespace matching_learning.common.Repositories
 
                         cmd.ExecuteNonQuery();
                     }
+
+                    SaveCandidateEvaluations(ca, conn, trans);
+
+                    SaveCandidateRoles(ca, conn, trans);
 
                     trans.Commit();
                 }
@@ -460,6 +498,140 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@isActive", SqlDbType.Bit);
             cmd.Parameters["@isActive"].Value = ca.IsActive;
+        }
+        #endregion
+
+        #region Candidate Evaluations
+        public void SaveCandidateEvaluations(Candidate ca, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ca.Evaluations != null && ca.Evaluations.Count >= 0)
+            {
+                var evalRepository = new EvaluationRepository();
+
+                foreach (var eval in ca.Evaluations)
+                {
+                    eval.CandidateId = ca.Id;
+                    evalRepository.SaveEvaluation(eval, conn, trans);
+                }
+            }
+        }
+        #endregion
+
+        #region Candidate Roles
+        public void SaveCandidateRoles(Candidate ca, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ca.RolesHistory != null && ca.RolesHistory.Count >= 0)
+            {
+                foreach (var role in ca.RolesHistory)
+                {
+                    role.Id = saveCandidateRoleHistory(role, ca.Id, conn, trans);
+                }
+            }
+        }
+        #endregion
+
+        #region Save
+        private int saveCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            if (crh.Id < 0)
+            {
+                res = insertCandidateRoleHistory(crh, candidateId, conn, trans);
+            }
+            else
+            {
+                res = updateCandidateRoleHistory(crh, candidateId, conn, trans);
+            }
+
+            return (res);
+        }
+
+        private int insertCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            var stmntIns = "INSERT INTO [dbo].[CandidateCandidateRole] (" +
+                           " [CandidateId]," +
+                           " [CandidateRoleId]," +
+                           " [StartDate]," +
+                           " [EndDate] " +
+                           ") " +
+                           "VALUES (" +
+                           "  @candidateId," +
+                           "  @candidateRoleId," +
+                           "  @startDate," +
+                           "  @endDate" +
+                           ")";
+
+            var stmntId = "SELECT @@IDENTITY";
+
+            using (var cmdIns = new SqlCommand(stmntIns, conn))
+            {
+                cmdIns.Transaction = trans;
+
+                setParamsCandidateRoleHistory(cmdIns, crh, candidateId);
+
+                cmdIns.ExecuteNonQuery();
+            }
+
+            using (var cmdId = new SqlCommand(stmntId, conn))
+            {
+                cmdId.Transaction = trans;
+
+                var id = cmdId.ExecuteScalar();
+
+                res = Convert.ToInt32(id);
+            }
+
+            return (res);
+        }
+
+        private int updateCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "UPDATE [dbo].[CandidateCandidateRole] " +
+                        "SET [CandidateId] = @candidateId," +
+                        "    [CandidateRoleId] = @candidateRoleId," +
+                        "    [StartDate] = @startDate," +
+                        "    [EndDate] = @endDate " +
+                        "WHERE [Id] = @id";
+
+            using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@id", SqlDbType.Int);
+                cmd.Parameters["@id"].Value = crh.Id;
+
+                setParamsCandidateRoleHistory(cmd, crh, candidateId);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return (crh.Id);
+        }
+
+        private void setParamsCandidateRoleHistory(SqlCommand cmd, CandidateRoleHistory crh, int candidateId)
+        {
+            cmd.Parameters.Add("@candidateId", SqlDbType.Int);
+            cmd.Parameters["@candidateId"].Value = candidateId;
+
+            cmd.Parameters.Add("@candidateRoleId", SqlDbType.Int);
+            cmd.Parameters["@candidateRoleId"].Value = crh.Role.Id;
+
+            cmd.Parameters.Add("@startDate", SqlDbType.DateTime);
+            cmd.Parameters["@startDate"].Value = crh.Start;
+
+            cmd.Parameters.Add("@endDate", SqlDbType.NVarChar);
+            cmd.Parameters["@endDate"].IsNullable = true;
+            if (crh.End.HasValue)
+            {
+                cmd.Parameters["@endDate"].Value = crh.End.Value;
+            }
+            else
+            {
+                cmd.Parameters["@endDate"].Value = DBNull.Value;
+            }
         }
         #endregion
     }
