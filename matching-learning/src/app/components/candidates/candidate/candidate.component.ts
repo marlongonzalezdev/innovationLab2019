@@ -57,7 +57,7 @@ export class CandidateComponent implements OnInit {
 
       this.service.addCandidate(candidate).subscribe(
         elem => {
-          this.notificationService.sucess('Candidate added successfully.');
+          this.notificationService.sucess('Candidate saved successfully.');
           this.onClear();
           console.log(elem);
           this.onClose();
