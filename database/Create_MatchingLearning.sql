@@ -7,6 +7,9 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
+DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+GO
+
 DROP VIEW IF EXISTS [dbo].[GlobalSkill]
 
 DROP TABLE IF EXISTS [dbo].[SkillEstimatedExpertise]
@@ -40,7 +43,25 @@ GO
 CREATE TYPE [MLCode] FROM NVARCHAR(32)
 CREATE TYPE [MLName] FROM NVARCHAR(256)
 CREATE TYPE [MLDecimal] FROM DECIMAL(12, 4)
+GO
 
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomDate] (@daysRange INT, @rnd FLOAT) RETURNS DATETIME
+AS
+ BEGIN
+  DECLARE @res DATETIME
+
+  DECLARE @baseDaysRange FLOAT = @daysRange  
+  DECLARE @currentDate DATE = GetDate()
+  DECLARE @rndDays INT
+  
+  SET @rndDays = (@rnd * @baseDaysRange)  
+  SET @res = DATEADD(DD, -@rndDays, @currentDate)
+
+  RETURN @res
+ END
 GO
 
 ----------------------------------------------------------------------------------------------------
@@ -788,6 +809,12 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
+
+UPDATE [dbo].[CandidateCandidateRole]
+SET [StartDate] = [dbo].[RandomDate](2000, RAND())
+GO
+
+----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
 DECLARE @candidateId INT
@@ -860,7 +887,7 @@ WHILE @@FETCH_STATUS = 0
       SELECT @candidateId,
              @skillId,
              [Id],
-             '2015-01-01',
+             [dbo].[RandomDate](2000, RAND()),
              @rndCvExpertice
       FROM [dbo].[EvaluationType]
       WHERE [Code] = 'CV'
@@ -882,7 +909,7 @@ WHILE @@FETCH_STATUS = 0
       SELECT @candidateId,
              @skillId,
              [Id],
-             '2015-01-01',
+             [dbo].[RandomDate](2000, RAND()),
              @rndExpExpertice
       FROM [dbo].[EvaluationType]
       WHERE [Code] = 'EXPERT'
@@ -943,6 +970,12 @@ INNER JOIN [dbo].[GlobalSkill] AS [GS] ON [GS].[SkillId] = [SEE].[SkillId]
 INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]
 ORDER BY [SEE].[CandidateId],
          [SEE].[SkillId]
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+GO
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
