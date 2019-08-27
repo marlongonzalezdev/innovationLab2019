@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Resources;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Domain.Enums;
 using matching_learning.common.Utils;
@@ -363,9 +364,13 @@ namespace matching_learning.common.Repositories
                         cmdId.Transaction = trans;
 
                         var id = cmdId.ExecuteScalar();
-
-                        res = Convert.ToInt32(id);
+                        ca.Id = Convert.ToInt32(id);
+                        res = ca.Id;
                     }
+
+                    SaveCandidateEvaluations(ca, conn, trans);
+
+                    SaveCandidateRoles(ca, conn, trans);
 
                     trans.Commit();
                 }
@@ -414,6 +419,10 @@ namespace matching_learning.common.Repositories
 
                         cmd.ExecuteNonQuery();
                     }
+
+                    SaveCandidateEvaluations(ca, conn, trans);
+
+                    SaveCandidateRoles(ca, conn, trans);
 
                     trans.Commit();
                 }
@@ -490,6 +499,140 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@isActive", SqlDbType.Bit);
             cmd.Parameters["@isActive"].Value = ca.IsActive;
+        }
+        #endregion
+
+        #region Candidate Evaluations
+        public void SaveCandidateEvaluations(Candidate ca, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ca.Evaluations != null && ca.Evaluations.Count >= 0)
+            {
+                var evalRepository = new EvaluationRepository();
+
+                foreach (var eval in ca.Evaluations)
+                {
+                    eval.CandidateId = ca.Id;
+                    evalRepository.SaveEvaluation(eval, conn, trans);
+                }
+            }
+        }
+        #endregion
+
+        #region Candidate Roles
+        public void SaveCandidateRoles(Candidate ca, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ca.RolesHistory != null && ca.RolesHistory.Count >= 0)
+            {
+                foreach (var role in ca.RolesHistory)
+                {
+                    role.Id = saveCandidateRoleHistory(role, ca.Id, conn, trans);
+                }
+            }
+        }
+        #endregion
+
+        #region Save
+        private int saveCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            if (crh.Id < 0)
+            {
+                res = insertCandidateRoleHistory(crh, candidateId, conn, trans);
+            }
+            else
+            {
+                res = updateCandidateRoleHistory(crh, candidateId, conn, trans);
+            }
+
+            return (res);
+        }
+
+        private int insertCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            var stmntIns = "INSERT INTO [dbo].[CandidateCandidateRole] (" +
+                           " [CandidateId]," +
+                           " [CandidateRoleId]," +
+                           " [StartDate]," +
+                           " [EndDate] " +
+                           ") " +
+                           "VALUES (" +
+                           "  @candidateId," +
+                           "  @candidateRoleId," +
+                           "  @startDate," +
+                           "  @endDate" +
+                           ")";
+
+            var stmntId = "SELECT @@IDENTITY";
+
+            using (var cmdIns = new SqlCommand(stmntIns, conn))
+            {
+                cmdIns.Transaction = trans;
+
+                setParamsCandidateRoleHistory(cmdIns, crh, candidateId);
+
+                cmdIns.ExecuteNonQuery();
+            }
+
+            using (var cmdId = new SqlCommand(stmntId, conn))
+            {
+                cmdId.Transaction = trans;
+
+                var id = cmdId.ExecuteScalar();
+
+                res = Convert.ToInt32(id);
+            }
+
+            return (res);
+        }
+
+        private int updateCandidateRoleHistory(CandidateRoleHistory crh, int candidateId, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "UPDATE [dbo].[CandidateCandidateRole] " +
+                        "SET [CandidateId] = @candidateId," +
+                        "    [CandidateRoleId] = @candidateRoleId," +
+                        "    [StartDate] = @startDate," +
+                        "    [EndDate] = @endDate " +
+                        "WHERE [Id] = @id";
+
+            using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@id", SqlDbType.Int);
+                cmd.Parameters["@id"].Value = crh.Id;
+
+                setParamsCandidateRoleHistory(cmd, crh, candidateId);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return (crh.Id);
+        }
+
+        private void setParamsCandidateRoleHistory(SqlCommand cmd, CandidateRoleHistory crh, int candidateId)
+        {
+            cmd.Parameters.Add("@candidateId", SqlDbType.Int);
+            cmd.Parameters["@candidateId"].Value = candidateId;
+
+            cmd.Parameters.Add("@candidateRoleId", SqlDbType.Int);
+            cmd.Parameters["@candidateRoleId"].Value = crh.Role.Id;
+
+            cmd.Parameters.Add("@startDate", SqlDbType.DateTime);
+            cmd.Parameters["@startDate"].Value = crh.Start;
+
+            cmd.Parameters.Add("@endDate", SqlDbType.NVarChar);
+            cmd.Parameters["@endDate"].IsNullable = true;
+            if (crh.End.HasValue)
+            {
+                cmd.Parameters["@endDate"].Value = crh.End.Value;
+            }
+            else
+            {
+                cmd.Parameters["@endDate"].Value = DBNull.Value;
+            }
         }
         #endregion
     }

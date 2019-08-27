@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using matching_learning.common.Domain.DTOs;
@@ -8,6 +9,7 @@ namespace matching_learning.common.Repositories
 {
     public class CandidateRoleRepository : ICandidateRoleRepository
     {
+        #region Retrieve
         public List<CandidateRole> GetCandidateRoles()
         {
             var res = new List<CandidateRole>();
@@ -83,5 +85,6 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
+        #endregion
     }
 }
