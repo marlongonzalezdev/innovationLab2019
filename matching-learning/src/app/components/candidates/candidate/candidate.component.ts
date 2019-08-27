@@ -51,7 +51,8 @@ export class CandidateComponent implements OnInit {
         employeeNumber: 43245,
         inBench: true,
         picture: null,
-        isActive: true
+        isActive: true,
+		evaluations: null
       };
 
       this.service.addCandidate(candidate).subscribe(
