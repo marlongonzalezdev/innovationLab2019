@@ -78,12 +78,12 @@ namespace matching_learning.common.Repositories
                     res.IsVersioned = tech.IsVersioned;
                     if (tech.IsVersioned && tech.Versions != null)
                     {
-                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
+                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.RelatedId)).ToList();
                     }
 
                     if (tech.Roles != null)
                     {
-                        res.Roles = tech.Roles.Select(tr => getFromTechnologyRole(tr, skill.Id)).ToList();
+                        res.Roles = tech.Roles.Select(tr => getFromTechnologyRole(tr, skill.RelatedId)).ToList();
                     }
                     break;
 
