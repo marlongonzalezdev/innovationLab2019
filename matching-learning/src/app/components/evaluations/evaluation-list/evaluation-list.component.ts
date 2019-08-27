@@ -1,9 +1,9 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {EvaluationService} from '../../../shared/services/evaluation.service';
-import {Candidate} from '../../../shared/models/candidate';
 import {Evaluation} from '../../../shared/models/evaluation';
-import {MatTableDataSource} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {Candidate} from '../../../shared/models/candidate';
 
 @Component({
   selector: 'app-evaluation-list',
@@ -13,9 +13,15 @@ import {MatTableDataSource} from '@angular/material';
 export class EvaluationListComponent implements OnInit, OnDestroy {
   id: number;
   private sub: any;
-  evaluations: Evaluation[] = [];
+  candidate: Candidate;
 
-  constructor(private route: ActivatedRoute, private  evaluationService: EvaluationService) {}
+  dataSource: any;
+  displayedColumns: string[] = ['evaluationType', 'expertise', 'date', 'actions'];
+  searchKey: string;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+
+  constructor(private route: ActivatedRoute, private  evaluationService: EvaluationService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -23,16 +29,19 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
       console.log(this.id);
       this.evaluationService.getEvaluations(this.id)
         .subscribe(response => {
-          this.evaluations = response;
-          // this.dataSource = new MatTableDataSource<Candidate>(this.candidates);
+          this.candidate = response;
+          this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
           // this.dataSource.sort = this.sort;
           // this.dataSource.paginator = this.paginator;
-          console.log(this.evaluations);
+          console.log(this.candidate);
         });
     });
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  onEdit(row: any) {
   }
 }

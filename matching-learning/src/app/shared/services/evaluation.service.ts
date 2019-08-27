@@ -33,8 +33,8 @@ export class EvaluationService {
     });
   }
 
-  getEvaluations(id): Observable<Evaluation[]> {
+  getEvaluations(id): Observable<Candidate> {
     this.url = 'https://localhost:44374/Evaluations/Evaluation?id=22';
-    return this.http.get<Evaluation[]>(this.url, {responseType: 'json'});
+    return this.http.get<Candidate>(this.url, {responseType: 'json'});
   }
 }

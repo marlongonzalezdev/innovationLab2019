@@ -18,4 +18,5 @@ export interface Candidate {
   activeRole: ActiveRole;
   picture: string;
   isActive: boolean;
+  
 }
