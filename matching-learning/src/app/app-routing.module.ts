@@ -5,6 +5,7 @@ import { CandidatesComponent } from './components/candidates/candidates.componen
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { DeliveryUnitsComponent } from './components/delivery-units/delivery-units.component';
 import { RegionsComponent } from './components/regions/regions.component';
+import {EvaluationsComponent} from './components/evaluations/evaluations.component';
 
 const routes: Routes = [
   {path: 'skills', component: SkillsComponent},
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path: 'build', component: InputCriteriaComponent},
   {path: 'dus', component: DeliveryUnitsComponent},
   {path: 'regions', component: RegionsComponent},
+  {path: 'evaluations', component: EvaluationsComponent},
 ];
 
 @NgModule({
