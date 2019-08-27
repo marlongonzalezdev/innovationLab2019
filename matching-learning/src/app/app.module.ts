@@ -85,6 +85,6 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     EvaluationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]
 })
 export class AppModule { }
