@@ -38,6 +38,7 @@ import { DeliveryUnitsComponent } from './components/delivery-units/delivery-uni
 import { RegionComponent } from './components/regions/region/region.component';
 import { RegionListComponent } from './components/regions/region-list/region-list.component';
 import { RegionsComponent } from './components/regions/regions.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { RegionsComponent } from './components/regions/regions.component';
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FlexLayoutModule
   ],
   providers: [
     HttpErrorHandler,
