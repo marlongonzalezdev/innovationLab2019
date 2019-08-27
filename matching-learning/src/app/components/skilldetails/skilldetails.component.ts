@@ -27,6 +27,7 @@ export class SkilldetailsComponent implements OnInit {
   versionList: SkillVersion[] = [];
   source: MatTableDataSource<SkillVersion>;
   displayedColumns = ['name', 'actions'];
+  categoryDisable: boolean;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   // tslint:disable-next-line: no-output-on-prefix
@@ -43,23 +44,40 @@ export class SkilldetailsComponent implements OnInit {
     this.source = new MatTableDataSource<SkillVersion>(this.versionList);
     this.source.sort = this.sort;
     this.source.paginator = this.paginator;
+    if (this.skillservice.form.controls.$key.value) {this.categoryDisable = true; } else {this.categoryDisable = false; }
   }
 
   onSubmit(skillData) {
     const defaultExpertiseValue = 0.0;
-    const skill: Skill = {
-      id: -1,
-      relatedId: -1,
-      category: skillData.category,
-      code: skillData.name,
-      name: skillData.name,
-      defaultExpertise: defaultExpertiseValue,
-      isVersioned: skillData.isVersioned,
-      parentTechnologyId: -1,
-      versions: this.versionList,
-      weight: null
+    let skill: Skill;
+    if (skillData.$key) {
+      skill = {
+        id: skillData.$key,
+        relatedId: skillData.relatedId,
+        category: skillData.category,
+        code: skillData.name,
+        name: skillData.name,
+        defaultExpertise: defaultExpertiseValue,
+        isVersioned: skillData.isVersioned,
+        parentTechnologyId: skillData.parentTechnologyId,
+        versions: this.versionList,
+        weight: null
+      };
+    } else {
+      skill = {
+        id: -1,
+        relatedId: -1,
+        category: skillData.category,
+        code: skillData.name,
+        name: skillData.name,
+        defaultExpertise: defaultExpertiseValue,
+        isVersioned: skillData.isVersioned,
+        parentTechnologyId: -1,
+        versions: this.versionList,
+        weight: null
 
-    };
+      };
+    }
     let result: SaveResult;
     this.skillservice.saveSkill(skill)
     .subscribe(response => {

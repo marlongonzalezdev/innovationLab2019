@@ -32,7 +32,9 @@ export class SkillService implements SkillServiceBase {
     category: new FormControl('', Validators.required),
     isVersioned: new FormControl(false),
     versions: new FormControl(''),
-    version: new FormControl('')
+    version: new FormControl(''),
+    relatedId: new FormControl(null),
+    parentTechnologyId: new FormControl(null)
   });
 
   getSkillsSorted(): Observable<Skill[]> {
@@ -75,7 +77,9 @@ export class SkillService implements SkillServiceBase {
       category: '',
       isVersioned: false,
       versions: [],
-      version: ''
+      version: '',
+      relatedId: null,
+      parentTechnologyId: null
     });
   }
 
@@ -86,7 +90,9 @@ export class SkillService implements SkillServiceBase {
       category: skill.category,
       isVersioned: skill.isVersioned,
       versions: skill.versions,
-      version: ''
+      version: '',
+      relatedId: skill.relatedId,
+      parentTechnologyId: null
     });
   }
 }

@@ -9,7 +9,7 @@
                     <mat-card class=".mat-elevation-z0">                            
                       <div class="controls-container">                                
                                 <mat-form-field class="select-width">
-                                    <mat-select formControlName="category" placeholder="Category">
+                                    <mat-select formControlName="category" placeholder="Category" [disabled]="categoryDisable">
                                           <mat-option>None</mat-option>
                                           <ng-container *ngFor="let skillCategory of skillCategories">
                                             <mat-option (onSelectionChange)="onSelect($event)" [value]="skillCategory.id">{{skillCategory.name}}</mat-option>
