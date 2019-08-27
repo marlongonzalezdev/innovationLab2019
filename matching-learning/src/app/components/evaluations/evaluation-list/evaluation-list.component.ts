@@ -31,8 +31,8 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
         .subscribe(response => {
           this.candidate = response;
           this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
-          // this.dataSource.sort = this.sort;
-          // this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
           console.log(this.candidate);
         });
     });
@@ -43,5 +43,17 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   }
 
   onEdit(row: any) {
+  }
+
+  onCreate() {
+
+  }
+
+  applyFilter() {
+
+  }
+
+  onSearchClear() {
+
   }
 }

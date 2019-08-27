@@ -1,6 +1,7 @@
 import {DeliveryUnit} from './deliveryUnit';
 import {RolesHistory} from './rolesHistory';
 import {ActiveRole} from './activeRole';
+import {Evaluation} from './evaluation';
 
 export interface Candidate {
   id: number;
@@ -18,5 +19,5 @@ export interface Candidate {
   activeRole: ActiveRole;
   picture: string;
   isActive: boolean;
-  
+  evaluations: Evaluation[];
 }
