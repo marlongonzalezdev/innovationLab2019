@@ -2,8 +2,10 @@ import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {EvaluationService} from '../../../shared/services/evaluation.service';
 import {Evaluation} from '../../../shared/models/evaluation';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Candidate} from '../../../shared/models/candidate';
+import {CandidateComponent} from '../../candidates/candidate/candidate.component';
+import {EvaluationComponent} from '../evaluation/evaluation.component';
 
 @Component({
   selector: 'app-evaluation-list',
@@ -24,16 +26,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private  evaluationService: EvaluationService, private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.id = +params.id; // (+) converts string 'id' to a number
-      this.evaluationService.getEvaluations(this.id)
-        .subscribe(response => {
-          this.candidate = response;
-          this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-        });
-    });
+    this.fillDataSource();
   }
 
   ngOnDestroy() {
@@ -44,7 +37,8 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   }
 
   onCreate() {
-
+    this.evaluationService.InitializeFormGroup();
+    this.openDialog();
   }
 
   applyFilter() {
@@ -54,5 +48,33 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   onSearchClear() {
     this.searchKey = '';
     this.applyFilter();
+  }
+
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '40%';
+    const dialogRef = this.dialog.open(EvaluationComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.fillDataSource();
+    });
+  }
+
+
+
+   fillDataSource() {
+    this.sub = this.route.params.subscribe(params => {
+      this.id = +params.id; // (+) converts string 'id' to a number
+      this.evaluationService.getEvaluations(this.id)
+        .subscribe(response => {
+          this.candidate = response;
+          this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+        });
+    });
   }
 }
