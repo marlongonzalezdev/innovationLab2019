@@ -3,7 +3,7 @@ import { SkillCategory } from './skill-category';
 export interface Skill {
     id: number;
     relatedId: number;
-    category: SkillCategory;
+    category: number;
     code: string;
     name: string;
     defaultExpertise: number;

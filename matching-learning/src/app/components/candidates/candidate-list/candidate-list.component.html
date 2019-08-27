@@ -42,7 +42,7 @@
       <mat-cell *matCellDef="let row">
         <button mat-icon-button (click)="onEdit(row)" matTooltip="Edit"><mat-icon>launch</mat-icon></button>
         <button mat-icon-button color="warn" matTooltip="Delete"><mat-icon>delete_outline</mat-icon></button>
-        <button mat-icon-button color="primary" matTooltip="Evaluations"><mat-icon>assignment</mat-icon></button>
+        <button mat-icon-button color="primary" matTooltip="Evaluations" [routerLink]="['/evaluations', row.id]"><mat-icon>assignment</mat-icon></button>
 
       </mat-cell>
     </ng-container>

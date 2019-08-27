@@ -6,12 +6,17 @@ import { InputCriteriaComponent } from './components/input-criteria/input-criter
 import { DeliveryUnitsComponent } from './components/delivery-units/delivery-units.component';
 import { RegionsComponent } from './components/regions/regions.component';
 
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
+
 const routes: Routes = [
+  // { path: '**', component: PageNotFoundComponent },
   {path: 'skills', component: SkillsComponent},
   {path: 'candidates', component: CandidatesComponent},
   {path: 'build', component: InputCriteriaComponent},
   {path: 'dus', component: DeliveryUnitsComponent},
   {path: 'regions', component: RegionsComponent},
+  {path: 'evaluations/:id', component: EvaluationListComponent},
 ];
 
 @NgModule({
