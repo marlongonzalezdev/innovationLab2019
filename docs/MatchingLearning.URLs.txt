@@ -151,16 +151,6 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 ----------------------------------------------------------------------------------------------------
 
 GET
-https://localhost:44374/CandidateEvaluations/CandidateEvaluations?candidateId=22
-http://localhost:62460/CandidateEvaluations/CandidateEvaluations?candidateId=22
-
-GET
-https://localhost:44374/CandidateEvaluations/CandidateEvaluationsPaginated?candidateId=22&pageIdx=1&pageSize=10
-http://localhost:62460/CandidateEvaluations/CandidateEvaluationsPaginated?candidateId=22&pageIdx=1&pageSize=10
-
-----------------------------------------------------------------------------------------------------
-
-GET
 https://localhost:44374/Skills/SkillViews
 http://localhost:62460/Skills/SkillViews
 

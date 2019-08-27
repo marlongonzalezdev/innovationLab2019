@@ -15,11 +15,9 @@ namespace matching_learning.common.Repositories
         {
             var res = new List<Evaluation>();
 
-            var candidateRepository = new CandidateRepository();
             var skillRepository = new SkillRepository();
             var evaluationTypeRepository = new EvaluationTypeRepository();
 
-            var candidates = candidateRepository.GetCandidates();
             var skills = skillRepository.GetSkills();
             var evaluationTypes = evaluationTypeRepository.GetEvaluationTypes();
 
@@ -45,15 +43,13 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        var candidateId = dr.Db2Int("CandidateId");
                         var skillId = dr.Db2Int("SkillId");
                         var evaluationTypeId = dr.Db2Int("EvaluationTypeId");
 
-                        var candidate = candidates.FirstOrDefault(du => du.Id == candidateId);
                         var skill = skills.FirstOrDefault(du => du.Id == skillId);
                         var evaluationType = evaluationTypes.FirstOrDefault(du => du.Id == evaluationTypeId);
 
-                        res.Add(getEvaluationFromDataRow(dr, candidate, skill, evaluationType));
+                        res.Add(getEvaluationFromDataRow(dr, skill, evaluationType));
                     }
                 }
             }
@@ -65,11 +61,9 @@ namespace matching_learning.common.Repositories
         {
             Evaluation res = null;
 
-            var candidateRepository = new CandidateRepository();
             var skillRepository = new SkillRepository();
             var evaluationTypeRepository = new EvaluationTypeRepository();
-
-
+            
             var query = "SELECT [E].[Id], " +
                         "       [E].[CandidateId]," +
                         "       [E].[SkillId]," +
@@ -98,15 +92,13 @@ namespace matching_learning.common.Repositories
                     {
                         DataRow dr = dt.Rows[0];
 
-                        var candidateId = dr.Db2Int("CandidateId");
                         var skillId = dr.Db2Int("SkillId");
                         var evaluationTypeId = dr.Db2Int("EvaluationTypeId");
 
-                        var candidate = candidateRepository.GetCandidateById(candidateId);
                         var skill = skillRepository.GetSkillById(skillId);
                         var evaluationType = evaluationTypeRepository.GetEvaluationTypeById(evaluationTypeId);
 
-                        res = getEvaluationFromDataRow(dr, candidate, skill, evaluationType);
+                        res = getEvaluationFromDataRow(dr, skill, evaluationType);
                     }
                 }
             }
@@ -118,11 +110,9 @@ namespace matching_learning.common.Repositories
         {
             var res = new List<Evaluation>();
 
-            var candidateRepository = new CandidateRepository();
             var skillRepository = new SkillRepository();
             var evaluationTypeRepository = new EvaluationTypeRepository();
 
-            var candidate = candidateRepository.GetCandidateById(candidateId);
             var skills = skillRepository.GetSkills();
             var evaluationTypes = evaluationTypeRepository.GetEvaluationTypes();
 
@@ -159,7 +149,7 @@ namespace matching_learning.common.Repositories
                         var skill = skills.FirstOrDefault(du => du.Id == skillId);
                         var evaluationType = evaluationTypes.FirstOrDefault(du => du.Id == evaluationTypeId);
 
-                        res.Add(getEvaluationFromDataRow(dr, candidate, skill, evaluationType));
+                        res.Add(getEvaluationFromDataRow(dr, skill, evaluationType));
                     }
                 }
             }
@@ -167,19 +157,17 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private Evaluation getEvaluationFromDataRow(DataRow dr, Candidate candidate, Skill skill, EvaluationType evaluationType)
+        private Evaluation getEvaluationFromDataRow(DataRow dr, Skill skill, EvaluationType evaluationType)
         {
             Evaluation res = null;
 
-            var candidateId = dr.Db2Int("CandidateId");
             var skillId = dr.Db2Int("SkillId");
             var evaluationTypeId = dr.Db2Int("EvaluationTypeId");
 
             res = new Evaluation()
             {
                 Id = dr.Db2Int("Id"),
-                CandidateId = candidateId,
-                Candidate = candidate,
+                CandidateId = dr.Db2Int("CandidateId"),
                 SkillId = skillId,
                 Skill = skill,
                 EvaluationKey = dr.Db2String("EvaluationKey"),
