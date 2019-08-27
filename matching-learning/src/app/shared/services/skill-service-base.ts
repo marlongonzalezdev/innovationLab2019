@@ -13,6 +13,7 @@ export abstract class SkillServiceBase {
     public abstract getSkills: () => Observable<Skill[]>;
     public abstract getSkillById: (skill: Skill) => Observable<Skill>;
     public abstract getSkillCategory: () => Observable<SkillCategory>;
+    public abstract getMainSkillCategory: () => Observable<SkillCategory>;
     public abstract saveSkill: (skill: Skill) => Observable<Skill>;
     public abstract initializeFormGroup: () => void;
     public abstract populateForm: (skill) => void;

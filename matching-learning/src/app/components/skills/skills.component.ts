@@ -38,7 +38,7 @@ export class SkillsComponent implements OnInit {
          this.source.sort = this.sort;
          this.source.paginator = this.paginator;
       });
-      this.skillService.getSkillCategory()
+      this.skillService.getMainSkillCategory()
       .subscribe(response => {
       this.skillCategories = response;
     }

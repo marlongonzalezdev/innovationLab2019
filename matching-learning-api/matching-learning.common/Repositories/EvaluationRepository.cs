@@ -114,6 +114,59 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        public List<Evaluation> GetEvaluationsByCandidateId(int candidateId)
+        {
+            var res = new List<Evaluation>();
+
+            var candidateRepository = new CandidateRepository();
+            var skillRepository = new SkillRepository();
+            var evaluationTypeRepository = new EvaluationTypeRepository();
+
+            var candidate = candidateRepository.GetCandidateById(candidateId);
+            var skills = skillRepository.GetSkills();
+            var evaluationTypes = evaluationTypeRepository.GetEvaluationTypes();
+
+            var query = "SELECT [E].[Id], " +
+                        "       [E].[CandidateId]," +
+                        "       [E].[SkillId]," +
+                        "       [E].[EvaluationKey]," +
+                        "       [E].[EvaluationTypeId]," +
+                        "       [E].[Date]," +
+                        "       [E].[Expertise]," +
+                        "       [E].[Notes] " +
+                        "FROM [dbo].[Evaluation] AS [E] " +
+                        "WHERE [E].[CandidateId] = @candidateId";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@candidateId", SqlDbType.Int);
+                    cmd.Parameters["@candidateId"].Value = candidateId;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var skillId = dr.Db2Int("SkillId");
+                        var evaluationTypeId = dr.Db2Int("EvaluationTypeId");
+                        
+                        var skill = skills.FirstOrDefault(du => du.Id == skillId);
+                        var evaluationType = evaluationTypes.FirstOrDefault(du => du.Id == evaluationTypeId);
+
+                        res.Add(getEvaluationFromDataRow(dr, candidate, skill, evaluationType));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
         private Evaluation getEvaluationFromDataRow(DataRow dr, Candidate candidate, Skill skill, EvaluationType evaluationType)
         {
             Evaluation res = null;

@@ -7,7 +7,7 @@
   <mat-card class="criteria-card">
     <div>
       <mat-form-field floatLabel="never">
-        <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit">
+        <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit" >
           <mat-option>None</mat-option>
           <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
             <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>

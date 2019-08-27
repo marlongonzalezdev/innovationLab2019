@@ -75,6 +75,23 @@ namespace matching_learning.api.Controllers.Common
         }
 
         /// <summary>
+        /// Gets the main skill categories (technology version and technology role depends of technology.
+        /// </summary>
+        /// <returns></returns>
+        [Route("MainSkillCategories")]
+        public ActionResult<List<EnumEntity>> GetMainSkillCategories()
+        {
+            var res = from SkillCategory n in Enum.GetValues(typeof(SkillCategory))
+                select new EnumEntity()
+                {
+                    Id = (int)n,
+                    Name = EnumHelper.GetEnumDescription(n)
+                };
+
+            return (res.Where(ee => ee.Id == (int)SkillCategory.BusinessArea || ee.Id == (int)SkillCategory.SoftSkill || ee.Id == (int)SkillCategory.Technology).ToList());
+        }
+
+        /// <summary>
         /// Gets the skill relation types.
         /// </summary>
         /// <returns></returns>

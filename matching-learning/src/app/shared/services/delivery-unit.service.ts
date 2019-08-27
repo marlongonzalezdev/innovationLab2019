@@ -14,6 +14,10 @@ export class DeliveryUnitService {
   getDeliveryUnits() {
     return this.httpClient.get<DeliveryUnit[]>(environment.dbConfig.baseUrl + environment.dbConfig.GetDeliveryUnits);
   }
+  
+  getDefaultDeliveryUnit() {
+    return this.httpClient.get<DeliveryUnit>(environment.dbConfig.baseUrl + environment.dbConfig.GetDefaultDeliveryUnit);
+  }
 }
 
 
