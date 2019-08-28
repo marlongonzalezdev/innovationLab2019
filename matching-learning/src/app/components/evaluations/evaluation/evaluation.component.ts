@@ -3,6 +3,8 @@ import {EvaluationService} from '../../../shared/services/evaluation.service';
 import {MatDialogRef} from '@angular/material';
 import {Evaluation} from '../../../shared/models/evaluation';
 import {Skill} from '../../../shared/models/skill';
+import {Observable} from 'rxjs';
+import {EvaluationType} from '../../../shared/models/evaluation-type';
 
 @Component({
   selector: 'app-evaluation',
@@ -11,7 +13,10 @@ import {Skill} from '../../../shared/models/skill';
 })
 export class EvaluationComponent implements OnInit {
 
-  skills: Skill[] = [];
+  evaluationTypes: Observable<EvaluationType[]>;
+  skillsList: Observable<Skill[]>;
+
+  addedSkills: Skill[] = [];
   constructor(private evaluationService: EvaluationService, public dialogRef: MatDialogRef<EvaluationComponent>) { }
 
   ngOnInit() {
@@ -24,6 +29,7 @@ export class EvaluationComponent implements OnInit {
         candidateId: this.evaluationService.form.controls.candidateId.value,
         date: new Date(),
         evaluationType: this.evaluationService.form.controls.evaluationType.value,
+        skills: []
         // deliveryUnitId: 13,
         // deliveryUnit: null,
         // relationType: 1,
