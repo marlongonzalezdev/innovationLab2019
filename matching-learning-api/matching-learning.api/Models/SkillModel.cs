@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using matching_learning.ml.Domain;
+﻿using matching_learning.common.Domain.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace matching_learning.api.Models
 {
@@ -34,8 +34,8 @@ namespace matching_learning.api.Models
         {
             return new Skill
             {
-                Tag = Tag,
-                Weight = Weight
+                Code = Tag,
+                DefaultExpertise = decimal.Parse(Weight.ToString())
             };
         }
     }

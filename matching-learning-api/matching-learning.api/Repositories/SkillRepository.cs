@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using matching_learning.ml.Domain;
+﻿using matching_learning.common.Domain.DTOs;
+using System.Collections.Generic;
 
 namespace matching_learning.api.Repositories
 {
     /// <summary>
     /// Skills repository implementation
     /// </summary>
-    public class SkillRepository:ISkillRepository
+    public class SkillRepository: ISkillRepository
     {
         /// <summary>
         /// Get skill list 

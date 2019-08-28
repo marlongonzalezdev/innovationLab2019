@@ -32,6 +32,7 @@ namespace matching_learning_algorithm
             Logger = logger;
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
+            InputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
         }
         
         public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet)
@@ -56,13 +57,7 @@ namespace matching_learning_algorithm
         }
         private void GenerateDataset(ProjectCandidateRequirement candidateRequirement)
         {
-            InputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertisesBySkillIds(
-                candidateRequirement
-                .SkillsFilter
-                .Select(requirement => requirement.RequiredSkillId)
-                .ToList()
-                );
+            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
             if (candidateRequirement.DeliveryUnitIdFilter != null)
             {
                 estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.DeliveryUnitId == candidateRequirement.DeliveryUnitIdFilter).ToList();
@@ -72,7 +67,7 @@ namespace matching_learning_algorithm
                 estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.InBench == candidateRequirement.InBenchFilter).ToList();
             }
             CsvHeaders.Add("candidateId");
-            CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).ToList());
+            CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
             {
                 file.WriteLine(string.Join(',', CsvHeaders));
@@ -89,7 +84,7 @@ namespace matching_learning_algorithm
                                 : "0"
                             );
                     }
-
+                    file.WriteLine(string.Join(',', row));
                 }
             }
         }
