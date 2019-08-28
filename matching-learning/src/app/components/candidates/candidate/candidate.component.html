@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <span>{{service.form.controls['$key'].value?"Modify Candidate":"Add Candidate"}}</span>
+  <span>{{service.form.controls['$key'].value=== -1 ? "Add Candidate":"Modify Candidate"}}</span>
   <span class="fill-remaining-space"></span>
   <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
 </mat-toolbar>

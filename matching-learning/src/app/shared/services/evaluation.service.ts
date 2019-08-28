@@ -14,8 +14,9 @@ export class EvaluationService {
   constructor(private http: HttpClient) { }
 
   form: FormGroup = new FormGroup({
-    $key: new FormControl(null),
+    $key: new FormControl(-1),
     candidateId: new FormControl(''),
+    weight: new FormControl(0, Validators.required),
     evaluationType: new FormControl(0, Validators.required),
     skills: new FormControl(0, Validators.required),
     candidateName: new FormControl('')
@@ -25,6 +26,7 @@ export class EvaluationService {
     this.form.setValue({
       $key: -1,
       candidateId: null,
+      weight: 0,
       evaluationType: 0,
       skills: 0,
       candidateName: ''

@@ -63,8 +63,6 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
    fillDataSource() {
     this.sub = this.route.params.subscribe(params => {
       this.id = +params.id; // (+) converts string 'id' to a number

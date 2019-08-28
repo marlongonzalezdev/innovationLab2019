@@ -113,9 +113,10 @@ footer {
 /*  background-color: #3f51b5;*/
 /*}*/
 
-/*.hide {*/
-/*  display: none;*/
-/*}*/
+/*Heads up: do not remove*/
+.hide {
+  display: none;
+}
 
 /*mat-footer-row mat-footer-cell {*/
 /*  justify-content: center;*/
