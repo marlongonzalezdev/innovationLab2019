@@ -18,6 +18,10 @@
   </div>
   <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="skill">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Skill</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.skill.name}}</mat-cell>
+      </ng-container>
       <ng-container matColumnDef="evaluationType">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Evaluation Type</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.evaluationType.name}}</mat-cell>
@@ -28,7 +32,7 @@
       </ng-container>
       <ng-container matColumnDef="expertise">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Result</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.expertise}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.expertise | percent:'1.1-1'}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>

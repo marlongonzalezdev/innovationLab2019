@@ -826,11 +826,15 @@ DECLARE @limitSeeImpact FLOAT = 0.2
 
 DECLARE @rndCvExpertice FLOAT
 DECLARE @rndCvImpact FLOAT
-DECLARE @limitCvImpact FLOAT = 0.2
+DECLARE @limitCvImpact FLOAT = 0.1
 
 DECLARE @rndExpExpertice FLOAT
 DECLARE @rndExpImpact FLOAT
-DECLARE @limitExpImpact FLOAT = 0.2
+DECLARE @limitExpImpact FLOAT = 0.1
+
+DECLARE @rndLeadExpertice FLOAT
+DECLARE @rndLeadImpact FLOAT
+DECLARE @limitLeadImpact FLOAT = 0.1
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -871,7 +875,7 @@ WHILE @@FETCH_STATUS = 0
       )
      END
 
-
+    -- Random CV evaluations
     SET @rndCvExpertice = RAND()
     SET @rndCvImpact = RAND()
 
@@ -893,7 +897,7 @@ WHILE @@FETCH_STATUS = 0
       WHERE [Code] = 'CV'
      END
 
-
+    -- Random Expert evaluations
     SET @rndExpExpertice = RAND()
     SET @rndExpImpact = RAND()
 
@@ -913,6 +917,28 @@ WHILE @@FETCH_STATUS = 0
              @rndExpExpertice
       FROM [dbo].[EvaluationType]
       WHERE [Code] = 'EXPERT'
+     END
+    
+    -- Random leader evaluations
+    SET @rndLeadExpertice = RAND()
+    SET @rndLeadImpact = RAND()
+
+    IF (@rndLeadImpact < @limitLeadImpact)
+     BEGIN
+      INSERT INTO [dbo].[Evaluation] (
+        [CandidateId],
+        [SkillId],
+        [EvaluationTypeId],
+        [Date],
+        [Expertise]
+      )
+      SELECT @candidateId,
+             @skillId,
+             [Id],
+             [dbo].[RandomDate](2000, RAND()),
+             @rndLeadExpertice
+      FROM [dbo].[EvaluationType]
+      WHERE [Code] = 'LEADER'
      END
      
     FETCH NEXT FROM skill_cursor   
