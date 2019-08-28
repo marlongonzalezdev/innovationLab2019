@@ -1,31 +1,63 @@
-/*.skills-form {
-    border: 1px solid gray;
-}*/
-
-/*.skills__container {
-    width: 80%;
-    margin: auto;
-}*/
-
-.skills_selector {
-    display: inline-block;
+.skills__form {
+  border: 1px solid rgb(239, 239, 240);
+  text-align: center;
 }
 
-/*.skills__score {
-    padding-left: 50px;
-    display: inline-block;
-}*/
+.skills__form .container {
+  display: inline-block;
+  padding: 20px;
+  width: 100%;
+}
 
-/*.skills__add {
-    padding-left: 30px;
-    display: inline-block;
-}*/
+.skills__container {
+  width: 80%;
+  margin: auto;
+}
 
-/*.selected-skills__container {
-    padding-top: 30px;
-    width: 80%;
-    display: inline-block;
-}*/
+.skills__selector {
+  display: inline-block;
+}
+
+.skills__score {
+  padding-left: 50px;
+  display: inline-block;
+}
+
+mat-label {
+  margin: 10px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.skills__add {
+  padding-left: 30px;
+  display: inline-block;
+}
+
+.skills__add button{
+  background-color: rgb(222, 65, 27);
+}
+
+.selected-skills__container {
+  width: 80%;
+  display: inline-block;
+}
+
+.skills__selected {
+  display: inline-block;
+  width: 100%;
+}
+
+.list-group-item{
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+.delivery-unit, .bench{
+  display: inline-block;
+  padding-left: 30px;
+}
 
 .criteria-card {
   /*max-width: 70%;*/
@@ -33,17 +65,3 @@
   margin-top: 20px;
   margin-bottom: 20px !important;
 }
-
-.selected_skills
-{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-
-
-/*.skills__selected {*/
-/*    width: 100%;*/
-/*}*/

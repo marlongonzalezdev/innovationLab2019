@@ -1,49 +1,38 @@
-/*.matches__items {
-    display: inline-block;
-    !*width: 100%;*!
-    color: black;
-    vertical-align: top;
-    min-width: 500px;
-}
-
+/*.matches__items {*/
+/*    display: inline-block;*/
+/*    width: 100%;*/
+/*    color: black;*/
+/*    vertical-align: top;*/
+/*    min-width: 500px;*/
+/*}*/
 .photo__container {
-    min-width: 200px;
-    display: inline-block;
-    padding-left: 50px;
+  min-width: 200px;
+  display: inline-block;
+  padding-left: 50px;
 }
 
 .badge {
-    font-size: 14px;
-    margin-right: 10%;
+  font-size: 14px;
+  margin-right: 10%;
 }
 
 .user_percent {
-    float: right;
+  float: right;
 }
 
 .get-matches {
-    float: right;
-    padding-left: 30px;
-    padding-top: 30px;
-    !*display: none;*!
+  width: 100%;
+  text-align: center;
 }
 
-
-
-table {
-    width: 100%;
-  }*/
-
-.spinner-container {
+.get-matches button{
+  padding: 10px;
   margin: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 10px;
+  border-color: gray;
 }
 
-.get-matches{
-  margin: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.matches-result {
+  width: 80%;
+  margin: auto;
 }

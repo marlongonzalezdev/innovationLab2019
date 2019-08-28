@@ -4,28 +4,31 @@
         <span>Skills</span>
         <span class="fill-remaining-space"></span>
       </mat-toolbar>
+
+  <div class="container">
     <div class="search-div">
-        <button mat-raised-button (click)="addSkill()">
-          <mat-icon>add</mat-icon>
-          Create
+      <button mat-raised-button (click)="addSkill()">
+        <mat-icon>add</mat-icon>
+        Create
+      </button>
+      <mat-form-field class="search-form-field" floatLabel="never">
+        <input matInput [(ngModel)]="searchKey" placeholder="search" autocomplete="off" (keyup)="applyFilter()">
+        <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchClear()">
+          <mat-icon>close</mat-icon>
         </button>
-        <mat-form-field class="search-form-field" floatLabel="never">
-          <input matInput [(ngModel)]="searchKey" placeholder="search" autocomplete="off" (keyup)="applyFilter()">
-          <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchClear()">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>    
-  <div class="mat-elevation-z8">
+      </mat-form-field>
+    </div>
+
+    <div class="mat-elevation-z8">
       <mat-table [dataSource]="source" matSort>
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Skill</mat-header-cell>
           <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
         </ng-container>
-         <ng-container matColumnDef="category">
+        <ng-container matColumnDef="category">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Category</mat-header-cell>
           <mat-cell *matCellDef="let element">{{findCategoryName(element.category)}}</mat-cell>
-        </ng-container>        
+        </ng-container>
         <ng-container matColumnDef="actions">
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let row">
@@ -35,7 +38,7 @@
         </ng-container>
         <ng-container matColumnDef="loading">
           <mat-footer-cell *matFooterCellDef colspan="6">
-               Loading data...
+            Loading data...
           </mat-footer-cell>
         </ng-container>
         <ng-container matColumnDef="noData">
@@ -50,8 +53,8 @@
       </mat-table>
       <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
     </div>
+  </div>
 </div>
 
 
-  
-  
+

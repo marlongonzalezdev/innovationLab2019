@@ -1,59 +1,57 @@
-<div class="container">
-  <mat-toolbar>
-    <span class="fill-remaining-space"></span>
-    <span>Build Team</span>
-    <span class="fill-remaining-space"></span>
-  </mat-toolbar>
-  <mat-card class="criteria-card">
-    <div>
-      <mat-form-field floatLabel="never">
-        <mat-select [(ngModel)]="project.deliveryUnitIdFilter" placeholder="Delivery Unit" >
+<div class="container skills__form">
+  <div class="container">
+    <div class="skills__selector">
+      <mat-label>Skills</mat-label>
+      <mat-form-field color="warn">
+        <mat-select [(value)]="selectedSkill">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let skill of skillList" [value]="skill">
+            {{skill.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="skills__score">
+      <mat-label>Score</mat-label>
+      <mat-slider color="warn" class="expected-core" min="0" max="1" thumbLabel step="0.1" tickInterval="0.1"
+                  name="expectedScore" [(ngModel)]="expectedScore"></mat-slider>
+    </div>
+    <div class="skills__add">
+      <button mat-mini-fab color="primary" (click)="add(selectedSkill)">
+        <mat-icon>post_add</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="matches-container">
+    <div class="selected-skills__container">
+      <ul class="list-group skills__selected">
+        <li class="list-group-item" *ngFor="let skill of project.skillsFilter;">
+          <span class="badge">{{skill.name}}</span> --- <span class="badge">{{skill.weight * 100 | number}}
+          %</span>
+          <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+    <div class="delivery-unit">
+      <mat-label>Delivery Unit</mat-label>
+      <mat-form-field color="warn">
+        <mat-select [(ngModel)]="project.deliveryUnitIdFilter">
           <mat-option>None</mat-option>
           <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
             <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
           </ng-container>
         </mat-select>
       </mat-form-field>
-	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <mat-checkbox [(ngModel)]="project.inBenchFilter">Only bench</mat-checkbox>
     </div>
-    <div>
-      <mat-form-field>
-        <input [(ngModel)]="project.max" matInput placeholder="Max" type="number" min="1">
-      </mat-form-field>
+    <div class="bench">
+      <mat-checkbox [(ngModel)]="project.inBenchFilter" color="warn">Only bench</mat-checkbox>
     </div>
-    <div class="skills_selector">
-      <mat-form-field>
-        <mat-label>Skills</mat-label>
-        <mat-select [(value)]="selectedSkill">
-          <mat-option style="color: gray">None</mat-option>
-          <mat-option style="color: black" *ngFor="let skill of skillList" [value]="skill">{{skill.category === 1 || skill.category === 4 || skill.category === 5 ? "" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}} {{skill.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label>Weight:</label>
-      <mat-slider color="primary" class="expected-core" min="0" max="1" thumbLabel step="0.1" tickInterval="0.1"
-                  name="expectedScore" [(ngModel)]="expectedScore"></mat-slider>
-    </div>
-    <button mat-mini-fab color="primary" (click)="add(selectedSkill)">
-      <mat-icon>add</mat-icon>
-    </button>
-
-    <div class="selected_skills">
-      <ul class="list-group skills__selected">
-        <li class="list-group-item" *ngFor="let skill of project.skillsFilter">
-          <span class="badge">{{skill.name}}</span> : <span class="badge">{{skill.weight * 100 | number}}
-          %</span>
-          <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="primary">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </li>
-      </ul>
-    </div>
-
-  </mat-card>
-
+  </div>
+</div>
+<div class="matches">
   <app-matches [project]="project" [display]="display"></app-matches>
 </div>
-
-

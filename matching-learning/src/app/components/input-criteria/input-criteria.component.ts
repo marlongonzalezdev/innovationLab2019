@@ -50,9 +50,8 @@ export class InputCriteriaComponent implements OnInit {
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
 
-    //this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();	
+    this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();	
 	//this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
-    //this.project.deliveryUnitIdFilter = 13;
 	
     this.skillService.getSkillsSorted()
       .subscribe ( response => {

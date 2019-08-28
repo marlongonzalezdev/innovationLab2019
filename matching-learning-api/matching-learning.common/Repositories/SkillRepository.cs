@@ -78,12 +78,12 @@ namespace matching_learning.common.Repositories
                     res.IsVersioned = tech.IsVersioned;
                     if (tech.IsVersioned && tech.Versions != null)
                     {
-                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.Id)).ToList();
+                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.RelatedId)).ToList();
                     }
 
                     if (tech.Roles != null)
                     {
-                        res.Roles = tech.Roles.Select(tr => getFromTechnologyRole(tr, skill.Id)).ToList();
+                        res.Roles = tech.Roles.Select(tr => getFromTechnologyRole(tr, skill.RelatedId)).ToList();
                     }
                     break;
 
@@ -118,7 +118,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private SkillVersionView getFromTechnologyVersion(TechnologyVersion tv, int parentId)
+        private SkillVersionView getFromTechnologyVersion(TechnologyVersion tv, int parentTechnologyId)
         {
             SkillVersionView res;
 
@@ -126,7 +126,7 @@ namespace matching_learning.common.Repositories
             {
                 Id = tv.Id,
                 RelatedId = tv.RelatedId,
-                ParentTechnologyId = parentId,
+                ParentTechnologyId = parentTechnologyId,
                 DefaultExpertise = tv.DefaultExpertise,
                 Version = tv.Version,
                 StartDate = tv.StartDate,
@@ -134,7 +134,7 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
-        private SkillRoleView getFromTechnologyRole(TechnologyRole tr, int parentId)
+        private SkillRoleView getFromTechnologyRole(TechnologyRole tr, int parentTechnologyId)
         {
             SkillRoleView res;
 
@@ -145,7 +145,7 @@ namespace matching_learning.common.Repositories
                 Code = tr.Code,
                 Name = tr.Name,
                 DefaultExpertise = tr.DefaultExpertise,
-                ParentTechnologyId = parentId,
+                ParentTechnologyId = parentTechnologyId,
             };
 
             return (res);

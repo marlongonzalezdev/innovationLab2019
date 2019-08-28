@@ -88,6 +88,6 @@ import { LoginComponent } from './components/login/login.component';
     EvaluationService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]
 })
 export class AppModule { }
