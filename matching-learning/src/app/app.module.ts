@@ -39,6 +39,8 @@ import { RegionListComponent } from './components/regions/region-list/region-lis
 import { RegionsComponent } from './components/regions/regions.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { LoginComponent } from './components/login/login.component';
+
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     RegionsComponent,
     RegionListComponent,
     PageNotFoundComponent,
+    LoginComponent,
 
   ],
   imports: [
