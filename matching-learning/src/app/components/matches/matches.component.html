@@ -1,6 +1,6 @@
 <div class="get-matches" *ngIf="display">
-    <button mat-button (click)="processData()">
-        <mat-icon>cached</mat-icon>
+    <button mat-button color="warn" (click)="processData()">
+        <mat-icon>find_in_page</mat-icon>
         Get matches
     </button>
 </div>
@@ -9,7 +9,7 @@
     <mat-spinner *ngIf="loading"></mat-spinner>
 </div>
 
-<div class="mat-elevation-z8" *ngIf="showContent">
+<div class="matches-result mat-elevation-z8" *ngIf="showContent">
     <table class="matches_container" mat-table [dataSource]="dataSource">
 
         <!-- Candidate Name Column -->
