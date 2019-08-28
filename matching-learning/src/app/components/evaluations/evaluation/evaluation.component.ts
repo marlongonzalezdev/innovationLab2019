@@ -5,6 +5,7 @@ import {Evaluation} from '../../../shared/models/evaluation';
 import {Skill} from '../../../shared/models/skill';
 import {Observable} from 'rxjs';
 import {EvaluationType} from '../../../shared/models/evaluation-type';
+import {SkillService} from '../../../shared/services/skill.service';
 
 @Component({
   selector: 'app-evaluation',
@@ -17,9 +18,12 @@ export class EvaluationComponent implements OnInit {
   skillsList: Observable<Skill[]>;
 
   addedSkills: Skill[] = [];
-  constructor(private evaluationService: EvaluationService, public dialogRef: MatDialogRef<EvaluationComponent>) { }
+  constructor(private evaluationService: EvaluationService, private skillService: SkillService,
+              public dialogRef: MatDialogRef<EvaluationComponent>) { }
 
   ngOnInit() {
+    this.evaluationTypes = this.evaluationService.getEvaluationTypes();
+    this.skillsList = this.skillService.getSkills();
   }
 
   onSubmit() {

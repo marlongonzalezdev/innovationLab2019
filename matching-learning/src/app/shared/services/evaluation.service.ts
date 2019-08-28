@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {Candidate} from '../models/candidate';
+import {EvaluationType} from '../models/evaluation-type';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,10 @@ export class EvaluationService {
   getEvaluations(id): Observable<Candidate> {
     this.url = `https://localhost:44374/Candidates/Candidate?id=${id}`;
     return this.http.get<Candidate>(this.url, {responseType: 'json'});
+  }
+
+  getEvaluationTypes(): Observable<EvaluationType[]> {
+    this.url = 'https://localhost:44374/Evaluations/EvaluationTypes';
+    return this.http.get<EvaluationType[]>(this.url, {responseType: 'json'});
   }
 }
