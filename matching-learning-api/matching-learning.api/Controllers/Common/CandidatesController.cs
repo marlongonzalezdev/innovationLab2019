@@ -48,7 +48,7 @@ namespace matching_learning.api.Controllers.Common
         [Route("CandidatesPaginated")]
         public ActionResult<List<Candidate>> GetCandidatesPaginated(int pageIdx, int pageSize)
         {
-            return _candidateRepository.GetCandidates().OrderBy(ca => ca.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
+            return _candidateRepository.GetCandidatesPaginated(pageIdx, pageSize);
         }
         
         /// <summary>

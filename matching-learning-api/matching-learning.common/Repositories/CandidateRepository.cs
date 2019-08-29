@@ -75,6 +75,73 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        public List<Candidate> GetCandidatesPaginated(int pageIdx, int pageSize)
+        {
+            var res = new List<Candidate>();
+
+            var deliveryUnitsRepository = new DeliveryUnitRepository();
+
+            var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
+
+            var candidateEvaluations = getCandidatesEvaluations();
+            var candidateRolesHistory = getCandidatesRoleHistory();
+
+            var query = "SELECT [C].[Id], " +
+                        "       [C].[DeliveryUnitId]," +
+                        "       [C].[RelationType]," +
+                        "       [C].[FirstName]," +
+                        "       [C].[LastName]," +
+                        "       [C].[DocType]," +
+                        "       [C].[DocNumber]," +
+                        "       [C].[EmployeeNumber]," +
+                        "       [C].[InBench]," +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
+                        "FROM [dbo].[Candidate] AS [C] " +
+                        "ORDER BY [C].[Id] " +
+                        "OFFSET(@pageIdx * @pageSize) ROWS " +
+                        "FETCH NEXT @pageSize ROWS ONLY";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    DBCommon.SetPaginationParams(pageIdx, pageSize, cmd);
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var candidateId = dr.Db2Int("Id");
+
+                        var evaluations = new List<Evaluation>();
+
+                        if (candidateEvaluations.Any(ev => ev.CandidateId == candidateId))
+                        {
+                            evaluations = candidateEvaluations.Where(ev => ev.CandidateId == candidateId).ToList();
+                        }
+
+                        var rolesHistory = new List<CandidateRoleHistory>();
+
+                        if (candidateRolesHistory.ContainsKey(candidateId))
+                        {
+                            rolesHistory = candidateRolesHistory[candidateId];
+                        }
+
+                        var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
+
+                        res.Add(getCandidateFromDataRow(dr, deliveryUnit, evaluations, rolesHistory));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
         public Candidate GetCandidateById(int id)
         {
             Candidate res = null;

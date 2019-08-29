@@ -8,6 +8,10 @@ GO
 ----------------------------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+DROP FUNCTION IF EXISTS [dbo].[RandomBench]
+DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
+DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
+DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 GO
 
 DROP VIEW IF EXISTS [dbo].[GlobalSkill]
@@ -59,6 +63,95 @@ AS
   
   SET @rndDays = (@rnd * @baseDaysRange)  
   SET @res = DATEADD(DD, -@rndDays, @currentDate)
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomBench] (@rnd FLOAT) RETURNS BIT
+AS
+ BEGIN  
+  DECLARE @res BIT
+  
+  IF (@rnd < 0.05)
+   BEGIN
+    SET @res = 1
+   END
+  ELSE
+   BEGIN
+    SET @res = 0
+   END
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+CREATE FUNCTION [dbo].[RandomCandidateRole] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+
+  IF (@rnd < 0.85)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DEV')
+   END
+  ELSE IF (@rnd < 0.85)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'TST')
+   END
+  ELSE IF (@rnd < 0.95)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'PM')
+   END
+  ELSE IF (@rnd < 0.93)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DBA')
+   END
+  ELSE IF (@rnd < 0.95)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'UX')
+   END
+  ELSE IF (@rnd < 0.97)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'OPS')
+   END
+  ELSE IF (@rnd < 0.985)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'BA')
+   END
+  ELSE
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'ADMIN')
+   END
+   
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomDeliveryUnit] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 11)  
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomRelationType] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 2)  
 
   RETURN @res
  END
@@ -841,6 +934,67 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
+/*
+DECLARE @candidateLimit INT = 5000
+DECLARE @candidateIdx INT = 1
+
+DECLARE @candidateId INT
+DECLARE @candidateRoleId INT
+DECLARE @deliveryUnitId INT
+DECLARE @relationType INT
+DECLARE @inBench BIT
+
+WHILE (@candidateIdx <= @candidateLimit)
+ BEGIN
+  SET @deliveryUnitId = [dbo].[RandomDeliveryUnit](RAND())
+  SET @relationType = [dbo].[RandomRelationType](RAND())
+  SET @inBench =  [dbo].[RandomBench](RAND())
+
+  INSERT INTO [dbo].[Candidate] (
+    [DeliveryUnitId],
+    [RelationType],
+    [FirstName],
+    [LastName],
+    [DocType],
+    [DocNumber],
+    [EmployeeNumber],
+    [InBench],
+    [Picture],
+    [IsActive]
+  )
+  VALUES (
+    @deliveryUnitId,
+    @relationType,
+    'Generic First Name',
+    'Generic Last Name',
+    NULL,
+    NULL,
+    NULL,
+    @inBench,
+    NULL,
+    1
+  )
+
+  SET @candidateId = @@IDENTITY
+  SET @candidateRoleId = [dbo].[RandomCandidateRole](RAND())
+
+  INSERT INTO [dbo].[CandidateCandidateRole] (
+    [CandidateId],
+    [CandidateRoleId],
+    [StartDate],
+    [EndDate]
+  )
+  VALUES (
+    @candidateId,
+    @candidateRoleId,
+    '2015-01-01',
+    NULL
+  )
+
+  SET @candidateIdx = @candidateIdx + 1
+ END
+*/
+----------------------------------------------------------------------------------------------------
 
 UPDATE [dbo].[CandidateCandidateRole]
 SET [StartDate] = [dbo].[RandomDate](2000, RAND())
@@ -1033,6 +1187,10 @@ ORDER BY [SEE].[CandidateId],
 ----------------------------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+DROP FUNCTION IF EXISTS [dbo].[RandomBench]
+DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
+DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
+DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 GO
 
 ----------------------------------------------------------------------------------------------------

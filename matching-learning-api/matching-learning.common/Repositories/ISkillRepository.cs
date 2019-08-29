@@ -37,6 +37,7 @@ namespace matching_learning.common.Repositories
         TechnologyRole GetTechnologyRoleByCode(string code);
 
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertises();
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr);
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids);
 
         List<SkillRelation> GetSkillRelationsBySkillId(int id);
