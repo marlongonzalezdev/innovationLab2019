@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace matching_learning.common.Repositories
 {
@@ -15,8 +17,19 @@ namespace matching_learning.common.Repositories
             cmd.Parameters["@pageSize"].Value = pageSize;
         }
 
-#region DB conversions
-#region string conversions
+        public static string ConvertListIntToString(List<int> input)
+        {
+            string res = "";
+
+            var strInput = input.Select(i => i.ToString()).ToArray();
+
+            res = string.Join(',', strInput);
+
+            return (res);
+        }
+
+        #region DB conversions
+        #region string conversions
         public static string Db2String(this DataRow dr, string columnName)
         {
             if (dr[columnName] == DBNull.Value)

@@ -74,6 +74,38 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        public List<Candidate> GetCandidateByIds(List<int> ids)
+        {
+            var res = new List<Candidate>();
+
+            string idsStr = DBCommon.ConvertListIntToString(ids);
+            string whereCondition = $"WHERE [C].[Id] IN ({idsStr})";
+            
+            var query = "SELECT [C].[Id], " +
+                        "       [C].[DeliveryUnitId]," +
+                        "       [C].[RelationType]," +
+                        "       [C].[FirstName]," +
+                        "       [C].[LastName]," +
+                        "       [C].[DocType]," +
+                        "       [C].[DocNumber]," +
+                        "       [C].[EmployeeNumber]," +
+                        "       [C].[InBench]," +
+                        "       [C].[Picture]," +
+                        "       [C].[IsActive] " +
+                        "FROM [dbo].[Candidate] AS [C] " +
+                        $"{whereCondition}";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    res = getCandidates(conn, cmd);
+                }
+            }
+
+            return (res);
+        }
+
         private List<Candidate> getCandidates(SqlConnection conn, SqlCommand cmd)
         {
             var res = new List<Candidate>();
