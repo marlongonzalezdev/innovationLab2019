@@ -1,1 +1,9 @@
-<p>login works!</p>
+<mat-card>    
+    <form [formGroup]="loginService.loginForm">
+     <mat-grid-list>
+        <input matInput placeholder="User">
+        <input matInput placeholder="Password">
+        <button mat-raised-button color="warn" type="submit" [disabled]="loginService.loginForm.invalid">Login</button>
+    </mat-grid-list>
+    </form>   
+</mat-card>
