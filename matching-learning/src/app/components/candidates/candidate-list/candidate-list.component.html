@@ -1,15 +1,19 @@
-<div class="search-div">
-  <button mat-raised-button (click)="onCreate()">
+<div class="container">
+  <button class="add_button" mat-raised-button color="warn" (click)="onCreate()">
     <mat-icon>add</mat-icon>
-    Create
+    Add
   </button>
-  <mat-form-field class="search-form-field" floatLabel="never">
-    <input matInput [(ngModel)]="searchKey" placeholder="search" autocomplete="off" (keyup)="applyFilter()">
-    <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchClear()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
+  <div class="search-div">
+    <mat-form-field class="search-form-field" floatLabel="never" color="warn">
+      <input matInput [(ngModel)]="searchKey" placeholder="Search" autocomplete="off" (keyup)="applyFilter()">
+      <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchClear()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
 </div>
+
 
 <div class="mat-elevation-z8">
   <mat-table [dataSource]="dataSource" matSort>
