@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace matching_learning.common.Domain.DTOs
 {
@@ -7,10 +8,6 @@ namespace matching_learning.common.Domain.DTOs
         public int Id { get; set; }
 
         public int CandidateId { get; set; }
-        
-        public int SkillId { get; set; }
-
-        public Skill Skill { get; set; }
 
         public string EvaluationKey { get; set; }
 
@@ -19,10 +16,10 @@ namespace matching_learning.common.Domain.DTOs
         public EvaluationType EvaluationType { get; set; }
 
         public DateTime Date { get; set; }
-
-        public decimal Expertise { get; set; }
-
+        
         public string Notes { get; set; }
+
+        public List<EvaluationDetail> Details { get; set; }
 
         public int CompareTo(Evaluation other)
         {

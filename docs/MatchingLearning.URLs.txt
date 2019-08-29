@@ -144,9 +144,9 @@ Referer: http://localhost:4200/
 Accept-Encoding: gzip, deflate, br
 Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
-{"id":22,"candidateId":1,"candidate":null,"skillId":56,"skill":null,"evaluationKey":null,"evaluationTypeId":5,"evaluationType":null,"date":"2018-07-13T00:00:00","expertise":0.1234,"notes":null}
+{"id":22,"candidateId":1,"evaluationKey":null,"evaluationTypeId":1,"date":"2018-07-13T00:00:00","notes":null,"details":[{"id":22,"evaluationId":22,"skillId":56,"expertise":0.1234}]}
 
-{"id":-1,"candidateId":1,"candidate":null,"skillId":56,"skill":null,"evaluationKey":null,"evaluationTypeId":5,"evaluationType":null,"date":"2019-07-13T00:00:00","expertise":0.4321,"notes":null}
+{"id":-1,"candidateId":1,"evaluationKey":null,"evaluationTypeId":1,"date":"2019-07-13T00:00:00","notes":null,"details":[{"id":-1,"evaluationId":-1,"skillId":56,"expertise":0.4321}]}
 
 ----------------------------------------------------------------------------------------------------
 
