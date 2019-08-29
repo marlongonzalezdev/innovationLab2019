@@ -12,6 +12,7 @@ export const environment = {
     GetDeliveryUnits: '/DeliveryUnits/DeliveryUnits',
     GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
     GetMatches: '/Projects/GetProjectCandidates',
+    GetCandiRoles: '/Candidates/CandidateRoles',
   }
 };
 
