@@ -18,7 +18,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   candidate: Candidate;
 
   dataSource: any;
-  displayedColumns: string[] = ['skill', 'evaluationType', 'expertise', 'date', 'actions'];
+  displayedColumns: string[] = ['evaluationType', 'date', 'actions'];
   searchKey: string;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
@@ -34,6 +34,8 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   }
 
   onEdit(row: any) {
+    // this.candidateService.populateForm(row);
+    this.openDialog();
   }
 
   onCreate() {

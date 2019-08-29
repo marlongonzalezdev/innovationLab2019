@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {CandidateService} from 'src/app/shared/services/candidate.service';
 import {Candidate} from 'src/app/shared/models/candidate';
 import {MatDialog, MatDialogConfig, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {CandidateComponent} from '../candidate/candidate.component';
+import {EvaluationComponent} from '../../evaluations/evaluation/evaluation.component';
 
 @Component({
   selector: 'app-candidate-list',
@@ -50,7 +50,6 @@ export class CandidateListComponent implements OnInit {
   }
 
   onEdit(row) {
-    this.candidateService.populateForm(row);
     this.openDialog();
   }
 
@@ -59,7 +58,7 @@ export class CandidateListComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '40%';
-    const dialogRef = this.dialog.open(CandidateComponent, dialogConfig);
+    const dialogRef = this.dialog.open(EvaluationComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
