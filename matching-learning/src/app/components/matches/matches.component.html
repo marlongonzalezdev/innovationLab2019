@@ -22,31 +22,31 @@
         <!-- Picture Column -->
         <ng-container matColumnDef="picture">
             <th mat-header-cell *matHeaderCellDef> <b>Picture</b> </th>
-            <td mat-cell *matCellDef="let element"> <img src="{{element.candidate.picture}}" alt="{{element.candidate.name}}" width="50px" height="62px"> </td>
+            <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> <img src="{{element.candidate.picture}}" alt="{{element.candidate.name}}" width="50px" height="62px"> </td>
         </ng-container>
 
         <!-- Delivery Unit Column -->
         <ng-container matColumnDef="deliveryUnit">
             <th mat-header-cell *matHeaderCellDef> <b>Delivery Unit</b> </th>
-            <td mat-cell *matCellDef="let element"> {{element.candidate.deliveryUnit.name}}</td>
+            <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> {{element.candidate.deliveryUnit.name}}</td>
         </ng-container>
 
         <!-- Role Column -->
         <ng-container matColumnDef="role">
             <th mat-header-cell *matHeaderCellDef> <b>Role</b> </th>
-            <td mat-cell *matCellDef="let element"> {{element.candidate.activeRole.name}}</td>
+            <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> {{element.candidate.activeRole.name}}</td>
         </ng-container>
 
         <!-- In Bench Column -->
         <ng-container matColumnDef="inBench">
             <th mat-header-cell *matHeaderCellDef> <b>Bench</b> </th>
-            <td mat-cell *matCellDef="let element"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
+            <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
         </ng-container>
 
         <!-- MatchingScore Column -->
         <ng-container matColumnDef="matchingScore">
             <th mat-header-cell *matHeaderCellDef> <b>Score</b></th>
-            <td mat-cell *matCellDef="let element"> <b> {{element.ranking | percent:'1.1-1'}} </b> </td>
+            <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> <b> {{element.ranking | percent:'1.1-1'}} </b> </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
