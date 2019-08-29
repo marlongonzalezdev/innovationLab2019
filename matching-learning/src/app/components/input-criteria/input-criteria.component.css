@@ -29,7 +29,7 @@ mat-label {
     font-weight: 500;
 }
 
-.skills__score {
+.skills__score, .max_quantity {
     min-width: 50%;
 }
 
@@ -37,11 +37,11 @@ mat-label {
     min-width: 30%;
 }
 
-.skills_select, .du_select {
+.skills_select, .du_select, .role_select {
     min-width: 350px;
 }
 
-.expected-core {
+.expected-core, .max_input {
     min-width: 250px;
 }
 
@@ -84,4 +84,12 @@ mat-label {
     margin: auto;
     margin-top: 20px;
     margin-bottom: 20px !important;
+}
+
+.max_quantity, .role {
+    display: inline-block;
+}
+
+.max_input input {
+    text-align: right;
 }

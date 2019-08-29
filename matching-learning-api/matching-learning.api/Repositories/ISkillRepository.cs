@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using matching_learning.ml.Domain;
+﻿using matching_learning.common.Domain.DTOs;
+using System.Collections.Generic;
 
 namespace matching_learning.api.Repositories
 {

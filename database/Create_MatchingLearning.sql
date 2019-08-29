@@ -12,12 +12,14 @@ DROP FUNCTION IF EXISTS [dbo].[RandomBench]
 DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
 DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
+DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 GO
 
 DROP VIEW IF EXISTS [dbo].[GlobalSkill]
 
 DROP TABLE IF EXISTS [dbo].[SkillEstimatedExpertise]
 DROP TABLE IF EXISTS [dbo].[Experience]
+DROP TABLE IF EXISTS [dbo].[EvaluationDetail]
 DROP TABLE IF EXISTS [dbo].[Evaluation]
 DROP TABLE IF EXISTS [dbo].[EvaluationType]
 DROP TABLE IF EXISTS [dbo].[SkillLearningCurve]
@@ -152,6 +154,19 @@ AS
   DECLARE @res INT
   
   SET @res = 1 + (@rnd * 2)  
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomEvaluationType] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 7)  
 
   RETURN @res
  END
@@ -384,22 +399,33 @@ GO
 CREATE TABLE [dbo].[Evaluation] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
   [CandidateId]                   INT NOT NULL,
-  [SkillId]                       INT NOT NULL,
   [EvaluationKey]                 NVARCHAR(256) NULL,
   [EvaluationTypeId]              INT NOT NULL,
   [Date]                          DATETIME NOT NULL,
-  [Expertise]                     [MLDecimal] NOT NULL CONSTRAINT [CH_Evaluation_Expertise] CHECK ([Expertise] BETWEEN 0.0 AND 1.0),
   [Notes]                         NVARCHAR(MAX) NULL,
 
   CONSTRAINT [PK_Evaluation] PRIMARY KEY CLUSTERED ([Id] ASC),
 
   CONSTRAINT [FK_Evaluation_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
 
-  CONSTRAINT [FK_Evaluation_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
-
   CONSTRAINT [FK_Evaluation_EvaluationType_EvaluationTypeId] FOREIGN KEY ([EvaluationTypeId]) REFERENCES [dbo].[EvaluationType] ([Id]),
 )
 GO
+
+CREATE TABLE [dbo].[EvaluationDetail] (
+  [Id]                            INT IDENTITY(1, 1) NOT NULL,
+  [EvaluationId]                  INT NOT NULL,
+  [SkillId]                       INT NOT NULL,
+  [Expertise]                     [MLDecimal] NOT NULL CONSTRAINT [CH_Evaluation_Expertise] CHECK ([Expertise] BETWEEN 0.0 AND 1.0),
+
+  CONSTRAINT [PK_EvaluationDetail] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+  CONSTRAINT [FK_EvaluationDetail_Evaluation_EvaluationId] FOREIGN KEY ([EvaluationId]) REFERENCES [dbo].[Evaluation] ([Id]),
+
+  CONSTRAINT [FK_EvaluationDetail_Skill_SkillId] FOREIGN KEY ([SkillId]) REFERENCES [dbo].[Skill] ([Id]),
+)
+GO
+
 
 CREATE TABLE [dbo].[Experience] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
@@ -934,8 +960,8 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
-/*
-DECLARE @candidateLimit INT = 5000
+
+DECLARE @candidateLimit INT = 100
 DECLARE @candidateIdx INT = 1
 
 DECLARE @candidateId INT
@@ -993,7 +1019,7 @@ WHILE (@candidateIdx <= @candidateLimit)
 
   SET @candidateIdx = @candidateIdx + 1
  END
-*/
+
 ----------------------------------------------------------------------------------------------------
 
 UPDATE [dbo].[CandidateCandidateRole]
@@ -1010,17 +1036,12 @@ DECLARE @rndSeeExpertice FLOAT
 DECLARE @rndSeeImpact FLOAT
 DECLARE @limitSeeImpact FLOAT = 0.2
 
-DECLARE @rndCvExpertice FLOAT
-DECLARE @rndCvImpact FLOAT
-DECLARE @limitCvImpact FLOAT = 0.1
-
-DECLARE @rndExpExpertice FLOAT
-DECLARE @rndExpImpact FLOAT
-DECLARE @limitExpImpact FLOAT = 0.1
-
-DECLARE @rndLeadExpertice FLOAT
-DECLARE @rndLeadImpact FLOAT
-DECLARE @limitLeadImpact FLOAT = 0.1
+DECLARE @evalForCandidate BIT
+DECLARE @rndDetailExpertice FLOAT
+DECLARE @rndDetailImpact FLOAT
+DECLARE @rndEvalImpact FLOAT
+DECLARE @limitDetailImpact FLOAT = 0.1
+DECLARE @limitEvalImpact FLOAT = 0.25
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -1042,6 +1063,8 @@ WHILE @@FETCH_STATUS = 0
   FETCH NEXT FROM skill_cursor   
   INTO @skillId 
   
+  SET @evalForCandidate = 0
+
   WHILE @@FETCH_STATUS = 0  
    BEGIN
     SET @rndSeeExpertice = RAND()
@@ -1061,72 +1084,41 @@ WHILE @@FETCH_STATUS = 0
       )
      END
 
-    -- Random CV evaluations
-    SET @rndCvExpertice = RAND()
-    SET @rndCvImpact = RAND()
-
-    IF (@rndCvImpact < @limitCvImpact)
-     BEGIN
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [SkillId],
-        [EvaluationTypeId],
-        [Date],
-        [Expertise]
-      )
-      SELECT @candidateId,
-             @skillId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND()),
-             @rndCvExpertice
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'CV'
-     END
-
-    -- Random Expert evaluations
-    SET @rndExpExpertice = RAND()
-    SET @rndExpImpact = RAND()
-
-    IF (@rndExpImpact < @limitExpImpact)
-     BEGIN
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [SkillId],
-        [EvaluationTypeId],
-        [Date],
-        [Expertise]
-      )
-      SELECT @candidateId,
-             @skillId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND()),
-             @rndExpExpertice
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'EXPERT'
-     END
-    
-    -- Random leader evaluations
-    SET @rndLeadExpertice = RAND()
-    SET @rndLeadImpact = RAND()
-
-    IF (@rndLeadImpact < @limitLeadImpact)
-     BEGIN
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [SkillId],
-        [EvaluationTypeId],
-        [Date],
-        [Expertise]
-      )
-      SELECT @candidateId,
-             @skillId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND()),
-             @rndLeadExpertice
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'LEADER'
-     END
+    -- Random evaluations
+    SET @rndEvalImpact = RAND()
+    SET @rndDetailImpact = RAND()
+    IF (@rndDetailImpact < @limitDetailImpact)
+     BEGIN      
+       IF ((@rndEvalImpact < @limitEvalImpact) OR (@evalForCandidate = 0))
+        BEGIN
+         INSERT INTO [dbo].[Evaluation] (
+           [CandidateId],
+           [EvaluationTypeId],
+           [Date]
+         )
+         VALUES (
+           @candidateId,
+           [dbo].[RandomEvaluationType](RAND()),
+           [dbo].[RandomDate](2000, RAND())
+         )
+         
+         SET @evalForCandidate = 1
+        END
      
+      SET @rndDetailExpertice = RAND()
+      
+      INSERT INTO [dbo].[EvaluationDetail] (
+        [EvaluationId],
+        [SkillId],
+        [Expertise]
+      )
+      SELECT MAX([E].[Id]),
+             @skillId,
+             @rndDetailExpertice
+      FROM [dbo].[Evaluation] AS [E]
+      WHERE [E].[CandidateId] = @candidateId
+     END 
+           
     FETCH NEXT FROM skill_cursor   
     INTO @skillId 
    END   
@@ -1191,6 +1183,7 @@ DROP FUNCTION IF EXISTS [dbo].[RandomBench]
 DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
 DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
+DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 GO
 
 ----------------------------------------------------------------------------------------------------

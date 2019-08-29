@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using matching_learning.api.Models;
-using matching_learning.ml;
+using matching_learning.common.Domain.DTOs;
+using matching_learning_algorithm;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -42,13 +43,12 @@ namespace matching_learning.api.Controllers
         [ProducesResponseType(typeof(ProjectRecommendationsModel), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Candidates([FromBody] ProjectCandidatesModel model)
+        public async Task<IActionResult> Candidates([FromBody] ProjectCandidateRequirement model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var recommendationRequest = model.ToRecommendationRequest();
-            var analysisResult = await _analyzer.GetRecommendationsAsync(recommendationRequest);
+            var analysisResult = await _analyzer.GetRecommendationsAsync(model, false);
             ProjectRecommendationsModel result = ProjectRecommendationsModel.FromRecommendationResponse(analysisResult, _linkGenerator, _httpContextAccessor);
 
             return Ok(result);

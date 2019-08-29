@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using matching_learning.common.Repositories;
 using matching_learning.api.Models;
-using matching_learning.ml;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
+using matching_learning_algorithm;
 
 namespace matching_learning.api
 {
@@ -78,10 +78,10 @@ namespace matching_learning.api
 
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<IProjectAnalyzer, DefaultProjectAnalyzer>(sp =>
+            services.AddSingleton<IProjectAnalyzer, ProjectAnalyzer>(sp =>
             {
-                var logger = sp.GetRequiredService<ILogger<DefaultProjectAnalyzer>>();
-                DefaultProjectAnalyzer analyzer = new DefaultProjectAnalyzer(logger);
+                var logger = sp.GetRequiredService<ILogger<ProjectAnalyzer>>();
+                var analyzer = new ProjectAnalyzer(logger, new SkillRepository());
                 analyzer.TrainModelIfNotExists();
 
                 return analyzer;

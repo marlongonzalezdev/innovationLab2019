@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\matching-learning-algorithm\matching-learning-algorithm.csproj" />
     <ProjectReference Include="..\matching-learning.common\matching-learning.common.csproj" />
-    <ProjectReference Include="..\matching-learning.ml\matching-learning.ml.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +45,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

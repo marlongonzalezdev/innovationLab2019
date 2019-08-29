@@ -11,7 +11,7 @@ namespace matching_learning.common.Domain.BusinessLogic
         {
             pcr.Normalize();
 
-            var estimated = skillRepository.GetSkillEstimatedExpertisesForProject(pcr);
+            var estimated = skillRepository.GetSkillEstimatedExpertiseForProject(pcr);
 
             var filteredCandidates = estimated.Select(e => e.Candidate).Distinct().ToList();
 

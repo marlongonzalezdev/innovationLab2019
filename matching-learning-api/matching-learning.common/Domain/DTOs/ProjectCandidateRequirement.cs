@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using matching_learning.common.Domain.Enums;
 
 namespace matching_learning.common.Domain.DTOs
@@ -6,7 +7,7 @@ namespace matching_learning.common.Domain.DTOs
     public class ProjectCandidateRequirement
     {
         public int Max { get; set; }
-
+        [Required]
         public List<ProjectSkillRequirement> SkillsFilter { get; set; }
 
         public int? RoleIdFilter { get; set; }
