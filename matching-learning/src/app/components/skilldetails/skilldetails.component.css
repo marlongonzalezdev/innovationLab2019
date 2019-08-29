@@ -1,12 +1,17 @@
 .form-container{
     padding: 5%;
+    max-width: 500px;
 }
 
-.select-width{
-    width: fit-content;
+.input-field {
+    width: 100%;
+    padding: 10px 20px;
 }
 
-.input-field{
-    margin-left: 2%;
-    width: fit-content;
+.input-field button {
+    margin-left: 20px;
+}
+
+mat-table {
+    width: 300px;
 }
