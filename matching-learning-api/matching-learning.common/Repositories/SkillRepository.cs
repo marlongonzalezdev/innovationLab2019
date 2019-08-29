@@ -952,12 +952,12 @@ namespace matching_learning.common.Repositories
 
             if (pcr.RoleIdFilter.HasValue)
             {
-                whereCondition = " AND [CCR].[CandidateRoleId] = @candidateRoleId";
+                whereCondition += " AND [CCR].[CandidateRoleId] = @candidateRoleId";
             }
 
             if (pcr.RelationTypeFilter != null)
             {
-                whereCondition = " AND [C].[RelationType] = @relationType";
+                whereCondition += " AND [C].[RelationType] = @relationType";
             }
 
             var query = "SELECT [SEE].[Id], " +
