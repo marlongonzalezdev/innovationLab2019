@@ -1,9 +1,14 @@
-import { Skills } from './../../models/skills';
+import { SaveResult } from './../../shared/models/saveResult';
+import { MatTableDataSource } from '@angular/material/table';
+import { Skill } from '../../shared/models/skill';
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import { SkillServiceBase } from './services/skill-servie-base';
+
 import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { SkilldetailsComponent } from '../skilldetails/skilldetails.component';
+import {SkillServiceBase} from '../../shared/services/skill-service-base';
+import { NotificationService } from '../../shared/services/notification.service';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-skills',
@@ -11,32 +16,66 @@ import { MatSort } from '@angular/material/sort';
     styleUrls: ['./skills.component.css']
 })
 export class SkillsComponent implements OnInit {
-    skillList: Skills[] = [];
-    displayedColumns = ['name', 'category', 'defaultExpertise', 'code'];
-    selectedSkill: Skills;
+    skillList: Skill[] = [];
+    displayedColumns = ['name', 'category', 'actions'];
+    selectedSkill: Skill;
     showContent: boolean;
-    source: any;
-
-    constructor(private skillService: SkillServiceBase) {
+    source: MatTableDataSource<Skill>;
+    searchKey: string;
+    skillCategories: any;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    constructor(private skillService: SkillServiceBase,
+                private notificationService: NotificationService, private dialog: MatDialog) {
     }
-
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     ngOnInit() {
-      this.skillService.getSkill()
+      this.showContent = false;
+      this.skillService.getSkills()
       .subscribe ( response => {
          this.skillList = response;
-        //  this.source = new MatTableDataSource<Skills>(this.skillList);        
-         /* this.source.paginator = this.paginator;
-         this.source.sort = this.sort; */
+         this.source = new MatTableDataSource<Skill>(this.skillList);
+         this.source.sort = this.sort;
+         this.source.paginator = this.paginator;
       });
+      this.skillService.getMainSkillCategory()
+      .subscribe(response => {
+      this.skillCategories = response;
     }
-    applyFilter(filterValue: string) {
-      this.source.filter = filterValue.trim().toLowerCase();
+      );
+    }
+    findCategoryName(categoryId: number) {
+      const category = this.skillCategories.find((c: { id: number; }) => {
+        return c.id === categoryId;
+      });
+      return category.name;
+    }
+    onSearchClear() {
+      this.searchKey = '';
+      this.applyFilter();
+    }
+    applyFilter() {
+      this.source.filter = this.searchKey.trim().toLowerCase();
+    }
+    addSkill(): void {
+       this.skillService.initializeFormGroup();
+       const dialogConfig = new MatDialogConfig();
+       dialogConfig.disableClose = true;
+       dialogConfig.autoFocus = true;
+       dialogConfig.width = '40%';
+       this.dialog.open(SkilldetailsComponent, dialogConfig);
+    }
 
-      if (this.source.paginator) {
-        this.source.paginator.firstPage();
-      }
+    onChangedShowContent(displayContent: boolean) {
+      this.showContent = displayContent;
+    }
+
+    onEdit(row) {
+      this.skillService.populateForm(row);
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = true;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = '75%';
+      this.dialog.open(SkilldetailsComponent, dialogConfig);
     }
 }

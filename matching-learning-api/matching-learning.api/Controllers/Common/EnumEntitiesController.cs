@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -32,11 +31,11 @@ namespace matching_learning.api.Controllers.Common
         public ActionResult<List<EnumEntity>> GetCandidateRelationTypes()
         {
             var res = from CandidateRelationType n in Enum.GetValues(typeof(CandidateRelationType))
-                select new EnumEntity()
-                {
-                    Id = (int)n,
-                    Name = getEnumDescription(n)
-                };
+                      select new EnumEntity()
+                      {
+                          Id = (int)n,
+                          Name = EnumHelper.GetEnumDescription(n)
+                      };
 
             return (res.ToList());
         }
@@ -52,7 +51,7 @@ namespace matching_learning.api.Controllers.Common
                       select new EnumEntity()
                       {
                           Id = (int)n,
-                          Name = getEnumDescription(n)
+                          Name = EnumHelper.GetEnumDescription(n)
                       };
 
             return (res.ToList());
@@ -66,13 +65,30 @@ namespace matching_learning.api.Controllers.Common
         public ActionResult<List<EnumEntity>> GetSkillCategories()
         {
             var res = from SkillCategory n in Enum.GetValues(typeof(SkillCategory))
+                      select new EnumEntity()
+                      {
+                          Id = (int)n,
+                          Name = EnumHelper.GetEnumDescription(n)
+                      };
+
+            return (res.ToList());
+        }
+
+        /// <summary>
+        /// Gets the main skill categories (technology version and technology role depends of technology.
+        /// </summary>
+        /// <returns></returns>
+        [Route("MainSkillCategories")]
+        public ActionResult<List<EnumEntity>> GetMainSkillCategories()
+        {
+            var res = from SkillCategory n in Enum.GetValues(typeof(SkillCategory))
                 select new EnumEntity()
                 {
                     Id = (int)n,
-                    Name = getEnumDescription(n)
+                    Name = EnumHelper.GetEnumDescription(n)
                 };
 
-            return (res.ToList());
+            return (res.Where(ee => ee.Id == (int)SkillCategory.BusinessArea || ee.Id == (int)SkillCategory.SoftSkill || ee.Id == (int)SkillCategory.Technology).ToList());
         }
 
         /// <summary>
@@ -83,27 +99,13 @@ namespace matching_learning.api.Controllers.Common
         public ActionResult<List<EnumEntity>> GetSkillRelationTypes()
         {
             var res = from SkillRelationType n in Enum.GetValues(typeof(SkillRelationType))
-                select new EnumEntity()
-                {
-                    Id = (int)n,
-                    Name = getEnumDescription(n)
-                };
+                      select new EnumEntity()
+                      {
+                          Id = (int)n,
+                          Name = EnumHelper.GetEnumDescription(n)
+                      };
 
             return (res.ToList());
-        }
-
-        private static string getEnumDescription(Enum value)
-        {
-            FieldInfo fi = value.GetType().GetField(value.ToString());
-
-            DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-            if (attributes != null && attributes.Any())
-            {
-                return attributes.First().Description;
-            }
-
-            return value.ToString();
         }
     }
 }

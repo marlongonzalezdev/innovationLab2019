@@ -1,1 +1,58 @@
+<mat-toolbar>
+    <span>{{skillservice.form.controls['$key'].value?"Modify Skill":"Add Skill"}}</span>
+    <span class="fill-remaining-space"></span>
+    <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
+  </mat-toolbar>
+<div class="form-container">
+        <form [formGroup]="skillservice.form" class="normal-form" (submit)="onSubmit(skillservice.form.value)">
+                <mat-grid-list cols="2" rowHeight="300px">       
+                    <mat-card class=".mat-elevation-z0">                            
+                      <div class="controls-container">                                
+                                <mat-form-field class="select-width">
+                                    <mat-select formControlName="category" placeholder="Category" [disabled]="categoryDisable">
+                                          <mat-option>None</mat-option>
+                                          <ng-container *ngFor="let skillCategory of skillCategories">
+                                            <mat-option (onSelectionChange)="onSelect($event)" [value]="skillCategory.id">{{skillCategory.name}}</mat-option>
+                                          </ng-container>
+                                        </mat-select>
+                                      </mat-form-field>
+                                      <mat-form-field class="input-field">
+                                            <input formControlName="name" matInput placeholder="skill Name">
+                                            <mat-error>Skill name field is mandatory</mat-error>
+                                     </mat-form-field>
+                                      <div class="add-bottom-padding" *ngIf="isTechnology">
+                                        <mat-checkbox  formControlName="isVersioned" color="primary" (change)="toggleSelection($event)">Is Versioned</mat-checkbox>
+                                      </div>  
+                                      <div *ngIf="isVersioned">
+                                            <mat-form-field class="input-field">
+                                                    <input formControlName="version" matInput placeholder="version">                                            
+                                             </mat-form-field>                        
+                                             <button type="button" mat-mini-fab color="primary" (click)="addVersion()">
+                                               <mat-icon>add</mat-icon>
+                                              </button> 
+                                              <mat-table [dataSource]="source" matSort>
+                                                  <ng-container matColumnDef="name">
+                                                      <mat-header-cell *matHeaderCellDef mat-sort-header>Version</mat-header-cell>
+                                                      <mat-cell *matCellDef="let element">{{element.version}}</mat-cell>
+                                                  </ng-container>                                                          
+                                                    <ng-container matColumnDef="actions">
+                                                      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                                      <mat-cell *matCellDef="let row">
+                                                        <button type="button" mat-icon-button (click)="deleteVersion(row)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+                                                      </mat-cell>
+                                                    </ng-container>                                                    
+                                                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                                    <mat-row *matRowDef="let row; columns:displayedColumns"></mat-row>                                                 
+                                        </mat-table>               
+                                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>                                
+                                      </div>                                                                                                                                                
+                                      <div class="button-row">
+                                        <button mat-raised-button color="primary" type="submit" [disabled]="skillservice.form.invalid">Save</button>
+                                        <button mat-raised-button color="warn" (click)="onClear()">Clear</button>
+                                      </div>
+                                    </div>
+                                    </mat-card>            
+                </mat-grid-list>
+              </form>
+</div>
 

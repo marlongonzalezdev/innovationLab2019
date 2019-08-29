@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Repositories;
@@ -30,7 +31,7 @@ namespace matching_learning.api.Controllers.Common
         /// </summary>
         /// <returns></returns>
         [Route("DeliveryUnits")]
-        public ActionResult<List<DeliveryUnit>> Get()
+        public ActionResult<List<DeliveryUnit>> GetDeliveryUnits()
         {
             return _deliveryUnitRepository.GetDeliveryUnits();
         }
@@ -42,9 +43,19 @@ namespace matching_learning.api.Controllers.Common
         /// <param name="pageSize">Page size.</param>
         /// <returns></returns>
         [Route("DeliveryUnitsPaginated")]
-        public ActionResult<List<DeliveryUnit>> GetRegionsPaginated(int pageIdx, int pageSize)
+        public ActionResult<List<DeliveryUnit>> GetDeliveryUnitsPaginated(int pageIdx, int pageSize)
         {
             return _deliveryUnitRepository.GetDeliveryUnits().OrderBy(du => du.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
+        }
+        
+        /// <summary>
+        /// Get the user default delivery unit.
+        /// </summary>
+        /// <returns></returns>
+        [Route("DefaultDeliveryUnit")]
+        public ActionResult<DeliveryUnit> GetDefaultDeliveryUnit()
+        {
+            return _deliveryUnitRepository.GetDeliveryUnits().Where(du => string.Compare(du.Code, "MVD", StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
         }
     }
 }

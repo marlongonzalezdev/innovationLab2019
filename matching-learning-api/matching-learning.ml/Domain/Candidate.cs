@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace matching_learning.ml.Domain
+﻿namespace matching_learning.ml.Domain
 {
     /// <summary>
     /// The candidate in the domain.

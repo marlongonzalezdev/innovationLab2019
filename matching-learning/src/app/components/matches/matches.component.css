@@ -1,11 +1,10 @@
-/*.matches__items {
-    display: inline-block;
-    !*width: 100%;*!
-    color: black;
-    vertical-align: top;
-    min-width: 500px;
-}
-
+/*.matches__items {*/
+/*    display: inline-block;*/
+/*    width: 100%;*/
+/*    color: black;*/
+/*    vertical-align: top;*/
+/*    min-width: 500px;*/
+/*}*/
 .photo__container {
     min-width: 200px;
     display: inline-block;
@@ -22,16 +21,37 @@
 }
 
 .get-matches {
-    float: right;
-    padding-left: 30px;
-    padding-top: 30px;
-    !*display: none;*!
-}
-
-.spinner-container {
-    margin: 20px
-}
-
-table {
     width: 100%;
-  }*/
+    text-align: center;
+}
+
+.get-matches button {
+    padding: 10px 30px;
+    margin: 20px;
+    background-color: rgb(222, 65, 27);
+    border-radius: 10px;
+    color: white;
+}
+
+.matches-result {
+    width: 80%;
+    margin: auto;
+}
+
+.mat-row:hover {
+    background-color: rgb(222, 65, 27);
+    opacity: 0.8;
+}
+
+.mat-row:nth-child(odd) {
+    background-color: rgb(239, 239, 240);
+}
+
+.mat-header-row {
+    background-color: rgb(222, 65, 27);
+}
+
+.mat-header-cell {
+    color: white;
+    font-size: 14px;
+}

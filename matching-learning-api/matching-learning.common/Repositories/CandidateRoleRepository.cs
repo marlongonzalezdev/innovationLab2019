@@ -2,11 +2,13 @@
 using System.Data;
 using System.Data.SqlClient;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
     public class CandidateRoleRepository : ICandidateRoleRepository
     {
+        #region Retrieve
         public List<CandidateRole> GetCandidateRoles()
         {
             var res = new List<CandidateRole>();
@@ -16,7 +18,7 @@ namespace matching_learning.common.Repositories
                         "       [CR].[Name] " +
                         "FROM [dbo].[CandidateRole] AS [CR]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -28,12 +30,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new CandidateRole()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        });
+                        res.Add(getCandidateRoleFromDataRow(dr));
                     }
                 }
             }
@@ -45,17 +42,13 @@ namespace matching_learning.common.Repositories
         {
             CandidateRole res = null;
 
-            var deliveryUnitsRepository = new DeliveryUnitRepository();
-
-            var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
-
             var query = "SELECT [CR].[Id], " +
                         "       [CR].[Code]," +
                         "       [CR].[Name] " +
                         "FROM [dbo].[CandidateRole] AS [CR] " +
                         "WHERE [CR].[Id] = @id";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -70,19 +63,27 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new CandidateRole()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        };
+                        res = getCandidateRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
 
             return (res);
         }
+        
+        private CandidateRole getCandidateRoleFromDataRow(DataRow dr)
+        {
+            CandidateRole res = null;
+
+            res = new CandidateRole()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+            };
+
+            return (res);
+        }
+        #endregion
     }
 }

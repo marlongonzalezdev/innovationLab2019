@@ -1,75 +1,91 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {coerceNumberProperty} from '@angular/cdk/coercion';
-import {Skills} from '../../mock-skills';
-import {Skill} from '../../skill';
-import {Project} from '../../project';
+import { Component, Input, OnInit } from '@angular/core';
+import { Project } from '../../shared/models/project';
+import { Skill } from 'src/app/shared/models/skill';
+import { SkillsFilter } from '../../shared/models/skillsFilter';
+import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
+import { Observable } from 'rxjs';
+import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SkillServiceBase } from '../../shared/services/skill-service-base';
 
 @Component({
-    selector: 'app-input-criteria',
-    templateUrl: './input-criteria.component.html',
-    styleUrls: ['./input-criteria.component.css']
+  selector: 'app-input-criteria',
+  templateUrl: './input-criteria.component.html',
+  styleUrls: ['./input-criteria.component.css']
 })
 export class InputCriteriaComponent implements OnInit {
-    project: Project;
-    display: boolean;
-    skillList = Skills;
 
-    selectedSkill: Skill;
-    expectedScore: number;
-    showContent: boolean;
+  project: Project;
+  display: boolean;
+  skillList: Skill[] = [];
 
-  autoTicks = false;
-  disabled = false;
-  invert = false;
-  max = 100;
-  min = 0;
-  showTicks = false;
-  step = 1;
-  thumbLabel = false;
-  value = 0;
-  vertical = false;
+  selectedSkill: Skill;
+  expectedScore: number;
+  showContent: boolean;
 
-  get tickInterval(): number | 'auto' {
-    return this.showTicks ? (this.autoTicks ? 'auto' : this._tickInterval) : 0;
+  options: FormGroup;
+
+  deliveryUnits: Observable<DeliveryUnit[]>;
+  defaultDeliveryUnit: Observable<DeliveryUnit>;
+
+  constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
+      this.project = {
+      name: 'Example',
+      max: 10,
+      skillsFilter: [],
+      deliveryUnitIdFilter: null,
+      inBenchFilter: false,
+      relationTypeFilter: null,
+      roleIdFilter: null
+    };
+      this.display = false;
+      this.showContent = false;
+
+      this.options = fb.group({
+      hideRequired: false,
+      floatLabel: 'auto',
+    });
   }
-  set tickInterval(value) {
-    this._tickInterval = coerceNumberProperty(value);
-  }
-  private _tickInterval = 1;
 
-    constructor() {
-        this.project = new Project();
-        this.project.name = 'Example';
-        this.project.skills = [];
+  ngOnInit() {
+    this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
+
+    this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();	
+	//this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
+	
+    this.skillService.getSkillsSorted()
+      .subscribe ( response => {
+         this.skillList = response;
+      });
+  }
+
+  add(skill: Skill): void {
+
+    if (!skill || !this.expectedScore) {
+      return;
+    }
+    if (!this.project.skillsFilter.find(s => s.requiredSkillId === skill.id)) {
+        const skillsFilter: SkillsFilter = {
+        requiredSkillId: skill.id,
+        weight: this.expectedScore,
+        minAccepted: null,
+        name: skill.name
+      };
+        this.project.skillsFilter.push(skillsFilter);
+        this.selectedSkill = undefined;
+        this.expectedScore = undefined;
+    }
+    this.display = true;
+  }
+
+  delete(skill: SkillsFilter): void {
+    const index = this.project.skillsFilter.indexOf(skill, 0);
+    if (index > -1) {
+      this.project.skillsFilter.splice(index, 1);
+      if (this.project.skillsFilter.length === 0) {
         this.display = false;
         this.showContent = false;
-    }
-
-    ngOnInit() {
-    }
-
-    add(skill: Skill): void {
-
-        if (!skill || !this.expectedScore || this.expectedScore > 100) {
-            return;
-        }
-        if (!this.project.skills.find(s => s === skill)) {
-            skill.weight = this.expectedScore / 100;
-            this.project.skills.push(skill);
-            this.selectedSkill = undefined;
-            this.expectedScore = undefined;
-        }
-        this.display = true;
-    }
-
-    delete(skill: Skill): void {
-      const index = this.project.skills.indexOf(skill, 0);
-      if (index > -1) {
-        this.project.skills.splice(index, 1);
-        if (this.project.skills.length === 0) {
-          this.display = false;
-          this.showContent = false;
-        }
       }
     }
+  }
 }

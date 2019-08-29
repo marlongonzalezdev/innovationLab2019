@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -22,7 +23,7 @@ namespace matching_learning.common.Repositories
                         "       [RegionId] " +
                         "FROM [dbo].[DeliveryUnit]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -34,17 +35,28 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new DeliveryUnit()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            RegionId = dr.Db2Int("RegionId"),
-                            Region = regions.FirstOrDefault(r => r.Id == dr.Db2Int("RegionId")),
-                        });
+                        var region = regions.FirstOrDefault(r => r.Id == dr.Db2Int("RegionId"));
+
+                        res.Add(getDeliveryUnitFromDataRow(dr, region));
                     }
                 }
             }
+
+            return (res);
+        }
+
+        private DeliveryUnit getDeliveryUnitFromDataRow(DataRow dr, Region region)
+        {
+            DeliveryUnit res = null;
+
+            res = new DeliveryUnit()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                RegionId = dr.Db2Int("RegionId"),
+                Region = region,
+            };
 
             return (res);
         }

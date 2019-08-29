@@ -1,38 +1,18 @@
 ﻿using System;
 using System.Data;
-using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace matching_learning.common.Repositories
 {
     public static class DBCommon
     {
-        public static string GetConnectionString()
+        public static void SetPaginationParams(int pageIdx, int pageSize, SqlCommand cmd)
         {
-            string projectPath = AppDomain.CurrentDomain.BaseDirectory.Split(new String[] { @"bin\" }, StringSplitOptions.None)[0];
+            cmd.Parameters.Add("@pageIdx", SqlDbType.Int);
+            cmd.Parameters["@pageIdx"].Value = pageIdx;
 
-#if LOCAL_DEFAULT_INSTANCE
-  IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("appsettings.LocalDefaultInstance.json", optional: false)
-                .Build();
-#elif LOCAL_SQLEXPRESS_INSTANCE
-  IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("appsettings.LocalSqlExpressInstance.json", optional: false)
-                .Build();
-#else
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(projectPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-#endif
-
-            string connectionString = configuration.GetConnectionString("IL2019");
-
-            return (connectionString);
+            cmd.Parameters.Add("@pageSize", SqlDbType.Int);
+            cmd.Parameters["@pageSize"].Value = pageSize;
         }
 
 #region DB conversions

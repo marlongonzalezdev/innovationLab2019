@@ -1,4 +1,4 @@
-import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
+import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // <-- NgModel lives here
@@ -13,8 +13,7 @@ import { MenuComponent } from './components/menu/menu.component';
 
 import { HttpErrorHandler } from './http-error-handler.service';
 import {MessageService} from '../message.service';
-import { SkillServiceBase } from './components/skills/services/skill-servie-base';
-import { SkillService } from './components/skills/services/skill.service';
+
 import { SkilldetailsComponent } from './components/skilldetails/skilldetails.component';
 
 import { CandidatesComponent } from './components/candidates/candidates.component';
@@ -27,7 +26,19 @@ import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 import { NotificationService } from './shared/services/notification.service';
 import { CandidateListComponent } from './components/candidates/candidate-list/candidate-list.component';
-
+import { SkillServiceBase } from './shared/services/skill-service-base';
+import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
+import { EvaluationListComponent } from './components/evaluations/evaluation-list/evaluation-list.component';
+import { EvaluationComponent } from './components/evaluations/evaluation/evaluation.component';
+import { EvaluationService } from './shared/services/evaluation.service';
+import { DeliveryUnitComponent } from './components/delivery-units/delivery-unit/delivery-unit.component';
+import { DeliveryUnitListComponent } from './components/delivery-units/delivery-unit-list/delivery-unit-list.component';
+import { DeliveryUnitsComponent } from './components/delivery-units/delivery-units.component';
+import { RegionComponent } from './components/regions/region/region.component';
+import { RegionListComponent } from './components/regions/region-list/region-list.component';
+import { RegionsComponent } from './components/regions/regions.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +51,18 @@ import { CandidateListComponent } from './components/candidates/candidate-list/c
     CandidatesComponent,
     SkilldetailsComponent,
     CandidateComponent,
-    CandidateListComponent
+    CandidateListComponent,
+    SkilldetailsComponent,
+    EvaluationListComponent,
+    EvaluationComponent,
+    DeliveryUnitComponent,
+    DeliveryUnitsComponent,
+    DeliveryUnitListComponent,
+    RegionComponent,
+    RegionsComponent,
+    RegionListComponent,
+    PageNotFoundComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -49,7 +71,8 @@ import { CandidateListComponent } from './components/candidates/candidate-list/c
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FlexLayoutModule
   ],
   providers: [
     HttpErrorHandler,
@@ -58,8 +81,10 @@ import { CandidateListComponent } from './components/candidates/candidate-list/c
     CandidateService,
     DeliveryUnitService,
     RelationTypeService,
-    NotificationService
+    NotificationService,
+    EvaluationService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]
 })
 export class AppModule { }

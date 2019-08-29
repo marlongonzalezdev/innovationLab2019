@@ -4,13 +4,167 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Domain.DTOs.Views;
 using matching_learning.common.Domain.Enums;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
     public class SkillRepository : ISkillRepository
     {
         #region Retrieve
+        #region SkillView
+        public List<SkillView> GetSkillViews()
+        {
+            var res = new List<SkillView>();
+
+            var skills = GetSkills();
+
+            if ((skills == null) || (skills.Count == 0)) { return (res); }
+
+            skills = skills.Where(s => s.Category != SkillCategory.TechnologyVersion && s.Category != SkillCategory.TechnologyRole).ToList();
+
+            foreach (var skill in skills)
+            {
+                res.Add(getSkillViewFromSkill(skill));
+            }
+
+            return (res);
+        }
+
+        public SkillView GetSkillViewById(int id)
+        {
+            SkillView res = null;
+
+            var skill = GetSkillById(id);
+
+            res = getSkillViewFromSkill(skill);
+
+            return (res);
+        }
+
+        public SkillView GetSkillViewByCode(string code)
+        {
+            SkillView res = null;
+
+            var skill = GetSkillByCode(code);
+
+            res = getSkillViewFromSkill(skill);
+
+            return (res);
+        }
+
+        private SkillView getSkillViewFromSkill(Skill skill)
+        {
+            SkillView res = null;
+
+            if (skill == null) { return (null); }
+
+            switch (skill.Category)
+            {
+                case SkillCategory.BusinessArea:
+                    res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.SoftSkill:
+                    res = getFromSkill(skill);
+                    break;
+
+                case SkillCategory.Technology:
+                    res = getFromSkill(skill);
+
+                    var tech = GetTechnologyById(skill.Id);
+
+                    res.IsVersioned = tech.IsVersioned;
+                    if (tech.IsVersioned && tech.Versions != null)
+                    {
+                        res.Versions = tech.Versions.Select(tv => getFromTechnologyVersion(tv, skill.RelatedId)).ToList();
+                    }
+
+                    if (tech.Roles != null)
+                    {
+                        res.Roles = tech.Roles.Select(tr => getFromTechnologyRole(tr, skill.RelatedId)).ToList();
+                    }
+                    break;
+
+                case SkillCategory.TechnologyRole:
+                case SkillCategory.TechnologyVersion:
+                    throw new NotSupportedException($"Error: skill category {skill.Category} is part of technology view.");
+
+                default:
+                    throw new NotSupportedException($"Error: skill category {skill.Category} is out of range.");
+            }
+
+            return (res);
+        }
+
+        private SkillView getFromSkill(Skill s)
+        {
+            SkillView res;
+
+            res = new SkillView()
+            {
+                Id = s.Id,
+                RelatedId = s.RelatedId,
+                Category = s.Category,
+                Code = s.Code,
+                Name = s.Name,
+                DefaultExpertise = s.DefaultExpertise,
+                IsVersioned = false,
+                Versions = null,
+                Roles = null,
+            };
+
+            return (res);
+        }
+
+        private SkillVersionView getFromTechnologyVersion(TechnologyVersion tv, int parentTechnologyId)
+        {
+            SkillVersionView res;
+
+            res = new SkillVersionView()
+            {
+                Id = tv.Id,
+                RelatedId = tv.RelatedId,
+                ParentTechnologyId = parentTechnologyId,
+                DefaultExpertise = tv.DefaultExpertise,
+                Version = tv.Version,
+                StartDate = tv.StartDate,
+            };
+
+            return (res);
+        }
+        private SkillRoleView getFromTechnologyRole(TechnologyRole tr, int parentTechnologyId)
+        {
+            SkillRoleView res;
+
+            res = new SkillRoleView()
+            {
+                Id = tr.Id,
+                RelatedId = tr.RelatedId,
+                Code = tr.Code,
+                Name = tr.Name,
+                DefaultExpertise = tr.DefaultExpertise,
+                ParentTechnologyId = parentTechnologyId,
+            };
+
+            return (res);
+        }
+
+        public int Id { get; set; }
+
+        public int RelatedId { get; set; }
+
+        public int ParentTechnologyId { get; set; }
+
+        public decimal DefaultExpertise { get; set; }
+
+        public string Version { get; set; }
+
+        public DateTime StartDate { get; set; }
+        #endregion
+
+        #region Skill
         public List<Skill> GetSkills()
         {
             var res = new List<Skill>();
@@ -23,7 +177,7 @@ namespace matching_learning.common.Repositories
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -35,15 +189,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        });
+                        res.Add(getSkillFromDataRow(dr));
                     }
                 }
             }
@@ -64,7 +210,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[SkillId] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -79,17 +225,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -110,7 +246,7 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -125,17 +261,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Skill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -143,6 +269,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private Skill getSkillFromDataRow(DataRow dr)
+        {
+            Skill res = null;
+
+            res = new Skill()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region BusinessArea
         public BusinessArea GetBusinessAreaById(int id)
         {
             BusinessArea res = null;
@@ -157,7 +302,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -175,17 +320,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new BusinessArea()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -207,7 +342,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
                         "WHERE [BA].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -225,17 +360,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new BusinessArea()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getBusinessAreaFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -243,6 +368,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private BusinessArea getBusinessAreaFromDataRow(DataRow dr)
+        {
+            BusinessArea res = null;
+
+            res = new BusinessArea()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region SoftSkill
         public SoftSkill GetSoftSkillById(int id)
         {
             SoftSkill res = null;
@@ -257,7 +401,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -275,17 +419,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new SoftSkill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -307,7 +441,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
                         "WHERE [SK].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -325,17 +459,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new SoftSkill()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                        };
+                        res = getSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -343,6 +467,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private SoftSkill getSoftSkillFromDataRow(DataRow dr)
+        {
+            SoftSkill res = null;
+
+            res = new SoftSkill()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region Technology
         public Technology GetTechnologyById(int id)
         {
             Technology res = null;
@@ -358,7 +501,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -376,18 +519,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Technology()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            IsVersioned = dr.Db2Bool("IsVersioned")
-                        };
+                        res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -410,7 +542,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
                         "WHERE [T].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -428,18 +560,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        res = new Technology()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            IsVersioned = dr.Db2Bool("IsVersioned")
-                        };
+                        res = getTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -447,6 +568,33 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private Technology getTechnologyFromDataRow(DataRow dr)
+        {
+            Technology res = null;
+
+            res = new Technology()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                IsVersioned = dr.Db2Bool("IsVersioned"),
+            };
+
+            if (res.IsVersioned)
+            {
+                res.Versions = getTechnologyVersionsByTechnologyId(res.Id);
+            }
+
+            res.Roles = getTechnologyRolesByTechnologyId(res.Id);
+
+            return (res);
+        }
+        #endregion
+
+        #region TechnologyVersion
         public TechnologyVersion GetTechnologyVersionById(int id)
         {
             TechnologyVersion res = null;
@@ -465,7 +613,7 @@ namespace matching_learning.common.Repositories
                          "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
                          "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -483,22 +631,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        };
+                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -524,7 +657,7 @@ namespace matching_learning.common.Repositories
                          "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
                          "WHERE [T].[Code] + ' v' + [TV].[Version] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -542,22 +675,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        };
+                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -565,6 +683,72 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr)
+        {
+            TechnologyVersion res = null;
+
+            res = new TechnologyVersion()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                ParentTechnologyId = dr.Db2Int("TechnologyId"),
+                Version = dr.Db2String("Version"),
+                StartDate = dr.Db2DateTime("StartDate"),
+            };
+
+            return (res);
+        }
+
+        private List<TechnologyVersion> getTechnologyVersionsByTechnologyId(int id)
+        {
+            var res = new List<TechnologyVersion>();
+
+            var query = "SELECT [S].[Id] AS [SkillId], " +
+                        "       [TV].[Id] AS [RelatedId]," +
+                        "       @category AS [Category]," +
+                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[DefaultExpertise]," +
+                        "       [TV].[TechnologyId]," +
+                        "       [TV].[Version]," +
+                        "       [TV].[StartDate] " +
+                        "FROM [dbo].[Skill] AS [S]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
+                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
+                        "WHERE [S].[Id] = @skillId";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@skillId", SqlDbType.Int);
+                    cmd.Parameters["@skillId"].Value = id;
+
+                    cmd.Parameters.Add("@category", SqlDbType.Int);
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(getTechnologyVersionFromDataRow(dr));
+                    }
+                }
+            }
+
+            return (res);
+        }
+        #endregion
+
+        #region TechnologyRole
         public TechnologyRole GetTechnologyRoleById(int id)
         {
             TechnologyRole res = null;
@@ -580,7 +764,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -598,20 +782,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyRole()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                        };
+                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -634,7 +805,7 @@ namespace matching_learning.common.Repositories
                         "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
                         "WHERE [TR].[Code] = @code";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -652,20 +823,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        DataRow dr = dt.Rows[0];
-
-                        var parent = GetTechnologyById(dr.Db2Int("TechnologyId"));
-
-                        res = new TechnologyRole()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                        };
+                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -673,26 +831,41 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
+        private TechnologyRole getTechnologyRoleFromDataRow(DataRow dr)
         {
-            var res = new List<TechnologyVersion>();
+            TechnologyRole res = null;
 
-            var parent = GetTechnologyById(id);
+            res = new TechnologyRole()
+            {
+                Id = dr.Db2Int("SkillId"),
+                RelatedId = dr.Db2Int("RelatedId"),
+                Category = (SkillCategory)dr.Db2Int("Category"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+                DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
+                ParentTechnologyId = dr.Db2Int("TechnologyId"),
+            };
+
+            return (res);
+        }
+
+        private List<TechnologyRole> getTechnologyRolesByTechnologyId(int id)
+        {
+            var res = new List<TechnologyRole>();
 
             var query = "SELECT [S].[Id] AS [SkillId], " +
-                        "       [TV].[Id] AS [RelatedId]," +
+                        "       [TR].[Id] AS [RelatedId]," +
                         "       @category AS [Category]," +
-                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
-                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
-                        "       [TV].[DefaultExpertise]," +
-                        "       [TV].[Version]," +
-                        "       [TV].[StartDate] " +
+                        "       [TR].[Code]," +
+                        "       [TR].[Name]," +
+                        "       [TR].[DefaultExpertise]," +
+                        "       [TR].[TechnologyId] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
+                        "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]" +
                         "WHERE [S].[Id] = @skillId";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -700,7 +873,7 @@ namespace matching_learning.common.Repositories
                     cmd.Parameters["@skillId"].Value = id;
 
                     cmd.Parameters.Add("@category", SqlDbType.Int);
-                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
+                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyRole;
 
                     conn.Open();
 
@@ -710,81 +883,16 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        });
+                        res.Add(getTechnologyRoleFromDataRow(dr));
                     }
                 }
             }
 
             return (res);
         }
+        #endregion
 
-        public List<TechnologyVersion> GetTechnologyVersionsByTechnologyCode(string code)
-        {
-            var res = new List<TechnologyVersion>();
-
-            var parent = GetTechnologyByCode(code);
-
-            var query = "SELECT [S].[Id] AS [SkillId], " +
-                        "       [TV].[Id] AS [RelatedId]," +
-                        "       @category AS [Category]," +
-                        "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
-                        "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
-                        "       [TV].[DefaultExpertise]," +
-                        "       [TV].[Version]," +
-                        "       [TV].[StartDate] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
-                        "WHERE [T].[Code] = @code";
-
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
-            {
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                    cmd.Parameters["@code"].Value = code;
-
-                    cmd.Parameters.Add("@category", SqlDbType.Int);
-                    cmd.Parameters["@category"].Value = SkillCategory.TechnologyVersion;
-
-                    conn.Open();
-
-                    var dt = new DataTable();
-                    var da = new SqlDataAdapter(cmd);
-                    da.Fill(dt);
-
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        res.Add(new TechnologyVersion()
-                        {
-                            Id = dr.Db2Int("SkillId"),
-                            RelatedId = dr.Db2Int("RelatedId"),
-                            Category = (SkillCategory)dr.Db2Int("Category"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                            DefaultExpertise = dr.Db2Decimal("DefaultExpertise"),
-                            ParentTechnology = parent,
-                            Version = dr.Db2String("Version"),
-                            StartDate = dr.Db2DateTime("StartDate"),
-                        });
-                    }
-                }
-            }
-
-            return (res);
-        }
-
+        #region SkillEstimatedExpertise
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertises()
         {
             var res = new List<SkillEstimatedExpertise>();
@@ -793,13 +901,15 @@ namespace matching_learning.common.Repositories
                         "       [SEE].[CandidateId], " +
                         "       [SEE].[SkillId], " +
                         "       [SEE].[Expertise] " +
-                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]";
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]" +
+                        "INNER JOIN [dbo].[candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
+                        "                                   AND [C].[IsActive] = 1";
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
             var skills = GetSkills();
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -814,16 +924,113 @@ namespace matching_learning.common.Repositories
                         var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
                         var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
 
-                        res.Add(new SkillEstimatedExpertise()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Candidate = candidate,
-                            Skill = skill,
-                            Expertise = dr.Db2Decimal("Expertise"),
-                        });
+                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
                     }
                 }
             }
+
+            return (res);
+        }
+
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr)
+        {
+
+            var res = new List<SkillEstimatedExpertise>();
+
+            List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
+            string reqSkillsStr = convertListIntToString(reqSkills);
+
+            string whereCondition = $"WHERE [SEE].[SkillId] IN ({reqSkillsStr})";
+
+            if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
+            {
+                whereCondition += " AND [C].[InBench] = @inBench";
+            }
+
+            if (pcr.DeliveryUnitIdFilter.HasValue)
+            {
+                whereCondition += " AND [C].[DeliveryUnitId] = @deliveryUnitId";
+            }
+
+            if (pcr.RoleIdFilter.HasValue)
+            {
+                whereCondition = " AND [CCR].[CandidateRoleId] = @candidateRoleId";
+            }
+
+            if (pcr.RelationTypeFilter != null)
+            {
+                whereCondition = " AND [C].[RelationType] = @relationType";
+            }
+
+            var query = "SELECT [SEE].[Id], " +
+                        "       [SEE].[CandidateId], " +
+                        "       [SEE].[SkillId], " +
+                        "       [SEE].[Expertise] " +
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE] " +
+                        "INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
+                        "                                   AND [C].[IsActive] = 1 " +
+                        "LEFT JOIN [dbo].[CandidateCandidateRole] AS [CCR] ON [CCR].[CandidateId] = [SEE].[CandidateId]" +
+                        "                                                 AND [CCR].[EndDate] IS NULL " +
+                        $"{whereCondition}";
+
+            var candidateRepository = new CandidateRepository();
+            var candidates = candidateRepository.GetCandidates();
+            var skills = GetSkills();
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
+                    {
+                        cmd.Parameters.Add("@inBench", SqlDbType.Bit);
+                        cmd.Parameters["@inBench"].Value = pcr.InBenchFilter.Value;
+                    }
+
+                    if (pcr.DeliveryUnitIdFilter.HasValue)
+                    {
+                        cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
+                        cmd.Parameters["@deliveryUnitId"].Value = pcr.DeliveryUnitIdFilter.Value;
+                    }
+
+                    if (pcr.RoleIdFilter.HasValue)
+                    {
+                        cmd.Parameters.Add("@candidateRoleId", SqlDbType.Int);
+                        cmd.Parameters["@candidateRoleId"].Value = pcr.RoleIdFilter.Value;
+                    }
+
+                    if (pcr.RelationTypeFilter != null)
+                    {
+                        cmd.Parameters.Add("@relationType", SqlDbType.Int);
+                        cmd.Parameters["@relationType"].Value = pcr.RelationTypeFilter.Value;
+                    }
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
+                        var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
+
+                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        private static string convertListIntToString(List<int> input)
+        {
+            string res = "";
+
+             var strInput = input.Select(i => i.ToString()).ToArray();
+            
+            res = string.Join(',', strInput);
 
             return (res);
         }
@@ -833,10 +1040,27 @@ namespace matching_learning.common.Repositories
             var all = GetSkillEstimatedExpertises();
 
             var res = all.Where(see => ids.Contains(see.Skill.Id));
-               
+
             return (res.ToList());
         }
 
+        private SkillEstimatedExpertise getSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)
+        {
+            SkillEstimatedExpertise res = null;
+
+            res = new SkillEstimatedExpertise()
+            {
+                Id = dr.Db2Int("Id"),
+                Candidate = candidate,
+                Skill = skill,
+                Expertise = dr.Db2Decimal("Expertise"),
+            };
+
+            return (res);
+        }
+        #endregion
+
+        #region SkillRelation
         public List<SkillRelation> GetSkillRelationsBySkillId(int id)
         {
             var res = new List<SkillRelation>();
@@ -851,7 +1075,7 @@ namespace matching_learning.common.Repositories
 
             var mainSkill = GetSkillById(id);
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -866,16 +1090,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
-
-                        res.Add(new SkillRelation()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Skill = mainSkill,
-                            AssociatedSkill = associatedSkill,
-                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
-                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
-                        });
+                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
@@ -898,7 +1113,7 @@ namespace matching_learning.common.Repositories
 
             var mainSkill = GetSkillByCode(code);
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -913,25 +1128,143 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
-
-                        res.Add(new SkillRelation()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Skill = mainSkill,
-                            AssociatedSkill = associatedSkill,
-                            RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
-                            ConversionFactor = dr.Db2Decimal("ConversionFactor"),
-                        });
+                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
 
             return (res);
         }
+
+        private SkillRelation getSkillRelationFromDataRow(DataRow dr, Skill mainSkill)
+        {
+            SkillRelation res = null;
+
+            var associatedSkill = GetSkillById(dr.Db2Int("AssociatedSkillId"));
+
+            res = new SkillRelation()
+            {
+                Id = dr.Db2Int("Id"),
+                Skill = mainSkill,
+                AssociatedSkill = associatedSkill,
+                RelationType = (SkillRelationType)dr.Db2Int("RelationType"),
+                ConversionFactor = dr.Db2Decimal("ConversionFactor"),
+            };
+
+            return (res);
+        }
+        #endregion
         #endregion
 
         #region Save
+        #region Save SkillView
+        public int SaveSkillView(SkillView sv)
+        {
+            int res = -1;
+
+            switch (sv.Category)
+            {
+                case SkillCategory.BusinessArea:
+                    var ba = new BusinessArea()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                    };
+
+                    res = SaveBusinessArea(ba);
+                    break;
+
+                case SkillCategory.SoftSkill:
+                    var ss = new SoftSkill()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                    };
+
+                    res = SaveSoftSkill(ss);
+                    break;
+
+                case SkillCategory.Technology:
+                    List<TechnologyVersion> versions = null;
+                    List<TechnologyRole> roles = null;
+
+                    if (sv.IsVersioned)
+                    {
+                        versions = new List<TechnologyVersion>();
+
+                        if (sv.Versions != null && sv.Versions.Count > 0)
+                        {
+                            foreach (var tv in sv.Versions)
+                            {
+                                versions.Add(new TechnologyVersion()
+                                {
+                                    Id = tv.Id,
+                                    RelatedId = tv.RelatedId,
+                                    Category = SkillCategory.TechnologyVersion,
+                                    ParentTechnologyId = tv.ParentTechnologyId,
+                                    Version = tv.Version,
+                                    StartDate = tv.StartDate,
+                                });
+                            }
+                        }
+                    }
+
+                    roles = new List<TechnologyRole>();
+
+                    if (sv.Roles != null && sv.Roles.Count > 0)
+                    {
+                        foreach (var tr in sv.Roles)
+                        {
+                            roles.Add(new TechnologyRole()
+                            {
+                                Id = tr.Id,
+                                RelatedId = tr.RelatedId,
+                                Category = SkillCategory.TechnologyRole,
+                                Code = tr.Code,
+                                Name = tr.Name,
+                                ParentTechnologyId = tr.ParentTechnologyId,
+                            });
+                        }
+                    }
+
+                    var tech = new Technology()
+                    {
+                        Id = sv.Id,
+                        RelatedId = sv.RelatedId,
+                        Category = sv.Category,
+                        Code = sv.Code,
+                        Name = sv.Name,
+                        DefaultExpertise = sv.DefaultExpertise,
+                        IsVersioned = sv.IsVersioned,
+                        Versions = versions,
+                        Roles = roles,
+                    };
+
+                    res = SaveTechnology(tech);
+                    break;
+
+                case SkillCategory.TechnologyRole:
+                    throw new NotSupportedException($"Error: skill view technology role save is not supported. Skill views technology role can be saved only as part of Technology.");
+
+                case SkillCategory.TechnologyVersion:
+                    throw new NotSupportedException($"Error: skill view technology version save is not supported. Skill views technology version can be saved only as part of Technology.");
+
+                default:
+                    throw new NotSupportedException($"Error: skill view category {sv.Category} is out of range.");
+            }
+
+            return (res);
+        }
+        #endregion
+
         #region Save BusinessArea
         public int SaveBusinessArea(BusinessArea ba)
         {
@@ -972,10 +1305,10 @@ namespace matching_learning.common.Repositories
                              "WHERE [Code] = @code";
 
             var stmntId = "SELECT @@IDENTITY";
-            
+
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -986,14 +1319,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdBA.Transaction = trans;
 
-                        cmdBA.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdBA.Parameters["@code"].Value = ba.Code;
-
-                        cmdBA.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdBA.Parameters["@name"].Value = ba.Name;
-
-                        cmdBA.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdBA.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+                        setParamsBusinessArea(cmdBA, ba);
 
                         cmdBA.ExecuteNonQuery();
                     }
@@ -1039,7 +1365,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1053,14 +1379,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@baId", SqlDbType.Int);
                         cmd.Parameters["@baId"].Value = ba.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = ba.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = ba.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
+                        setParamsBusinessArea(cmd, ba);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1075,6 +1394,18 @@ namespace matching_learning.common.Repositories
             }
 
             return (ba.Id);
+        }
+
+        private void setParamsBusinessArea(SqlCommand cmd, BusinessArea ba)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = ba.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = ba.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = ba.DefaultExpertise;
         }
         #endregion
 
@@ -1121,7 +1452,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1132,14 +1463,7 @@ namespace matching_learning.common.Repositories
                     {
                         cmdSS.Transaction = trans;
 
-                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@code"].Value = ss.Code;
-
-                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@name"].Value = ss.Name;
-
-                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdSS.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+                        setParamsSoftSkill(cmdSS, ss);
 
                         cmdSS.ExecuteNonQuery();
                     }
@@ -1185,7 +1509,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1199,14 +1523,7 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@ssId", SqlDbType.Int);
                         cmd.Parameters["@ssId"].Value = ss.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = ss.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = ss.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
+                        setParamsSoftSkill(cmd, ss);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -1221,6 +1538,19 @@ namespace matching_learning.common.Repositories
             }
 
             return (ss.Id);
+        }
+
+
+        private void setParamsSoftSkill(SqlCommand cmd, SoftSkill ss)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = ss.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = ss.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = ss.DefaultExpertise;
         }
         #endregion
 
@@ -1269,7 +1599,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1280,19 +1610,18 @@ namespace matching_learning.common.Repositories
                     {
                         cmdSS.Transaction = trans;
 
-                        cmdSS.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@code"].Value = tech.Code;
-
-                        cmdSS.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdSS.Parameters["@name"].Value = tech.Name;
-
-                        cmdSS.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdSS.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
-
-                        cmdSS.Parameters.Add("@isVersioned", SqlDbType.Bit);
-                        cmdSS.Parameters["@isVersioned"].Value = tech.IsVersioned;
+                        setParamsTechnology(cmdSS, tech);
 
                         cmdSS.ExecuteNonQuery();
+                    }
+
+                    using (var cmdTechId = new SqlCommand(stmntId, conn))
+                    {
+                        cmdTechId.Transaction = trans;
+
+                        var techId = cmdTechId.ExecuteScalar();
+
+                        tech.RelatedId = Convert.ToInt32(techId);
                     }
 
                     using (var cmdSkill = new SqlCommand(stmntSkill, conn))
@@ -1309,10 +1638,13 @@ namespace matching_learning.common.Repositories
                     {
                         cmdId.Transaction = trans;
 
-                        var id = cmdId.ExecuteScalar();
+                        var skillId = cmdId.ExecuteScalar();
 
-                        res = Convert.ToInt32(id);
+                        tech.Id = Convert.ToInt32(skillId);
+                        res = tech.Id;
                     }
+
+                    saveRelatedEntities(tech, conn, trans);
 
                     trans.Commit();
                 }
@@ -1337,7 +1669,7 @@ namespace matching_learning.common.Repositories
 
             SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 conn.Open();
                 trans = conn.BeginTransaction();
@@ -1351,20 +1683,12 @@ namespace matching_learning.common.Repositories
                         cmd.Parameters.Add("@techId", SqlDbType.Int);
                         cmd.Parameters["@techId"].Value = tech.RelatedId;
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = tech.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = tech.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
-
-                        cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
-                        cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
+                        setParamsTechnology(cmd, tech);
 
                         cmd.ExecuteNonQuery();
                     }
+
+                    saveRelatedEntities(tech, conn, trans);
 
                     trans.Commit();
                 }
@@ -1377,26 +1701,184 @@ namespace matching_learning.common.Repositories
 
             return (tech.Id);
         }
+
+        private void setParamsTechnology(SqlCommand cmd, Technology tech)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = tech.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = tech.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tech.DefaultExpertise;
+
+            cmd.Parameters.Add("@isVersioned", SqlDbType.Bit);
+            cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
+        }
+
+        private void saveRelatedEntities(Technology tech, SqlConnection conn, SqlTransaction trans)
+        {
+            if (tech.IsVersioned && tech.Versions != null && tech.Versions.Count > 0)
+            {
+                foreach (var tv in tech.Versions)
+                {
+                    saveTechnologyVersion(tv, tech.RelatedId, conn, trans);
+                }
+            }
+
+            if (tech.Roles != null && tech.Roles.Count > 0)
+            {
+                foreach (var tr in tech.Roles)
+                {
+                    saveTechnologyRole(tr, tech.RelatedId, conn, trans);
+                }
+            }
+        }
         #endregion
 
-        #region Save TechnologyRole
-        public int SaveTechnologyRole(TechnologyRole tr)
+        #region Save TechnologyVersion
+        private int saveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
-            if (tr.Id < 0)
+            // Set new techId as parent.
+            if (tv.ParentTechnologyId == -1) { tv.ParentTechnologyId = techId; }
+
+            if (tv.Id < 0)
             {
-                res = insertTechnologyRole(tr);
+                res = insertTechnologyVersion(tv, conn, trans);
             }
             else
             {
-                res = updateTechnologyRole(tr);
+                res = updateTechnologyVersion(tv, conn, trans);
             }
 
             return (res);
         }
 
-        private int insertTechnologyRole(TechnologyRole tr)
+        private int insertTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            var stmntTech = "INSERT INTO [dbo].[TechnologyVersion] (" +
+                          " [TechnologyId]," +
+                          " [DefaultExpertise]," +
+                          " [Version]," +
+                          " [StartDate] " +
+                          ") " +
+                          "VALUES (" +
+                          "  @technologyId," +
+                          "  @defaultExpertise," +
+                          "  @version," +
+                          "  @startDate" +
+                          ")";
+
+            var stmntSkill = "INSERT INTO [dbo].[Skill] (" +
+                             "  [TechnologyVersionId] " +
+                             ") " +
+                             "SELECT [Id] " +
+                             "FROM [dbo].[TechnologyVersion]" +
+                             "WHERE [TechnologyId] = @technologyId" +
+                             "  AND [Version] = @version";
+
+            var stmntId = "SELECT @@IDENTITY";
+
+            using (var cmdSS = new SqlCommand(stmntTech, conn))
+            {
+                cmdSS.Transaction = trans;
+
+                setParamsTechnologyVersion(cmdSS, tv);
+
+                cmdSS.ExecuteNonQuery();
+            }
+
+            using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+            {
+                cmdSkill.Transaction = trans;
+
+                cmdSkill.Parameters.Add("@technologyId", SqlDbType.Int);
+                cmdSkill.Parameters["@technologyId"].Value = tv.ParentTechnologyId;
+
+                cmdSkill.Parameters.Add("@version", SqlDbType.NVarChar);
+                cmdSkill.Parameters["@version"].Value = tv.Version;
+
+                cmdSkill.ExecuteNonQuery();
+            }
+
+            using (var cmdId = new SqlCommand(stmntId, conn))
+            {
+                cmdId.Transaction = trans;
+
+                var id = cmdId.ExecuteScalar();
+
+                res = Convert.ToInt32(id);
+            }
+
+            return (res);
+        }
+
+        private int updateTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
+                        "SET [TechnologyId] = @technologyId," +
+                        "    [DefaultExpertise] = @defaultExpertise," +
+                        "    [Version] = @version," +
+                        "    [StartDate] = @startDate " +
+                        "WHERE [Id] = @tvId";
+
+            using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@tvId", SqlDbType.Int);
+                cmd.Parameters["@tvId"].Value = tv.RelatedId;
+
+                setParamsTechnologyVersion(cmd, tv);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return (tv.Id);
+        }
+
+        private void setParamsTechnologyVersion(SqlCommand cmd, TechnologyVersion tv)
+        {
+            cmd.Parameters.Add("@technologyId", SqlDbType.Int);
+            cmd.Parameters["@technologyId"].Value = tv.ParentTechnologyId;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tv.DefaultExpertise;
+
+            cmd.Parameters.Add("@version", SqlDbType.NVarChar);
+            cmd.Parameters["@version"].Value = tv.Version;
+
+            cmd.Parameters.Add("@startDate", SqlDbType.DateTime);
+            cmd.Parameters["@startDate"].Value = tv.StartDate;
+        }
+        #endregion
+
+        #region Save TechnologyRole
+        private int saveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
+        {
+            int res;
+
+            // Set new techId as parent.
+            if (tr.ParentTechnologyId == -1) { tr.ParentTechnologyId = techId; }
+
+            if (tr.Id < 0)
+            {
+                res = insertTechnologyRole(tr, conn, trans);
+            }
+            else
+            {
+                res = updateTechnologyRole(tr, conn, trans);
+            }
+
+            return (res);
+        }
+
+        private int insertTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1421,67 +1903,43 @@ namespace matching_learning.common.Repositories
                              "WHERE [Code] = @code";
 
             var stmntId = "SELECT @@IDENTITY";
-            
-            SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+
+            using (var cmdTR = new SqlCommand(stmntTR, conn))
             {
-                conn.Open();
-                trans = conn.BeginTransaction();
+                cmdTR.Transaction = trans;
 
-                try
-                {
-                    using (var cmdTR = new SqlCommand(stmntTR, conn))
-                    {
-                        cmdTR.Transaction = trans;
+                cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
+                cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
-                        cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
-                        cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+                setParamsTechnologyRole(cmdTR, tr);
 
-                        cmdTR.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdTR.Parameters["@code"].Value = tr.Code;
+                cmdTR.ExecuteNonQuery();
+            }
 
-                        cmdTR.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmdTR.Parameters["@name"].Value = tr.Name;
+            using (var cmdSkill = new SqlCommand(stmntSkill, conn))
+            {
+                cmdSkill.Transaction = trans;
 
-                        cmdTR.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmdTR.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
+                cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
+                cmdSkill.Parameters["@code"].Value = tr.Code;
 
-                        cmdTR.ExecuteNonQuery();
-                    }
+                cmdSkill.ExecuteNonQuery();
+            }
 
-                    using (var cmdSkill = new SqlCommand(stmntSkill, conn))
-                    {
-                        cmdSkill.Transaction = trans;
+            using (var cmdId = new SqlCommand(stmntId, conn))
+            {
+                cmdId.Transaction = trans;
 
-                        cmdSkill.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmdSkill.Parameters["@code"].Value = tr.Code;
+                var id = cmdId.ExecuteScalar();
 
-                        cmdSkill.ExecuteNonQuery();
-                    }
-
-                    using (var cmdId = new SqlCommand(stmntId, conn))
-                    {
-                        cmdId.Transaction = trans;
-
-                        var id = cmdId.ExecuteScalar();
-
-                        res = Convert.ToInt32(id);
-                    }
-
-                    trans.Commit();
-                }
-                catch
-                {
-                    trans.Rollback();
-                    throw;
-                }
+                res = Convert.ToInt32(id);
             }
 
             return (res);
         }
 
-        private int updateTechnologyRole(TechnologyRole tr)
+        private int updateTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             var stmnt = "UPDATE [dbo].[TechnologyRole] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1490,47 +1948,35 @@ namespace matching_learning.common.Repositories
                         "    [DefaultExpertise] = @defaultExpertise " +
                         "WHERE [Id] = @ssId";
 
-            SqlTransaction trans;
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var cmd = new SqlCommand(stmnt, conn))
             {
-                conn.Open();
-                trans = conn.BeginTransaction();
+                cmd.Transaction = trans;
 
-                try
-                {
-                    using (var cmd = new SqlCommand(stmnt, conn))
-                    {
-                        cmd.Transaction = trans;
+                cmd.Parameters.Add("@technologyId", SqlDbType.Int);
+                cmd.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
-                        cmd.Parameters.Add("@technologyId", SqlDbType.Int);
-                        cmd.Parameters["@technologyId"].Value = tr.ParentTechnology.Id;
+                cmd.Parameters.Add("@ssId", SqlDbType.Int);
+                cmd.Parameters["@ssId"].Value = tr.RelatedId;
 
-                        cmd.Parameters.Add("@ssId", SqlDbType.Int);
-                        cmd.Parameters["@ssId"].Value = tr.RelatedId;
+                setParamsTechnologyRole(cmd, tr);
 
-                        cmd.Parameters.Add("@code", SqlDbType.NVarChar);
-                        cmd.Parameters["@code"].Value = tr.Code;
-
-                        cmd.Parameters.Add("@name", SqlDbType.NVarChar);
-                        cmd.Parameters["@name"].Value = tr.Name;
-
-                        cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
-                        cmd.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
-
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    trans.Commit();
-                }
-                catch
-                {
-                    trans.Rollback();
-                    throw;
-                }
+                cmd.ExecuteNonQuery();
             }
 
             return (tr.Id);
+        }
+
+        private void setParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
+        {
+            cmd.Parameters.Add("@code", SqlDbType.NVarChar);
+            cmd.Parameters["@code"].Value = tr.Code;
+
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar);
+            cmd.Parameters["@name"].Value = tr.Name;
+
+            cmd.Parameters.Add("@defaultExpertise", SqlDbType.Decimal);
+            cmd.Parameters["@defaultExpertise"].Value = tr.DefaultExpertise;
         }
         #endregion
         #endregion

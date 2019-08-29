@@ -4,7 +4,7 @@ namespace matching_learning.common.Domain.DTOs
 {
     public class TechnologyVersion : Skill
     {
-        public Technology ParentTechnology { get; set; }
+        public int ParentTechnologyId { get; set; }
 
         public string Version { get; set; }
 

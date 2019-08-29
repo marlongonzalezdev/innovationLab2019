@@ -1,8 +1,16 @@
 ----------------------------------------------------------------------------------------------------
-
-https://marketplace.visualstudio.com/items?itemName=vscps.SlowCheetah-XMLTransforms
-Install-Package Microsoft.VisualStudio.SlowCheetah -Version 3.2.20
-
+----------------------------------------------------------------------------------------------------
+<img src="assets/candidatePictures/MVD/Pablo_Queirolo.jpg" alt="Pablo Queirolo" width="100px" height="133px">
+<td mat-cell *matCellDef="let element"> {{element.candidate.inBench ? "&#10004;" : " "}}</td>
+<td mat-cell *matCellDef="let element"> {{element.ranking | percent:'1.1-1'}} </td>
+      <mat-form-field>
+        <mat-label>Skills</mat-label>
+        <mat-select [(value)]="selectedSkill">
+          <mat-option style="color: gray" >None</mat-option>
+          <mat-option style="color: black" *ngFor="let skill of skillList" [value]="skill">{{skill.category === 1 || skill.category === 4 || skill.category === 5 ? "" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}} {{skill.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
 GET
@@ -18,9 +26,14 @@ https://localhost:44374/EnumEntities/SkillCategories
 http://localhost:62460/EnumEntities/SkillCategories
 
 GET
+https://localhost:44374/EnumEntities/MainSkillCategories
+http://localhost:62460/EnumEntities/MainSkillCategories
+
+GET
 https://localhost:44374/EnumEntities/SkillRelationTypes
 http://localhost:62460/EnumEntities/SkillRelationTypes
 
+----------------------------------------------------------------------------------------------------
 
 GET
 https://localhost:44374/Regions/Regions
@@ -39,6 +52,11 @@ GET
 https://localhost:44374/DeliveryUnits/DeliveryUnitsPaginated?pageIdx=5&pageSize=10
 http://localhost:62460/DeliveryUnits/DeliveryUnitsPaginated?pageIdx=5&pageSize=10
 
+GET
+https://localhost:44374/DeliveryUnits/DefaultDeliveryUnit
+http://localhost:62460/DeliveryUnits/DefaultDeliveryUnit
+
+----------------------------------------------------------------------------------------------------
 
 GET
 https://localhost:44374/Candidates/Candidates
@@ -84,6 +102,68 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 {"id":-1,"deliveryUnitId":13,"relationType":1,"firstName":"Juan","lastName":"Perez","name":"Juan, Perez","docType":null,"docNumber":null,"employeeNumber":43245,"inBench":true}
 
+----------------------------------------------------------------------------------------------------
+
+GET
+https://localhost:44374/Evaluations/Evaluations
+http://localhost:62460/Evaluations/Evaluations
+
+GET
+https://localhost:44374/Evaluations/EvaluationsPaginated?pageIdx=5&pageSize=10
+http://localhost:62460/Evaluations/EvaluationsPaginated?pageIdx=5&pageSize=10
+
+GET
+https://localhost:44374/Evaluations/Evaluation?id=22
+http://localhost:62460/Evaluations/Evaluation?id=22
+
+GET
+https://localhost:44374/Evaluations/EvaluationTypes
+http://localhost:62460/Evaluations/EvaluationTypes
+
+GET
+https://localhost:44374/Evaluations/EvaluationTypesPaginated?pageIdx=0&pageSize=10
+http://localhost:62460/Evaluations/EvaluationTypesPaginated?pageIdx=0&pageSize=10
+
+GET
+https://localhost:44374/Evaluations/EvaluationType?id=3
+http://localhost:62460/Evaluations/EvaluationType?id=3
+
+
+POST
+https://localhost:44374/Evaluations/SaveEvaluation
+http://localhost:62460/Evaluations/SaveEvaluation
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":22,"candidateId":1,"candidate":null,"skillId":56,"skill":null,"evaluationKey":null,"evaluationTypeId":5,"evaluationType":null,"date":"2018-07-13T00:00:00","expertise":0.1234,"notes":null}
+
+{"id":-1,"candidateId":1,"candidate":null,"skillId":56,"skill":null,"evaluationKey":null,"evaluationTypeId":5,"evaluationType":null,"date":"2019-07-13T00:00:00","expertise":0.4321,"notes":null}
+
+----------------------------------------------------------------------------------------------------
+
+GET
+https://localhost:44374/Skills/SkillViews
+http://localhost:62460/Skills/SkillViews
+
+GET
+https://localhost:44374/Skills/SkillViewsPaginated?pageIdx=5&pageSize=10
+http://localhost:62460/Skills/SkillViewsPaginated?pageIdx=5&pageSize=10
+
+GET
+https://localhost:44374/Skills/SkillView?id=5
+http://localhost:62460/Skills/SkillView?id=5
+
+https://localhost:44374/Skills/SkillView?id=15
+http://localhost:62460/Skills/SkillView?id=15
 
 GET
 https://localhost:44374/Skills/Skills
@@ -94,8 +174,13 @@ https://localhost:44374/Skills/SkillsPaginated?pageIdx=5&pageSize=10
 http://localhost:62460/Skills/SkillsPaginated?pageIdx=5&pageSize=10
 
 GET
+https://localhost:44374/Skills/SkillsSorted
+http://localhost:62460/Skills/SkillsSorted
+
+GET
 https://localhost:44374/Skills/Skill?id=5
 http://localhost:62460/Skills/Skill?id=5
+
 
 GET
 https://localhost:44374/Skills/BusinessArea?id=102
@@ -116,11 +201,6 @@ http://localhost:62460/Skills/TechnologyVersion?id=22
 GET
 https://localhost:44374/Skills/TechnologyRole?id=84
 http://localhost:62460/Skills/TechnologyRole?id=84
-
-
-GET
-https://localhost:44374/Skills/TechnologyVersionsByTechnology?id=10
-http://localhost:62460/Skills/TechnologyVersionsByTechnology?id=10
 
 
 GET
@@ -151,6 +231,29 @@ https://localhost:44374/Skills/SkillRelationsBySkillId?id=80
 http://localhost:62460/Skills/SkillRelationsBySkillId?id=80
 
 ----------------------------------------------------------------------------------------------------
+
+POST
+https://localhost:44374/Skills/SaveSkillView
+http://localhost:62460/Skills/SaveSkillView
+
+Host: localhost:62460
+Connection: keep-alive
+Content-Length: 99
+Origin: http://localhost:4200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+Content-Type: application/json
+Accept: application/json
+Referer: http://localhost:4200/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en,es-ES;q=0.9,es;q=0.8
+
+{"id":5,"relatedId":2,"category":1,"code":"AZURE","name":"Microsoft Azure","defaultExpertise":0.4321,"isVersioned":false,"parentTechnologyId":-1,"versions":null}
+
+{"id":-1,"relatedId":-1,"category":1,"code":"TEST","name":"TEST","defaultExpertise":0.1234,"isVersioned":false,"parentTechnologyId":-1,"versions":null}
+
+{"id":15,"relatedId":5,"category":1,"code":"SQLServer","name":"MS SQL Server","defaultExpertise":0.2000,"isVersioned":true,"parentTechnologyId":-1,"versions":[{"id":15,"relatedId":4,"parentTechnologyId":15,"defaultExpertise":0.3333,"version":"2000","startDate":"2000-01-01T00:00:00"},{"id":15,"relatedId":5,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2005","startDate":"2005-11-01T00:00:00"},{"id":15,"relatedId":6,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2008","startDate":"2008-08-06T00:00:00"},{"id":15,"relatedId":7,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2008 R2","startDate":"2010-04-21T00:00:00"},{"id":15,"relatedId":8,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2012","startDate":"2012-03-06T00:00:00"},{"id":15,"relatedId":9,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2014","startDate":"2014-03-18T00:00:00"},{"id":15,"relatedId":10,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2016","startDate":"2016-06-01T00:00:00"},{"id":15,"relatedId":11,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"2017","startDate":"2017-10-02T00:00:00"},{"id":15,"relatedId":1,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"6.0","startDate":"1995-01-01T00:00:00"},{"id":15,"relatedId":2,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"6.5","startDate":"1996-01-01T00:00:00"},{"id":15,"relatedId":3,"parentTechnologyId":15,"defaultExpertise":0.2500,"version":"7.0","startDate":"1998-01-01T00:00:00"}]}
+
+
 
 POST
 https://localhost:44374/Skills/SaveBusinessArea
@@ -206,24 +309,6 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 {"id":-1,"relatedId":-1,"category":1,"code":"TECHTST1","name":"TECH Test 01","defaultExpertise":0.1234,"isVersioned":true}
 
 
-
-POST
-https://localhost:44374/Skills/SaveTechnologyRole
-http://localhost:62460/Skills/SaveTechnologyRole
-
-Host: localhost:62460
-Connection: keep-alive
-Content-Length: 99
-Origin: http://localhost:4200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
-Content-Type: application/json
-Accept: application/json
-Referer: http://localhost:4200/
-Accept-Encoding: gzip, deflate, br
-Accept-Language: en,es-ES;q=0.9,es;q=0.8
-
-{"id":-1,"relatedId":-1,"category":3,"code":"TRTST1","name":"TR Test 01","defaultExpertise":0.1234,"parentTechnology":null}
-
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
@@ -246,6 +331,8 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 {"max":10,"SkillsFilter":[{"requiredSkillId":25,"weight":0.1,"minAccepted":null},{"requiredSkillId":65,"weight":0.9,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
 
+{"max":10,"SkillsFilter":[{"requiredSkillId":57,"weight":0.7,"minAccepted":null},{"requiredSkillId":25,"weight":0.3,"minAccepted":null}],"roleIdFilter":null,"deliveryUnitIdFilter":null,"inBenchFilter":null,"relationTypeFilter":null}
+C# 7.3 - Sql 2017
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------

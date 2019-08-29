@@ -2,6 +2,6 @@
 {
     public class TechnologyRole : Skill
     {
-        public Technology ParentTechnology { get; set; }
+        public int ParentTechnologyId { get; set; }
     }
 }

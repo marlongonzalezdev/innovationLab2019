@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Utils;
 
 namespace matching_learning.common.Repositories
 {
@@ -16,7 +17,7 @@ namespace matching_learning.common.Repositories
                         "       [Name] " +
                         "FROM [dbo].[Region]";
 
-            using (var conn = new SqlConnection(DBCommon.GetConnectionString()))
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -28,15 +29,25 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(new Region()
-                        {
-                            Id = dr.Db2Int("Id"),
-                            Code = dr.Db2String("Code"),
-                            Name = dr.Db2String("Name"),
-                        });
+                        res.Add(getRegionFromDataRow(dr));
                     }
                 }
             }
+
+            return (res);
+        }
+
+
+        private Region getRegionFromDataRow(DataRow dr)
+        {
+            Region res = null;
+
+            res = new Region()
+            {
+                Id = dr.Db2Int("Id"),
+                Code = dr.Db2String("Code"),
+                Name = dr.Db2String("Name"),
+            };
 
             return (res);
         }

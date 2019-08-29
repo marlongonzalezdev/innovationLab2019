@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.DTOs;
+using matching_learning.common.Domain.DTOs.Views;
 using matching_learning.common.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +28,42 @@ namespace matching_learning.api.Controllers.Common
         }
 
         #region Retrieve
+        #region SkillView
+        /// <summary>
+        /// Gets the skill views.
+        /// </summary>
+        /// <returns></returns>
+        [Route("SkillViews")]
+        public ActionResult<List<SkillView>> GetSkillViews()
+        {
+            return _skillRepository.GetSkillViews();
+        }
+
+        /// <summary>
+        /// Gets the skill views paginated.
+        /// </summary>
+        /// <param name="pageIdx">Page index (0 based).</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns></returns>
+        [Route("SkillViewsPaginated")]
+        public ActionResult<List<SkillView>> GetSkillViewsPaginated(int pageIdx, int pageSize)
+        {
+            return _skillRepository.GetSkillViews().OrderBy(s => s.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
+        }
+
+        /// <summary>
+        /// Gets the skill view with the specified skill identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("SkillView")]
+        public ActionResult<SkillView> GetSkillViewById(int id)
+        {
+            return _skillRepository.GetSkillViewById(id);
+        }
+        #endregion
+
+        #region Skill
         /// <summary>
         /// Gets the skills.
         /// </summary>
@@ -47,6 +85,22 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetSkills().OrderBy(s => s.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
         }
+
+        /// <summary>
+        /// Gets the skills sorted for selection.
+        /// </summary>
+        /// <returns></returns>
+        [Route("SkillsSorted")]
+        public ActionResult<List<Skill>> GetSkillsSorted()
+        {
+            var skills = _skillRepository.GetSkills();
+
+            var comp = new SkillSelectorComparer();
+
+            skills.Sort(comp);
+
+            return skills;
+        }
         
         /// <summary>
         /// Gets the skill with the specified skill identifier.
@@ -58,6 +112,7 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetSkillById(id);
         }
+        #endregion
 
         /// <summary>
         /// Gets the business area with the specified skill identifier.
@@ -113,18 +168,7 @@ namespace matching_learning.api.Controllers.Common
         {
             return _skillRepository.GetTechnologyRoleById(id);
         }
-
-        /// <summary>
-        /// Gets the technology versions with the specified parent technology skill identifier.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns></returns>
-        [Route("TechnologyVersionsByTechnology")]
-        public ActionResult<List<TechnologyVersion>> GetTechnologyVersionsByTechnologyId(int id)
-        {
-            return _skillRepository.GetTechnologyVersionsByTechnologyId(id);
-        }
-
+        
         /// <summary>
         /// Gets the skill estimated expertise.
         /// </summary>
@@ -160,6 +204,26 @@ namespace matching_learning.api.Controllers.Common
         #endregion
 
         #region Save
+        /// <summary>
+        /// Save the skill view in the database (insert/update).
+        /// </summary>
+        /// <param name="sv"></param>
+        [HttpPost("SaveSkillView")]
+        [ProducesResponseType(typeof(SkillView), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public IActionResult SaveSkillView([FromBody] SkillView sv)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var id = _skillRepository.SaveSkillView(sv);
+
+            var res = _skillRepository.GetSkillViewById(id);
+
+            return Ok(res);
+        }
+
         /// <summary>
         /// Save the business area object in the database (insert/update).
         /// </summary>
@@ -216,26 +280,6 @@ namespace matching_learning.api.Controllers.Common
             var id = _skillRepository.SaveTechnology(tech);
 
             var res = _skillRepository.GetTechnologyById(id);
-
-            return Ok(res);
-        }
-
-        /// <summary>
-        /// Save the technology role object in the database (insert/update).
-        /// </summary>
-        /// <param name="tr"></param>
-        [HttpPost("SaveTechnologyRole")]
-        [ProducesResponseType(typeof(TechnologyRole), 200)]
-        [Consumes("application/json")]
-        [ProducesResponseType(500)]
-        public IActionResult SaveTechnologyRole([FromBody] TechnologyRole tr)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var id = _skillRepository.SaveTechnologyRole(tr);
-
-            var res = _skillRepository.GetTechnologyRoleById(id);
 
             return Ok(res);
         }

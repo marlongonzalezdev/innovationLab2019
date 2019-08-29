@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { RelationType } from 'src/app/shared/relationType';
-import { Candidate } from 'src/app/shared/candidate';
-import { DeliveryUnit } from 'src/app/shared/deliveryUnit';
+import { RelationType } from 'src/app/shared/models/relationType';
+import { Candidate } from 'src/app/shared/models/candidate';
+import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
 import { CandidateService } from 'src/app/shared/services/candidate.service';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
 import { RelationTypeService } from 'src/app/shared/services/relation-type.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-candidate',
@@ -16,15 +17,16 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 })
 export class CandidateComponent implements OnInit {
 
-  deliveryUnits: Observable<RelationType[]>;
-  relationTypes: Observable<DeliveryUnit[]>;
+  deliveryUnits: Observable<DeliveryUnit[]>;
+  relationTypes: Observable<RelationType[]>;
 
-  constructor(private service: CandidateService, private  deliveryUnitService: DeliveryUnitService,
-              private relationTypeService: RelationTypeService, private notificationService: NotificationService) { }
+  constructor(private service: CandidateService, private deliveryUnitService: DeliveryUnitService,
+              private relationTypeService: RelationTypeService, private notificationService: NotificationService,
+              public dialogRef: MatDialogRef<CandidateComponent>) { }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
-    this.relationTypes =  this.relationTypeService.getRelationTypes();
+    this.relationTypes = this.relationTypeService.getRelationTypes();
   }
 
   onClear() {
@@ -37,22 +39,34 @@ export class CandidateComponent implements OnInit {
       const candidate: Candidate = {
         id: -1,
         deliveryUnitId: 13,
+        deliveryUnit: null,
         relationType: 1,
         firstName: 'Juan',
         lastName: 'Perez',
+        name: '',
+        activeRole: null,
+        rolesHistory: null,
         docType: null,
         docNumber: null,
         employeeNumber: 43245,
-        inBench: true
-    };
+        inBench: true,
+        picture: null,
+        isActive: true, evaluations: null
+      };
 
       this.service.addCandidate(candidate).subscribe(
-        candidate => {
-          this.notificationService.sucess('Candidate added successfully.');
+        elem => {
+          this.notificationService.sucess('Candidate saved successfully.');
           this.onClear();
-          console.log(candidate);
+          console.log(elem);
+          this.onClose();
         }
-    );
+      );
     }
+  }
+
+  onClose() {
+    this.onClear();
+    this.dialogRef.close();
   }
 }

@@ -95,6 +95,8 @@ namespace matching_learning.api
             services.AddSingleton<IDeliveryUnitRepository, DeliveryUnitRepository>();
             services.AddSingleton<ICandidateRepository, CandidateRepository>();
             services.AddSingleton<ICandidateRoleRepository, CandidateRoleRepository>();
+            services.AddSingleton<IEvaluationRepository, EvaluationRepository>();
+            services.AddSingleton<IEvaluationTypeRepository, EvaluationTypeRepository>();
             services.AddSingleton<ISkillRepository, SkillRepository>();
 
             GenFu.GenFu.Configure<CandidateModel>()
