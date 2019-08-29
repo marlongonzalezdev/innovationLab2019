@@ -123,8 +123,6 @@ namespace matching_learning_algorithm
             string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
             try
             {
-                //TexLoaderFields.AddRange(CsvHeaders
-                //    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
                 var result = GenerateNames();
                 var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
@@ -143,8 +141,8 @@ namespace matching_learning_algorithm
                     userData = userData.ToList().Take(candidateRequirement.Max).ToArray();
                 }
                 userData = userData
-                    .Where(u => u.SelectedClusterId == prediction.SelectedClusterId)
-                    //.OrderBy(x => x.Distance[prediction.SelectedClusterId])
+                    .Where(u => u.SelectedClusterId == prediction.SelectedClusterId && u.Distance[prediction.SelectedClusterId] <= prediction.Distance[prediction.SelectedClusterId])
+                    .OrderBy(x => x.Distance[prediction.SelectedClusterId])
                     .ToArray();
                 return userData;
             }
