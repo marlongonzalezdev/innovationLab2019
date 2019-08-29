@@ -1160,6 +1160,26 @@ WHERE [CandidateId] IN (SELECT [CandidateId]
                     WHERE [S].[TechnologyId] IS NOT NULL OR [S].[TechnologyRoleId] IS NOT NULL OR [S].[TechnologyVersionId] IS NOT NULL OR [S].[BusinessAreaId] IS NOT NULL)
 
 ----------------------------------------------------------------------------------------------------
+/*
+INSERT INTO [dbo].[SkillEstimatedExpertise] (
+  [CandidateId],
+  [SkillId],
+  [Expertise]
+)
+SELECT [SEE].[CandidateId],
+       [SNEW].[Id],
+       RAND()
+FROM [dbo].[SkillEstimatedExpertise] AS [SEE]
+INNER JOIN [dbo].[Skill] AS [SOLD] ON [SOLD].[Id] = [SEE].[SkillId]
+INNER JOIN [dbo].[TechnologyVersion] AS [TVOLD] ON [TVOLD].[Id] = [SOLD].[TechnologyVersionId]
+INNER JOIN [dbo].[TechnologyVersion] AS [TVNEW] ON [TVNEW].[TechnologyId] = [TVOLD].[TechnologyId] AND [TVNEW].[Id] <> [TVOLD].[Id]
+INNER JOIN [dbo].[Skill] AS [SNEW] ON [SNEW].[TechnologyVersionId] = [TVNEW].[Id]
+WHERE NOT EXISTS (SELECT 1
+                  FROM [dbo].[SkillEstimatedExpertise] AS [SEEAUX]
+                  WHERE [SEEAUX].[CandidateId] = [SEE].[CandidateId]
+                    AND [SEEAUX].[SkillId] = [SEE].[SkillId])
+*/
+----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
 SELECT * FROM [dbo].[Candidate]
