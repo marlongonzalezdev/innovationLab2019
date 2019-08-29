@@ -1,7 +1,6 @@
-import { SaveResult } from './../../shared/models/saveResult';
 import { MatTableDataSource } from '@angular/material/table';
 import { Skill } from '../../shared/models/skill';
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 
 import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -45,9 +44,9 @@ export class SkillsComponent implements OnInit {
       );
     }
     findCategoryName(categoryId: number) {
-      const category = this.skillCategories.find((c: { id: number; }) => {
+      const category = this.skillCategories ? this.skillCategories.find((c: { id: number; }) => {
         return c.id === categoryId;
-      });
+      }) : [];
       return category.name;
     }
     onSearchClear() {
