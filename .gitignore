@@ -2,4 +2,5 @@ data/
 MVD/
 InnoLabClient/
 matching-learning-api/matching-learning.api/matching-learning.api.xml
+matching-learning-api/matching-learning.api/Data/trainedModel.zip
 matching-learning/src/assets/candidatePictures/MVD.zip
