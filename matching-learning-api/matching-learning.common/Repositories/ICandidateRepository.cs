@@ -9,6 +9,8 @@ namespace matching_learning.common.Repositories
 
         List<Candidate> GetCandidatesPaginated(int pageIdx, int pageSize);
 
+        List<Candidate> GetCandidateByIds(List<int> ids);
+
         Candidate GetCandidateById(int id);
 
         #region Save

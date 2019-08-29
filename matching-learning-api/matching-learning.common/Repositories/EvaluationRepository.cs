@@ -371,20 +371,16 @@ namespace matching_learning.common.Repositories
 
             var stmntIns = "INSERT INTO [dbo].[Evaluation] (" +
                            " [CandidateId]," +
-                           " [SkillId]," +
                            " [EvaluationKey]," +
                            " [EvaluationTypeId]," +
                            " [Date]," +
-                           " [Expertise]," +
                            " [Notes] " +
                            ") " +
                            "VALUES (" +
                            "  @candidateId," +
-                           "  @skillId," +
                            "  @evaluationKey," +
                            "  @evaluationTypeId," +
                            "  @date," +
-                           "  @expertise," +
                            "  @notes" +
                            ")";
 
@@ -449,11 +445,9 @@ namespace matching_learning.common.Repositories
         {
             var stmnt = "UPDATE [dbo].[Evaluation] " +
                         "SET [CandidateId] = @candidateId," +
-                        "    [SkillId] = @skillId," +
                         "    [EvaluationKey] = @evaluationKey," +
                         "    [EvaluationTypeId] = @evaluationTypeId," +
                         "    [Date] = @date," +
-                        "    [Expertise] = @expertise," +
                         "    [Notes] = @notes " +
                         "WHERE [Id] = @id";
 

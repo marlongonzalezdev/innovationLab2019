@@ -18,12 +18,12 @@ html, body {
 }
 
 .main-content {
-  height: calc(100vh - 152px);
+  height: calc(100vh - 128px);
   margin: 20px 30px 0;
 }
 
 footer {
-  height: 64px;
+  height: 40px;
   background-color: white;
   padding: 0 40px;
   margin: 0 40px;
@@ -32,7 +32,7 @@ footer {
 
 .endava_footer {
   float: right;
-  padding: 16px 80px;
+  padding: 4px;
 }
 
 .endava_footer img {
@@ -40,18 +40,45 @@ footer {
 }
 
 .copyright {
-  padding: 16px 80px;
+  padding: 16px;
   position: absolute;
   bottom: 0;
+  font-size: 12px;
 }
 
 /*div.container {*/
 /*  margin: 0px 40px;*/
 /*}*/
 
-/*.fill-remaining-space {*/
-/*  flex: 1 1 auto;*/
-/*}*/
+.fill-remaining-space {
+  flex: 1 1 auto;
+}
+
+.add_button {
+  float: right;
+  position: relative;
+}
+
+.search-form-field {
+  min-width: 300px;
+}
+
+.btn-dialog-close {
+  float: left;
+}
+
+.button-row button {
+  margin: 5px;
+}
+
+mat-grid-list mat-grid-tile {
+  margin-left: 20px;
+}
+
+.mat-dialog-container {
+  max-width: 500px;
+  margin: auto;
+}
 
 /*.normal-form {*/
 /*  margin: 10px;*/
@@ -67,9 +94,10 @@ footer {
 /*}*/
 
 /*!* radio group *!*/
-/*.add-bottom-padding {*/
-/*  padding-bottom: 10px;*/
-/*}*/
+.add-bottom-padding {
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
 
 /*!* add gap b/w adjacent button *!*/
 /*.button-row button {*/

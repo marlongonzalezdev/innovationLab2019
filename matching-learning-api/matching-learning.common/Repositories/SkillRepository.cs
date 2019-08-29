@@ -934,12 +934,10 @@ namespace matching_learning.common.Repositories
 
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr)
         {
-
             var res = new List<SkillEstimatedExpertise>();
 
             List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
-            string reqSkillsStr = convertListIntToString(reqSkills);
-
+            string reqSkillsStr = DBCommon.ConvertListIntToString(reqSkills);
             string whereCondition = $"WHERE [SEE].[SkillId] IN ({reqSkillsStr})";
 
             if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
@@ -1023,18 +1021,7 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
-
-        private static string convertListIntToString(List<int> input)
-        {
-            string res = "";
-
-             var strInput = input.Select(i => i.ToString()).ToArray();
-            
-            res = string.Join(',', strInput);
-
-            return (res);
-        }
-
+        
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids)
         {
             var all = GetSkillEstimatedExpertises();

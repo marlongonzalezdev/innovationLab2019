@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { DeliveryUnit } from 'src/app/shared/models/deliveryUnit';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SkillServiceBase } from '../../shared/services/skill-service-base';
+import {Role} from '../../shared/models/role';
 
 @Component({
   selector: 'app-input-criteria',
@@ -27,6 +28,7 @@ export class InputCriteriaComponent implements OnInit {
 
   deliveryUnits: Observable<DeliveryUnit[]>;
   defaultDeliveryUnit: Observable<DeliveryUnit>;
+  candidateRoles: Observable<Role[]>;
 
   constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
       this.project = {
@@ -49,10 +51,11 @@ export class InputCriteriaComponent implements OnInit {
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
+    this.candidateRoles = this.deliveryUnitService.getRoles();
 
-    this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();	
-	//this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
-	
+    this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();
+	// this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
+
     this.skillService.getSkillsSorted()
       .subscribe ( response => {
          this.skillList = response;

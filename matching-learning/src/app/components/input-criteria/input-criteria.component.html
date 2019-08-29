@@ -23,7 +23,6 @@
                 </button>
             </div>
         </div>
-
     </div>
     <div class="matches-container">
         <div class="selected-skills__container">
@@ -39,12 +38,25 @@
         </div>
     </div>
     <div class="container">
+        <div class="role">
+            <mat-label>Roles</mat-label>
+            <mat-form-field class="role_select" color="warn">
+                <mat-select [(ngModel)]="project.roleIdFilter">
+                    <mat-option>None</mat-option>
+                    <ng-container *ngFor="let role of candidateRoles | async">
+                        <mat-option value="{{role.id}}">{{role.name}}</mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+        </div>
         <div class="max_quantity">
-            <mat-label>Max</mat-label>
-            <mat-form-field>
+            <mat-label>Quantity</mat-label>
+            <mat-form-field class="max_input">
                 <input [(ngModel)]="project.max" matInput type="number" min="1">
             </mat-form-field>
         </div>
+    </div>
+    <div class="container">
         <div class="delivery-unit">
             <mat-label>Delivery Unit</mat-label>
             <mat-form-field class="du_select" color="warn">
