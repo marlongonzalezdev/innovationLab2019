@@ -12,6 +12,7 @@ DROP FUNCTION IF EXISTS [dbo].[RandomBench]
 DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
 DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
+DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 GO
 
 DROP VIEW IF EXISTS [dbo].[GlobalSkill]
@@ -153,6 +154,19 @@ AS
   DECLARE @res INT
   
   SET @res = 1 + (@rnd * 2)  
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomEvaluationType] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 7)  
 
   RETURN @res
  END
@@ -400,7 +414,7 @@ GO
 
 CREATE TABLE [dbo].[EvaluationDetail] (
   [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [EvaluationId]                   INT NOT NULL,
+  [EvaluationId]                  INT NOT NULL,
   [SkillId]                       INT NOT NULL,
   [Expertise]                     [MLDecimal] NOT NULL CONSTRAINT [CH_Evaluation_Expertise] CHECK ([Expertise] BETWEEN 0.0 AND 1.0),
 
@@ -1022,17 +1036,12 @@ DECLARE @rndSeeExpertice FLOAT
 DECLARE @rndSeeImpact FLOAT
 DECLARE @limitSeeImpact FLOAT = 0.2
 
-DECLARE @rndCvExpertice FLOAT
-DECLARE @rndCvImpact FLOAT
-DECLARE @limitCvImpact FLOAT = 0.1
-
-DECLARE @rndExpExpertice FLOAT
-DECLARE @rndExpImpact FLOAT
-DECLARE @limitExpImpact FLOAT = 0.1
-
-DECLARE @rndLeadExpertice FLOAT
-DECLARE @rndLeadImpact FLOAT
-DECLARE @limitLeadImpact FLOAT = 0.1
+DECLARE @evalForCandidate BIT
+DECLARE @rndDetailExpertice FLOAT
+DECLARE @rndDetailImpact FLOAT
+DECLARE @rndEvalImpact FLOAT
+DECLARE @limitDetailImpact FLOAT = 0.1
+DECLARE @limitEvalImpact FLOAT = 0.25
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -1054,6 +1063,8 @@ WHILE @@FETCH_STATUS = 0
   FETCH NEXT FROM skill_cursor   
   INTO @skillId 
   
+  SET @evalForCandidate = 0
+
   WHILE @@FETCH_STATUS = 0  
    BEGIN
     SET @rndSeeExpertice = RAND()
@@ -1073,93 +1084,41 @@ WHILE @@FETCH_STATUS = 0
       )
      END
 
-    -- Random CV evaluations
-    SET @rndCvImpact = RAND()
-    IF (@rndCvImpact < @limitCvImpact)
-     BEGIN
-      SET @rndCvExpertice = RAND()
-
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [EvaluationTypeId],
-        [Date]
-      )
-      SELECT @candidateId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND())
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'CV'
-
-      INSERT INTO [dbo].[EvaluationDetail] (
-        [EvaluationId],
-        [SkillId],
-        [Expertise]
-      )
-      VALUES (
-        @@IDENTITY,
-        @skillId,
-        @rndCvExpertice
-      )
-     END
-
-    -- Random Expert evaluations
-    SET @rndExpImpact = RAND()
-    IF (@rndExpImpact < @limitExpImpact)
-     BEGIN
-      SET @rndExpExpertice = RAND()
-
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [EvaluationTypeId],
-        [Date]
-      )
-      SELECT @candidateId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND())
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'EXPERT'
-      
-      INSERT INTO [dbo].[EvaluationDetail] (
-        [EvaluationId],
-        [SkillId],
-        [Expertise]
-      )
-      VALUES (
-        @@IDENTITY,
-        @skillId,
-        @rndExpExpertice
-      )
-     END
-    
-    -- Random leader evaluations
-    SET @rndLeadImpact = RAND()
-    IF (@rndLeadImpact < @limitLeadImpact)
-     BEGIN
-      SET @rndLeadExpertice = RAND()
-
-      INSERT INTO [dbo].[Evaluation] (
-        [CandidateId],
-        [EvaluationTypeId],
-        [Date]
-      )
-      SELECT @candidateId,
-             [Id],
-             [dbo].[RandomDate](2000, RAND())
-      FROM [dbo].[EvaluationType]
-      WHERE [Code] = 'LEADER'
-      
-      INSERT INTO [dbo].[EvaluationDetail] (
-        [EvaluationId],
-        [SkillId],
-        [Expertise]
-      )
-      VALUES (
-        @@IDENTITY,
-        @skillId,
-        @rndLeadExpertice
-      )
-     END
+    -- Random evaluations
+    SET @rndEvalImpact = RAND()
+    SET @rndDetailImpact = RAND()
+    IF (@rndDetailImpact < @limitDetailImpact)
+     BEGIN      
+       IF ((@rndEvalImpact < @limitEvalImpact) OR (@evalForCandidate = 0))
+        BEGIN
+         INSERT INTO [dbo].[Evaluation] (
+           [CandidateId],
+           [EvaluationTypeId],
+           [Date]
+         )
+         VALUES (
+           @candidateId,
+           [dbo].[RandomEvaluationType](RAND()),
+           [dbo].[RandomDate](2000, RAND())
+         )
+         
+         SET @evalForCandidate = 1
+        END
      
+      SET @rndDetailExpertice = RAND()
+      
+      INSERT INTO [dbo].[EvaluationDetail] (
+        [EvaluationId],
+        [SkillId],
+        [Expertise]
+      )
+      SELECT MAX([E].[Id]),
+             @skillId,
+             @rndDetailExpertice
+      FROM [dbo].[Evaluation] AS [E]
+      WHERE [E].[CandidateId] = @candidateId
+     END 
+           
     FETCH NEXT FROM skill_cursor   
     INTO @skillId 
    END   
@@ -1224,6 +1183,7 @@ DROP FUNCTION IF EXISTS [dbo].[RandomBench]
 DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
 DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
+DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 GO
 
 ----------------------------------------------------------------------------------------------------
