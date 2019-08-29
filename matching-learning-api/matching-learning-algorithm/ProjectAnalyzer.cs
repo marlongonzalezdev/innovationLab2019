@@ -25,17 +25,29 @@ namespace matching_learning_algorithm
 
         private string InputPath { get; set; }
 
+        private List<TextLoader.Column> TexLoaderFields {get; set;}
+
         private List<string> CsvHeaders { get; set; }
         public ProjectAnalyzer(ILogger logger, ISkillRepository skillRepository)
         {
-            MLContext = new MLContext();
+            MLContext = new MLContext(seed: 1);
             Logger = logger;
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
+            TexLoaderFields = new List<TextLoader.Column>();
+            InputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
         }
-        
-        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement)
+
+
+        public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet)
         {
+
+            GenerateDataset(candidateRequirement);
+            if (createDataSet)
+            {
+                TrainModelIfNotExists();
+            }
+
             var predictionData = PredictValue(candidateRequirement);
 
             var candidates = predictionData.userData
@@ -51,13 +63,7 @@ namespace matching_learning_algorithm
         }
         private void GenerateDataset(ProjectCandidateRequirement candidateRequirement)
         {
-            InputPath = Path.Combine(Environment.CurrentDirectory, "Data", "user-languages.csv");
-            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertisesBySkillIds(
-                candidateRequirement
-                .SkillsFilter
-                .Select(requirement => requirement.RequiredSkillId)
-                .ToList()
-                );
+            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
             if (candidateRequirement.DeliveryUnitIdFilter != null)
             {
                 estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.DeliveryUnitId == candidateRequirement.DeliveryUnitIdFilter).ToList();
@@ -67,7 +73,7 @@ namespace matching_learning_algorithm
                 estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.InBench == candidateRequirement.InBenchFilter).ToList();
             }
             CsvHeaders.Add("candidateId");
-            CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).ToList());
+            CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
             {
                 file.WriteLine(string.Join(',', CsvHeaders));
@@ -75,7 +81,7 @@ namespace matching_learning_algorithm
                 foreach (var candidate in resultByCandidate)
                 {
                     var row = new List<string>();
-                    row.Add(candidate.ToString());
+                    row.Add(candidate.Key.ToString());
                     foreach (var header in CsvHeaders)
                     {
                         row.Add(
@@ -84,7 +90,7 @@ namespace matching_learning_algorithm
                                 : "0"
                             );
                     }
-
+                    file.WriteLine(string.Join(',', row));
                 }
             }
         }
@@ -99,15 +105,22 @@ namespace matching_learning_algorithm
                     Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
                     return;
                 }
-                var texLoaderFields = CsvHeaders.Where(header => !header.Equals("candidateId"))
-                    .Select((text, index) => new TextLoader.Column(text, DataKind.Single, index)).ToArray();
-                var textLoader = MLContext.Data.CreateTextLoader(texLoaderFields, hasHeader: true, separatorChar: ',');
-                IDataView data = textLoader.Load(InputPath);
+                TexLoaderFields.AddRange(CsvHeaders
+                    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
+                var textLoader = MLContext.Data.CreateTextLoader(TexLoaderFields.ToArray(), hasHeader: true, separatorChar: ',');
+                var data = textLoader.Load(InputPath);
+                DataOperationsCatalog.TrainTestData trainTestData = MLContext.Data.TrainTestSplit(data, testFraction: 0.2);
+                var trainingDataView = trainTestData.TrainSet;
+                var testingDataView = trainTestData.TestSet;
+
                 var dataProcessPipeline =  MLContext
                     .Transforms
                     .Concatenate("Features", CsvHeaders.Where(header => !header.Equals("candidateId")).ToArray())
                     .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: NumberOfClusters));
-                var trainedModel = dataProcessPipeline.Fit(data);
+                var trainedModel = dataProcessPipeline.Fit(trainingDataView);
+
+                IDataView predictions = trainedModel.Transform(testingDataView);
+                var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Features");
 
                 // Save/persist the trained model to a .ZIP file
                 MLContext.Model.Save(trainedModel, data.Schema, modelPath);
@@ -127,16 +140,15 @@ namespace matching_learning_algorithm
             string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
             try
             {
-                var data = MLContext.Data.LoadFromTextFile<ExpandoObject>(
-                   path: InputPath,
-                   hasHeader: true,
-                   separatorChar: ',');
+                TexLoaderFields.AddRange(CsvHeaders
+                    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
+                var textLoader = MLContext.Data.CreateTextLoader(TexLoaderFields.ToArray(), hasHeader: true, separatorChar: ',');
+                var data = textLoader.Load(InputPath);
 
-                // Load data preparation pipeline and trained model out dataPrepPipelineSchema);
                 ITransformer trainedModel = MLContext.Model.Load(modelPath, out var modelSchema);
 
                 var transformedDataView = trainedModel.Transform(data);
-                var predictionEngine = MLContext.Model.CreatePredictionEngine<ExpandoObject, ClusteringPrediction>(trainedModel);
+                var predictionEngine = MLContext.Model.CreatePredictionEngine<DataModel, ClusteringPrediction>(trainedModel);
                 var prediction = predictionEngine.Predict(ProcessRequest(candidateRequirement));
 
                 ClusteringPrediction[] userData = MLContext.Data
@@ -155,14 +167,21 @@ namespace matching_learning_algorithm
             }
         }
 
-        private ExpandoObject ProcessRequest(ProjectCandidateRequirement candidateRequirement)
+        private DataModel ProcessRequest(ProjectCandidateRequirement candidateRequirement)
         {
-            var newPrediction = new ExpandoObject() as IDictionary<string, Object>;
+            //var newPrediction = new ExpandoObject() as IDictionary<string, Object>;
+            //foreach (var skill in candidateRequirement.SkillsFilter)
+            //{
+            //    newPrediction.Add(skill.RequiredSkillId.ToString(), skill.Weight);
+            //}
+            //return newPrediction as ExpandoObject;
+            var dataModel = new DataModel();
             foreach (var skill in candidateRequirement.SkillsFilter)
             {
-                newPrediction.Add(skill.RequiredSkillId.ToString(), skill.Weight);
+                var propertyInfo = dataModel.GetType().GetProperty(skill.RequiredSkillId.ToString().ToLower());
+                propertyInfo.SetValue(dataModel, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
             }
-            return newPrediction as ExpandoObject;
+            return dataModel;
         }
     }
 }

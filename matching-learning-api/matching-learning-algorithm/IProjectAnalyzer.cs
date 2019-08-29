@@ -6,6 +6,6 @@ namespace matching_learning_algorithm
 {
     public interface IProjectAnalyzer
     {
-        Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement);
+        Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet);
     }
 }

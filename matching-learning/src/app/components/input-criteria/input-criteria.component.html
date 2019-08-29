@@ -39,6 +39,12 @@
         </div>
     </div>
     <div class="container">
+        <div class="max_quantity">
+            <mat-label>Max</mat-label>
+            <mat-form-field>
+                <input [(ngModel)]="project.max" matInput type="number" min="1">
+            </mat-form-field>
+        </div>
         <div class="delivery-unit">
             <mat-label>Delivery Unit</mat-label>
             <mat-form-field class="du_select" color="warn">

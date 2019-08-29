@@ -1,4 +1,5 @@
-﻿using matching_learning.ml.Domain;
+﻿
+using matching_learning.common.Domain.DTOs;
 
 namespace matching_learning.api.Models
 {
@@ -14,6 +15,8 @@ namespace matching_learning.api.Models
         /// The name of the user.
         /// </value>
         public string UserName { get; set; }
+
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the photo URL.
@@ -54,11 +57,11 @@ namespace matching_learning.api.Models
         /// <returns></returns>
         public CandidateModel FromCandidate(Candidate candidate)
         {
-            UserName = candidate.UserId;
-            MatchingScore = candidate.Score;
+            Id = candidate.Id;
+            // MatchingScore = candidate.;
             Name = $"{Name?[0].ToString().ToUpperInvariant()}{Name?.Substring(1)}";
 
-            return this;
-        }
+        //    return this;
+        //}
     }
 }

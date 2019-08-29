@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using matching_learning.common.Domain.DTOs;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using matching_learning.ml.Domain;
 
 namespace matching_learning.api.Models
 {
@@ -28,17 +28,17 @@ namespace matching_learning.api.Models
         [Required]
         public IList<SkillModel> Skills { get; set; }
 
-        /// <summary>
-        /// Converts to recommendation request.
-        /// </summary>
-        /// <returns></returns>
-        public RecommendationRequest ToRecommendationRequest()
-        {
-            return new RecommendationRequest
-            {
-                ProjectName = Name,
-                ProjectSkills = Skills.Select(s => s.ToSkill()).ToList()
-            };
-        }
+        ///// <summary>
+        ///// Converts to recommendation request.
+        ///// </summary>
+        ///// <returns></returns>
+        //public RecommendationRequest ToRecommendationRequest()
+        //{
+        //    return new RecommendationRequest
+        //    {
+        //        ProjectName = Name,
+        //        ProjectSkills = Skills.Select(s => s.ToSkill()).ToList()
+        //    };
+        //}
     }
 }

@@ -85,3 +85,7 @@ mat-label {
     margin-top: 20px;
     margin-bottom: 20px !important;
 }
+
+.max_quantity {
+    display: inline-block;
+}
