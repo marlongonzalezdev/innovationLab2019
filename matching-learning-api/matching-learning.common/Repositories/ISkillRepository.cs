@@ -38,7 +38,8 @@ namespace matching_learning.common.Repositories
 
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertises();
         List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr);
-        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids);
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> skillIds);
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds);
 
         List<SkillRelation> GetSkillRelationsBySkillId(int id);
         List<SkillRelation> GetSkillRelationsBySkillCode(string code);

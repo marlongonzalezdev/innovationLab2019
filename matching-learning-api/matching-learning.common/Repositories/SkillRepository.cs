@@ -1022,11 +1022,20 @@ namespace matching_learning.common.Repositories
             return (res);
         }
         
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids)
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> skillIds)
         {
             var all = GetSkillEstimatedExpertises();
 
-            var res = all.Where(see => ids.Contains(see.Skill.Id));
+            var res = all.Where(see => skillIds.Contains(see.Skill.Id));
+
+            return (res.ToList());
+        }
+
+        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds)
+        {
+            var all = GetSkillEstimatedExpertises();
+
+            var res = all.Where(see => candidateIds.Contains(see.Candidate.Id) && skillIds.Contains(see.Skill.Id));
 
             return (res.ToList());
         }

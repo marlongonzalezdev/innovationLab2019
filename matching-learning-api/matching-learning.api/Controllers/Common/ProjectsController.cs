@@ -63,10 +63,25 @@ namespace matching_learning.api.Controllers.Common
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
-            var candidatesIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
-            var candidates = _candidateRepository.GetCandidateByIds(candidatesIds);
-            var result = candidates.Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = 0, SkillRankings = null });
+            var candidateIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
+            var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
+
+            var candidateExpertices = _skillRepository.GetSkillEstimatedExpertisesByCandidateAndSkillIds(candidateIds, skillIds);
+
+            var result = candidates.Select(candidate => new ProjectCandidate
+            {
+                Candidate = candidate,
+                Ranking = 0,
+                SkillRankings = candidateExpertices
+                    .Where(exp => exp.Candidate.Id == candidate.Id)
+                    .Select(exp => new ProjectCandidateSkill()
+                    {
+                        Skill = exp.Skill,
+                        Ranking = exp.Expertise,
+                    }).ToList(),
+            });
 
             return Ok(result);
         }
