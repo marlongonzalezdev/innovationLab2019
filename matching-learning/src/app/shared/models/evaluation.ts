@@ -1,5 +1,5 @@
-import {Candidate} from './candidate';
 import {EvaluationType} from './evaluation-type';
+import {Skill} from './skill';
 
 
 export interface Evaluation {
@@ -7,4 +7,5 @@ export interface Evaluation {
    candidateId: number;
    evaluationType: EvaluationType;
    date: Date;
+   skills: Skill[];
 }

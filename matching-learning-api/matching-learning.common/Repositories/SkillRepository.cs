@@ -932,6 +932,109 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr)
+        {
+
+            var res = new List<SkillEstimatedExpertise>();
+
+            List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
+            string reqSkillsStr = convertListIntToString(reqSkills);
+
+            string whereCondition = $"WHERE [SEE].[SkillId] IN ({reqSkillsStr})";
+
+            if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
+            {
+                whereCondition += " AND [C].[InBench] = @inBench";
+            }
+
+            if (pcr.DeliveryUnitIdFilter.HasValue)
+            {
+                whereCondition += " AND [C].[DeliveryUnitId] = @deliveryUnitId";
+            }
+
+            if (pcr.RoleIdFilter.HasValue)
+            {
+                whereCondition = " AND [CCR].[CandidateRoleId] = @candidateRoleId";
+            }
+
+            if (pcr.RelationTypeFilter != null)
+            {
+                whereCondition = " AND [C].[RelationType] = @relationType";
+            }
+
+            var query = "SELECT [SEE].[Id], " +
+                        "       [SEE].[CandidateId], " +
+                        "       [SEE].[SkillId], " +
+                        "       [SEE].[Expertise] " +
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE] " +
+                        "INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
+                        "                                   AND [C].[IsActive] = 1 " +
+                        "LEFT JOIN [dbo].[CandidateCandidateRole] AS [CCR] ON [CCR].[CandidateId] = [SEE].[CandidateId]" +
+                        "                                                 AND [CCR].[EndDate] IS NULL " +
+                        $"{whereCondition}";
+
+            var candidateRepository = new CandidateRepository();
+            var candidates = candidateRepository.GetCandidates();
+            var skills = GetSkills();
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
+                    {
+                        cmd.Parameters.Add("@inBench", SqlDbType.Bit);
+                        cmd.Parameters["@inBench"].Value = pcr.InBenchFilter.Value;
+                    }
+
+                    if (pcr.DeliveryUnitIdFilter.HasValue)
+                    {
+                        cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
+                        cmd.Parameters["@deliveryUnitId"].Value = pcr.DeliveryUnitIdFilter.Value;
+                    }
+
+                    if (pcr.RoleIdFilter.HasValue)
+                    {
+                        cmd.Parameters.Add("@candidateRoleId", SqlDbType.Int);
+                        cmd.Parameters["@candidateRoleId"].Value = pcr.RoleIdFilter.Value;
+                    }
+
+                    if (pcr.RelationTypeFilter != null)
+                    {
+                        cmd.Parameters.Add("@relationType", SqlDbType.Int);
+                        cmd.Parameters["@relationType"].Value = pcr.RelationTypeFilter.Value;
+                    }
+
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
+                        var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
+
+                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        private static string convertListIntToString(List<int> input)
+        {
+            string res = "";
+
+             var strInput = input.Select(i => i.ToString()).ToArray();
+            
+            res = string.Join(',', strInput);
+
+            return (res);
+        }
+
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> ids)
         {
             var all = GetSkillEstimatedExpertises();

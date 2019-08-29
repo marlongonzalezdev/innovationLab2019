@@ -8,6 +8,10 @@ GO
 ----------------------------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+DROP FUNCTION IF EXISTS [dbo].[RandomBench]
+DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
+DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
+DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 GO
 
 DROP VIEW IF EXISTS [dbo].[GlobalSkill]
@@ -59,6 +63,95 @@ AS
   
   SET @rndDays = (@rnd * @baseDaysRange)  
   SET @res = DATEADD(DD, -@rndDays, @currentDate)
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomBench] (@rnd FLOAT) RETURNS BIT
+AS
+ BEGIN  
+  DECLARE @res BIT
+  
+  IF (@rnd < 0.05)
+   BEGIN
+    SET @res = 1
+   END
+  ELSE
+   BEGIN
+    SET @res = 0
+   END
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+CREATE FUNCTION [dbo].[RandomCandidateRole] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+
+  IF (@rnd < 0.85)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DEV')
+   END
+  ELSE IF (@rnd < 0.85)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'TST')
+   END
+  ELSE IF (@rnd < 0.95)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'PM')
+   END
+  ELSE IF (@rnd < 0.93)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DBA')
+   END
+  ELSE IF (@rnd < 0.95)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'UX')
+   END
+  ELSE IF (@rnd < 0.97)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'OPS')
+   END
+  ELSE IF (@rnd < 0.985)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'BA')
+   END
+  ELSE
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'ADMIN')
+   END
+   
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomDeliveryUnit] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 11)  
+
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomRelationType] (@rnd FLOAT) RETURNS INT
+AS
+ BEGIN
+  DECLARE @res INT
+  
+  SET @res = 1 + (@rnd * 2)  
 
   RETURN @res
  END
@@ -455,9 +548,11 @@ INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQL', 'SQL', 0.2, 0)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLServer', 'MS SQL Server', 0.2, 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLServerAzure', 'MS SQL Server Azure', 0.15, 1)
-INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('Oracle', 'Oracle', 0.1, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLSERVER', 'MS SQL Server', 0.2, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SQLSERVERAZURE', 'MS SQL Server Azure', 0.15, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('ORACLE', 'Oracle', 0.1, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('MYSQL', 'MySql', 0.1, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('POSTGRESQL', 'PostgreSQL', 0.1, 1)
 GO
 
 INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.25, '6.0', '1995-01-01' FROM [dbo].[Technology] WHERE [Code] = 'SQLServer'
@@ -554,6 +649,23 @@ GO
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('JS', 'JavaScript', 0.0, 1)
+
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.0', '1996-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.1', '1996-08-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.2', '1997-06-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.3', '1998-10-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.5', '2000-11-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.6', '2005-11-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.7', '2006-10-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.8', '2008-06-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.8.1', '2009-06-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.8.2', '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '1.8.5', '2011-03-01' FROM [dbo].[Technology] WHERE [Code] = 'JS'
+GO
+
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('ANGULAR', 'Angular', 0.0, 1)
 
 INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, 'JS', '2010-01-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
@@ -561,6 +673,19 @@ INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Vers
 INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '4.0', '2017-03-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
 INSERT INTO [dbo].[TechnologyVersion] ([TechnologyId], [DefaultExpertise], [Version], [StartDate]) SELECT [Id], 0.0, '5.0', '2017-11-01' FROM [dbo].[Technology] WHERE [Code] = 'ANGULAR'
 GO
+
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('PYTHON', 'Python', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('RUBY', 'Ruby', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('PHP', 'PHP', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('NODEJS', 'Node.js', 0.0, 1)
+
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('GO', 'Go', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('SWIFT', 'Swift', 0.0, 1)
+
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('CSS', 'CSS', 0.0, 1)
+INSERT INTO [dbo].[Technology] ([Code], [Name], [DefaultExpertise], [IsVersioned]) VALUES ('HTML', 'HTML', 0.0, 1)
 
 ----------------------------------------------------------------------------------------------------
 
@@ -707,7 +832,7 @@ INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [L
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Valentín', 'Gadola', NULL, NULL, 10049, 0 , 'MVD/Valentin_Gadola.jpg', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Valeria', 'Rotunno', NULL, NULL, 28236, 0 , 'MVD/Valeria_Rotunno.JPG', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Victoria', 'Andrada', NULL, NULL, 88872, 0 , 'MVD/Victoria_Andrada.JPG', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'William', 'Claro', NULL, NULL, 76073, 0 , 'MVD/William_Claro.JPG', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'William', 'Claro', NULL, NULL, 76073, 1 , 'MVD/William_Claro.JPG', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Yago', 'Auza', NULL, NULL, 35839, 0 , 'MVD/Yago_Auza.jpg', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Yanara', 'Valdes', NULL, NULL, 92366, 0 , 'MVD/Yanara_Valdes.jpg', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
 INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive]) SELECT [Id], 1, 'Yony', 'Gómez', NULL, NULL, 49238, 0 , 'MVD/Yony_Gomez.JPG', 1 FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
@@ -809,6 +934,67 @@ INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [S
 INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
+/*
+DECLARE @candidateLimit INT = 5000
+DECLARE @candidateIdx INT = 1
+
+DECLARE @candidateId INT
+DECLARE @candidateRoleId INT
+DECLARE @deliveryUnitId INT
+DECLARE @relationType INT
+DECLARE @inBench BIT
+
+WHILE (@candidateIdx <= @candidateLimit)
+ BEGIN
+  SET @deliveryUnitId = [dbo].[RandomDeliveryUnit](RAND())
+  SET @relationType = [dbo].[RandomRelationType](RAND())
+  SET @inBench =  [dbo].[RandomBench](RAND())
+
+  INSERT INTO [dbo].[Candidate] (
+    [DeliveryUnitId],
+    [RelationType],
+    [FirstName],
+    [LastName],
+    [DocType],
+    [DocNumber],
+    [EmployeeNumber],
+    [InBench],
+    [Picture],
+    [IsActive]
+  )
+  VALUES (
+    @deliveryUnitId,
+    @relationType,
+    'Generic First Name',
+    'Generic Last Name',
+    NULL,
+    NULL,
+    NULL,
+    @inBench,
+    NULL,
+    1
+  )
+
+  SET @candidateId = @@IDENTITY
+  SET @candidateRoleId = [dbo].[RandomCandidateRole](RAND())
+
+  INSERT INTO [dbo].[CandidateCandidateRole] (
+    [CandidateId],
+    [CandidateRoleId],
+    [StartDate],
+    [EndDate]
+  )
+  VALUES (
+    @candidateId,
+    @candidateRoleId,
+    '2015-01-01',
+    NULL
+  )
+
+  SET @candidateIdx = @candidateIdx + 1
+ END
+*/
+----------------------------------------------------------------------------------------------------
 
 UPDATE [dbo].[CandidateCandidateRole]
 SET [StartDate] = [dbo].[RandomDate](2000, RAND())
@@ -826,11 +1012,15 @@ DECLARE @limitSeeImpact FLOAT = 0.2
 
 DECLARE @rndCvExpertice FLOAT
 DECLARE @rndCvImpact FLOAT
-DECLARE @limitCvImpact FLOAT = 0.2
+DECLARE @limitCvImpact FLOAT = 0.1
 
 DECLARE @rndExpExpertice FLOAT
 DECLARE @rndExpImpact FLOAT
-DECLARE @limitExpImpact FLOAT = 0.2
+DECLARE @limitExpImpact FLOAT = 0.1
+
+DECLARE @rndLeadExpertice FLOAT
+DECLARE @rndLeadImpact FLOAT
+DECLARE @limitLeadImpact FLOAT = 0.1
 
 DECLARE candidate_cursor CURSOR FOR   
 SELECT [Id]
@@ -871,7 +1061,7 @@ WHILE @@FETCH_STATUS = 0
       )
      END
 
-
+    -- Random CV evaluations
     SET @rndCvExpertice = RAND()
     SET @rndCvImpact = RAND()
 
@@ -893,7 +1083,7 @@ WHILE @@FETCH_STATUS = 0
       WHERE [Code] = 'CV'
      END
 
-
+    -- Random Expert evaluations
     SET @rndExpExpertice = RAND()
     SET @rndExpImpact = RAND()
 
@@ -913,6 +1103,28 @@ WHILE @@FETCH_STATUS = 0
              @rndExpExpertice
       FROM [dbo].[EvaluationType]
       WHERE [Code] = 'EXPERT'
+     END
+    
+    -- Random leader evaluations
+    SET @rndLeadExpertice = RAND()
+    SET @rndLeadImpact = RAND()
+
+    IF (@rndLeadImpact < @limitLeadImpact)
+     BEGIN
+      INSERT INTO [dbo].[Evaluation] (
+        [CandidateId],
+        [SkillId],
+        [EvaluationTypeId],
+        [Date],
+        [Expertise]
+      )
+      SELECT @candidateId,
+             @skillId,
+             [Id],
+             [dbo].[RandomDate](2000, RAND()),
+             @rndLeadExpertice
+      FROM [dbo].[EvaluationType]
+      WHERE [Code] = 'LEADER'
      END
      
     FETCH NEXT FROM skill_cursor   
@@ -975,6 +1187,10 @@ ORDER BY [SEE].[CandidateId],
 ----------------------------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS [dbo].[RandomDate]
+DROP FUNCTION IF EXISTS [dbo].[RandomBench]
+DROP FUNCTION IF EXISTS [dbo].[RandomCandidateRole]
+DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
+DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 GO
 
 ----------------------------------------------------------------------------------------------------

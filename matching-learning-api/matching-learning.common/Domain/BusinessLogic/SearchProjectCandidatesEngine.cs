@@ -11,29 +11,7 @@ namespace matching_learning.common.Domain.BusinessLogic
         {
             pcr.Normalize();
 
-            List<int> reqSkills = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
-
-            var estimated = skillRepository.GetSkillEstimatedExpertisesBySkillIds(reqSkills);
-
-            if (pcr.InBenchFilter.HasValue && pcr.InBenchFilter.Value)
-            {
-                estimated = estimated.Where(e => e.Candidate.InBench == pcr.InBenchFilter.Value).ToList();
-            }
-
-            if (pcr.DeliveryUnitIdFilter.HasValue)
-            {
-                estimated = estimated.Where(e => e.Candidate.DeliveryUnitId == pcr.DeliveryUnitIdFilter.Value).ToList();
-            }
-
-            if (pcr.RoleIdFilter.HasValue)
-            {
-                estimated = estimated.Where(e => e.Candidate.ActiveRole != null && e.Candidate.ActiveRole.Id == pcr.RoleIdFilter.Value).ToList();
-            }
-
-            if (pcr.RelationTypeFilter != null)
-            {
-                estimated = estimated.Where(e => e.Candidate.RelationType == pcr.RelationTypeFilter.Value).ToList();
-            }
+            var estimated = skillRepository.GetSkillEstimatedExpertisesForProject(pcr);
 
             var filteredCandidates = estimated.Select(e => e.Candidate).Distinct().ToList();
 

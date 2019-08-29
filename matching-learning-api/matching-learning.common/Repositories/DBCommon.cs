@@ -1,10 +1,20 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace matching_learning.common.Repositories
 {
     public static class DBCommon
     {
+        public static void SetPaginationParams(int pageIdx, int pageSize, SqlCommand cmd)
+        {
+            cmd.Parameters.Add("@pageIdx", SqlDbType.Int);
+            cmd.Parameters["@pageIdx"].Value = pageIdx;
+
+            cmd.Parameters.Add("@pageSize", SqlDbType.Int);
+            cmd.Parameters["@pageSize"].Value = pageSize;
+        }
+
 #region DB conversions
 #region string conversions
         public static string Db2String(this DataRow dr, string columnName)
