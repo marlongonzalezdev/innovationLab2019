@@ -52,7 +52,7 @@ namespace matching_learning_algorithm
         }
         private void GenerateDataset()
         {
-            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
+            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
@@ -158,7 +158,7 @@ namespace matching_learning_algorithm
             var dataModel = new DataModel();
             if (CsvHeaders.Count == 0)
             {
-                var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
+                var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
                 CsvHeaders.Add("candidateId");
                 CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             }

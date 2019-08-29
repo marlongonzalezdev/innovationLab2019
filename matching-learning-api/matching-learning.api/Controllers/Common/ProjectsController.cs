@@ -68,7 +68,7 @@ namespace matching_learning.api.Controllers.Common
             var candidateIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
             var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
 
-            var candidateExpertices = _skillRepository.GetSkillEstimatedExpertisesByCandidateAndSkillIds(candidateIds, skillIds);
+            var candidateExpertices = _skillRepository.GetSkillEstimatedExpertiseByCandidateAndSkillIds(candidateIds, skillIds);
 
             var result = candidates.Select(candidate => new ProjectCandidate
             {
