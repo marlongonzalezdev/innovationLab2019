@@ -1,3 +1,4 @@
+import { LoginService } from './shared/services/login.service';
 import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -64,8 +65,7 @@ import { LoginComponent } from './components/login/login.component';
     RegionsComponent,
     RegionListComponent,
     PageNotFoundComponent,
-    LoginComponent,
-
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -85,7 +85,8 @@ import { LoginComponent } from './components/login/login.component';
     DeliveryUnitService,
     RelationTypeService,
     NotificationService,
-    EvaluationService
+    EvaluationService,
+    LoginService
   ],
   bootstrap: [AppComponent],
   entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]

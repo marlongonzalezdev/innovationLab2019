@@ -1,9 +1,13 @@
 <mat-card>    
-    <form [formGroup]="loginService.loginForm">
-     <mat-grid-list>
-        <input matInput placeholder="User">
-        <input matInput placeholder="Password">
-        <button mat-raised-button color="warn" type="submit" [disabled]="loginService.loginForm.invalid">Login</button>
-    </mat-grid-list>
+    <form [formGroup]="loginService.loginForm" (submit)="onSubmit(loginService.loginForm.value)">     
+        <div class="form-group">
+            <input formControlName="user" matInput placeholder="User">
+        </div>
+        <div class="form-group">
+            <input formControlName="password" type="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <button mat-raised-button color="warn" type="submit">Login</button>
+        </div>        
     </form>   
 </mat-card>

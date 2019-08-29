@@ -67,7 +67,7 @@ namespace matching_learning.api.Controllers.Common
 
         private bool validateUser(UserCredentials uc)
         {
-            return (!_users.Contains(uc.UserName.ToLower()));
+            return (_users.Contains(uc.UserName.ToLower()));
         }
 
         private bool validatePassword(UserCredentials uc)
