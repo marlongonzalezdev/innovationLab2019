@@ -26,7 +26,7 @@ namespace matching_learning.common.Repositories
 
             foreach (var skill in skills)
             {
-                res.Add(getSkillViewFromSkill(skill));
+                res.Add(GetSkillViewFromSkill(skill));
             }
 
             return (res);
@@ -38,7 +38,7 @@ namespace matching_learning.common.Repositories
 
             var skill = GetSkillById(id);
 
-            res = getSkillViewFromSkill(skill);
+            res = GetSkillViewFromSkill(skill);
 
             return (res);
         }
@@ -49,12 +49,12 @@ namespace matching_learning.common.Repositories
 
             var skill = GetSkillByCode(code);
 
-            res = getSkillViewFromSkill(skill);
+            res = GetSkillViewFromSkill(skill);
 
             return (res);
         }
 
-        private SkillView getSkillViewFromSkill(Skill skill)
+        private SkillView GetSkillViewFromSkill(Skill skill)
         {
             SkillView res = null;
 
@@ -419,7 +419,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getSoftSkillFromDataRow(dt.Rows[0]);
+                        res = GetSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -459,7 +459,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getSoftSkillFromDataRow(dt.Rows[0]);
+                        res = GetSoftSkillFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -467,7 +467,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private SoftSkill getSoftSkillFromDataRow(DataRow dr)
+        private SoftSkill GetSoftSkillFromDataRow(DataRow dr)
         {
             SoftSkill res = null;
 
@@ -519,7 +519,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -560,7 +560,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -568,7 +568,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private Technology getTechnologyFromDataRow(DataRow dr)
+        private Technology GetTechnologyFromDataRow(DataRow dr)
         {
             Technology res = null;
 
@@ -585,10 +585,10 @@ namespace matching_learning.common.Repositories
 
             if (res.IsVersioned)
             {
-                res.Versions = getTechnologyVersionsByTechnologyId(res.Id);
+                res.Versions = GetTechnologyVersionsByTechnologyId(res.Id);
             }
 
-            res.Roles = getTechnologyRolesByTechnologyId(res.Id);
+            res.Roles = GetTechnologyRolesByTechnologyId(res.Id);
 
             return (res);
         }
@@ -631,7 +631,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -675,7 +675,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyVersionFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyVersionFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -683,7 +683,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private TechnologyVersion getTechnologyVersionFromDataRow(DataRow dr)
+        private TechnologyVersion GetTechnologyVersionFromDataRow(DataRow dr)
         {
             TechnologyVersion res = null;
 
@@ -703,7 +703,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private List<TechnologyVersion> getTechnologyVersionsByTechnologyId(int id)
+        private List<TechnologyVersion> GetTechnologyVersionsByTechnologyId(int id)
         {
             var res = new List<TechnologyVersion>();
 
@@ -739,7 +739,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getTechnologyVersionFromDataRow(dr));
+                        res.Add(GetTechnologyVersionFromDataRow(dr));
                     }
                 }
             }
@@ -782,7 +782,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -823,7 +823,7 @@ namespace matching_learning.common.Repositories
 
                     if (dt.Rows.Count == 1)
                     {
-                        res = getTechnologyRoleFromDataRow(dt.Rows[0]);
+                        res = GetTechnologyRoleFromDataRow(dt.Rows[0]);
                     }
                 }
             }
@@ -831,7 +831,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private TechnologyRole getTechnologyRoleFromDataRow(DataRow dr)
+        private TechnologyRole GetTechnologyRoleFromDataRow(DataRow dr)
         {
             TechnologyRole res = null;
 
@@ -849,7 +849,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private List<TechnologyRole> getTechnologyRolesByTechnologyId(int id)
+        private List<TechnologyRole> GetTechnologyRolesByTechnologyId(int id)
         {
             var res = new List<TechnologyRole>();
 
@@ -883,7 +883,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getTechnologyRoleFromDataRow(dr));
+                        res.Add(GetTechnologyRoleFromDataRow(dr));
                     }
                 }
             }
@@ -893,7 +893,7 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region SkillEstimatedExpertise
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertises()
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertise()
         {
             var res = new List<SkillEstimatedExpertise>();
 
@@ -924,7 +924,7 @@ namespace matching_learning.common.Repositories
                         var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
                         var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
 
-                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
+                        res.Add(GetSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
                     }
                 }
             }
@@ -932,7 +932,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesForProject(ProjectCandidateRequirement pcr)
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseForProject(ProjectCandidateRequirement pcr)
         {
             var res = new List<SkillEstimatedExpertise>();
 
@@ -1014,7 +1014,7 @@ namespace matching_learning.common.Repositories
                         var candidate = candidates.FirstOrDefault(c => c.Id == dr.Db2Int("CandidateId"));
                         var skill = skills.FirstOrDefault(s => s.Id == dr.Db2Int("SkillId"));
 
-                        res.Add(getSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
+                        res.Add(GetSkillEstimatedExpertiseFromDataRow(dr, candidate, skill));
                     }
                 }
             }
@@ -1022,25 +1022,25 @@ namespace matching_learning.common.Repositories
             return (res);
         }
         
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesBySkillIds(List<int> skillIds)
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseBySkillIds(List<int> skillIds)
         {
-            var all = GetSkillEstimatedExpertises();
+            var all = GetSkillEstimatedExpertise();
 
             var res = all.Where(see => skillIds.Contains(see.Skill.Id));
 
             return (res.ToList());
         }
 
-        List<SkillEstimatedExpertise> GetSkillEstimatedExpertisesByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds)
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds)
         {
-            var all = GetSkillEstimatedExpertises();
+            var all = GetSkillEstimatedExpertise();
 
             var res = all.Where(see => candidateIds.Contains(see.Candidate.Id) && skillIds.Contains(see.Skill.Id));
 
             return (res.ToList());
         }
 
-        private SkillEstimatedExpertise getSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)
+        private SkillEstimatedExpertise GetSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)
         {
             SkillEstimatedExpertise res = null;
 
@@ -1086,7 +1086,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
+                        res.Add(GetSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
@@ -1124,7 +1124,7 @@ namespace matching_learning.common.Repositories
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        res.Add(getSkillRelationFromDataRow(dr, mainSkill));
+                        res.Add(GetSkillRelationFromDataRow(dr, mainSkill));
                     }
                 }
             }
@@ -1132,7 +1132,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private SkillRelation getSkillRelationFromDataRow(DataRow dr, Skill mainSkill)
+        private SkillRelation GetSkillRelationFromDataRow(DataRow dr, Skill mainSkill)
         {
             SkillRelation res = null;
 
@@ -1268,17 +1268,17 @@ namespace matching_learning.common.Repositories
 
             if (ba.Id < 0)
             {
-                res = insertBusinessArea(ba);
+                res = InsertBusinessArea(ba);
             }
             else
             {
-                res = updateBusinessArea(ba);
+                res = UpdateBusinessArea(ba);
             }
 
             return (res);
         }
 
-        private int insertBusinessArea(BusinessArea ba)
+        private int InsertBusinessArea(BusinessArea ba)
         {
             int res;
 
@@ -1351,7 +1351,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int updateBusinessArea(BusinessArea ba)
+        private int UpdateBusinessArea(BusinessArea ba)
         {
             var stmnt = "UPDATE [dbo].[BusinessArea] " +
                         "SET [Code] = @code," +
@@ -1412,17 +1412,17 @@ namespace matching_learning.common.Repositories
 
             if (ss.Id < 0)
             {
-                res = insertSoftSkill(ss);
+                res = InsertSoftSkill(ss);
             }
             else
             {
-                res = updateSoftSkill(ss);
+                res = UpdateSoftSkill(ss);
             }
 
             return (res);
         }
 
-        private int insertSoftSkill(SoftSkill ss)
+        private int InsertSoftSkill(SoftSkill ss)
         {
             int res;
 
@@ -1495,7 +1495,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int updateSoftSkill(SoftSkill ss)
+        private int UpdateSoftSkill(SoftSkill ss)
         {
             var stmnt = "UPDATE [dbo].[SoftSkill] " +
                         "SET [Code] = @code," +
@@ -1557,17 +1557,17 @@ namespace matching_learning.common.Repositories
 
             if (tech.Id < 0)
             {
-                res = insertTechnology(tech);
+                res = InsertTechnology(tech);
             }
             else
             {
-                res = updateTechnology(tech);
+                res = UpdateTechnology(tech);
             }
 
             return (res);
         }
 
-        private int insertTechnology(Technology tech)
+        private int InsertTechnology(Technology tech)
         {
             int res;
 
@@ -1640,7 +1640,7 @@ namespace matching_learning.common.Repositories
                         res = tech.Id;
                     }
 
-                    saveRelatedEntities(tech, conn, trans);
+                    SaveRelatedEntities(tech, conn, trans);
 
                     trans.Commit();
                 }
@@ -1654,7 +1654,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int updateTechnology(Technology tech)
+        private int UpdateTechnology(Technology tech)
         {
             var stmnt = "UPDATE [dbo].[Technology] " +
                         "SET [Code] = @code," +
@@ -1684,7 +1684,7 @@ namespace matching_learning.common.Repositories
                         cmd.ExecuteNonQuery();
                     }
 
-                    saveRelatedEntities(tech, conn, trans);
+                    SaveRelatedEntities(tech, conn, trans);
 
                     trans.Commit();
                 }
@@ -1713,13 +1713,13 @@ namespace matching_learning.common.Repositories
             cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
         }
 
-        private void saveRelatedEntities(Technology tech, SqlConnection conn, SqlTransaction trans)
+        private void SaveRelatedEntities(Technology tech, SqlConnection conn, SqlTransaction trans)
         {
             if (tech.IsVersioned && tech.Versions != null && tech.Versions.Count > 0)
             {
                 foreach (var tv in tech.Versions)
                 {
-                    saveTechnologyVersion(tv, tech.RelatedId, conn, trans);
+                    SaveTechnologyVersion(tv, tech.RelatedId, conn, trans);
                 }
             }
 
@@ -1727,14 +1727,14 @@ namespace matching_learning.common.Repositories
             {
                 foreach (var tr in tech.Roles)
                 {
-                    saveTechnologyRole(tr, tech.RelatedId, conn, trans);
+                    SaveTechnologyRole(tr, tech.RelatedId, conn, trans);
                 }
             }
         }
         #endregion
 
         #region Save TechnologyVersion
-        private int saveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
+        private int SaveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1743,17 +1743,17 @@ namespace matching_learning.common.Repositories
 
             if (tv.Id < 0)
             {
-                res = insertTechnologyVersion(tv, conn, trans);
+                res = InsertTechnologyVersion(tv, conn, trans);
             }
             else
             {
-                res = updateTechnologyVersion(tv, conn, trans);
+                res = UpdateTechnologyVersion(tv, conn, trans);
             }
 
             return (res);
         }
 
-        private int insertTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        private int InsertTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1814,7 +1814,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int updateTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        private int UpdateTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
         {
             var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1855,7 +1855,7 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save TechnologyRole
-        private int saveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
+        private int SaveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1864,17 +1864,17 @@ namespace matching_learning.common.Repositories
 
             if (tr.Id < 0)
             {
-                res = insertTechnologyRole(tr, conn, trans);
+                res = InsertTechnologyRole(tr, conn, trans);
             }
             else
             {
-                res = updateTechnologyRole(tr, conn, trans);
+                res = UpdateTechnologyRole(tr, conn, trans);
             }
 
             return (res);
         }
 
-        private int insertTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        private int InsertTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1908,7 +1908,7 @@ namespace matching_learning.common.Repositories
                 cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
                 cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
-                setParamsTechnologyRole(cmdTR, tr);
+                SetParamsTechnologyRole(cmdTR, tr);
 
                 cmdTR.ExecuteNonQuery();
             }
@@ -1935,7 +1935,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int updateTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        private int UpdateTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             var stmnt = "UPDATE [dbo].[TechnologyRole] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1955,7 +1955,7 @@ namespace matching_learning.common.Repositories
                 cmd.Parameters.Add("@ssId", SqlDbType.Int);
                 cmd.Parameters["@ssId"].Value = tr.RelatedId;
 
-                setParamsTechnologyRole(cmd, tr);
+                SetParamsTechnologyRole(cmd, tr);
 
                 cmd.ExecuteNonQuery();
             }
@@ -1963,7 +1963,7 @@ namespace matching_learning.common.Repositories
             return (tr.Id);
         }
 
-        private void setParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
+        private void SetParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
         {
             cmd.Parameters.Add("@code", SqlDbType.NVarChar);
             cmd.Parameters["@code"].Value = tr.Code;

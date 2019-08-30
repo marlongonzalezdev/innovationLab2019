@@ -176,7 +176,7 @@ namespace matching_learning.api.Controllers.Common
         [Route("SkillEstimatedExpertises")]
         public ActionResult<List<SkillEstimatedExpertise>> GetSkillEstimatedExpertises()
         {
-            return _skillRepository.GetSkillEstimatedExpertises();
+            return _skillRepository.GetSkillEstimatedExpertise();
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace matching_learning.api.Controllers.Common
         [Consumes("application/json")]
         public ActionResult<List<SkillEstimatedExpertise>> GetSkillEstimatedExpertisesBySkillIds([FromBody] List<int> ids)
         {
-            return _skillRepository.GetSkillEstimatedExpertisesBySkillIds(ids);
+            return _skillRepository.GetSkillEstimatedExpertiseBySkillIds(ids);
         }
 
         /// <summary>

@@ -52,7 +52,7 @@ namespace matching_learning_algorithm
         }
         private void GenerateDataset()
         {
-            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
+            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
@@ -87,8 +87,7 @@ namespace matching_learning_algorithm
                     Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
                     return;
                 }
-                //TexLoaderFields.AddRange(CsvHeaders
-                //    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
+                
                 var result = GenerateNames();
                 var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
@@ -136,14 +135,12 @@ namespace matching_learning_algorithm
                 ClusteringPrediction[] userData = MLContext.Data
                     .CreateEnumerable<ClusteringPrediction>(transformedDataView, false)
                     .ToArray();
-                if (candidateRequirement.Max > 0)
-                {
-                    userData = userData.ToList().Take(candidateRequirement.Max).ToArray();
-                }
+
                 userData = userData
-                    .Where(u => u.SelectedClusterId == prediction.SelectedClusterId && u.Distance[prediction.SelectedClusterId] <= prediction.Distance[prediction.SelectedClusterId])
+                    .Where(u => u.SelectedClusterId == prediction.SelectedClusterId)
                     .OrderBy(x => x.Distance[prediction.SelectedClusterId])
                     .ToArray();
+
                 return userData;
             }
             catch (Exception ex)
@@ -158,7 +155,7 @@ namespace matching_learning_algorithm
             var dataModel = new DataModel();
             if (CsvHeaders.Count == 0)
             {
-                var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
+                var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
                 CsvHeaders.Add("candidateId");
                 CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             }
