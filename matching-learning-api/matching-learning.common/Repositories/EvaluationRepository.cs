@@ -51,6 +51,8 @@ namespace matching_learning.common.Repositories
                 }
             }
 
+            res.Sort();
+
             return (res);
         }
 
@@ -143,6 +145,8 @@ namespace matching_learning.common.Repositories
                 }
             }
 
+            res.Sort();
+
             return (res);
         }
 
@@ -199,6 +203,8 @@ namespace matching_learning.common.Repositories
                 }
             }
 
+            res.Sort();
+
             return (res);
         }
 
@@ -238,6 +244,8 @@ namespace matching_learning.common.Repositories
                     }
                 }
             }
+
+            res.Sort();
 
             return (res);
         }
@@ -282,6 +290,8 @@ namespace matching_learning.common.Repositories
                     }
                 }
             }
+
+            res.Sort();
 
             return (res);
         }
