@@ -65,23 +65,20 @@ namespace matching_learning.api.Controllers.Common
 
             var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
-            var candidateIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
-            var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
-
-            var candidateExpertices = _skillRepository.GetSkillEstimatedExpertiseByCandidateAndSkillIds(candidateIds, skillIds);
-
-            var result = candidates.Select(candidate => new ProjectCandidate
+            var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Select(c => int.Parse(c)).ToList());
+            if (pcr.DeliveryUnitIdFilter != null)
             {
-                Candidate = candidate,
-                Ranking = 0,
-                SkillRankings = candidateExpertices
-                    .Where(exp => exp.Candidate.Id == candidate.Id)
-                    .Select(exp => new ProjectCandidateSkill()
-                    {
-                        Skill = exp.Skill,
-                        Ranking = exp.Expertise,
-                    }).ToList(),
-            });
+                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.DeliveryUnitIdFilter)).ToList();
+            }
+            if (pcr.InBenchFilter != null)
+            {
+                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.InBenchFilter)).ToList();
+            }
+            if (pcr.Max != 0)
+            {
+                candidates = candidates.Take(pcr.Max).ToList();
+            }
+            var result = candidates.Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = 0, SkillRankings = null });
 
             return Ok(result);
         }
