@@ -1,4 +1,4 @@
-<mat-card class="formContainer">    
+<div class="formContainer">
     <form [formGroup]="loginService.loginForm" (submit)="onSubmit(loginService.loginForm.value)">
         <mat-form-field color="warn" class="input-field">
             <input formControlName="user" matInput placeholder="User">            
@@ -13,4 +13,4 @@
             <button mat-raised-button color="warn" type="submit">Login</button>
         </div>                      
     </form>   
-</mat-card>
+</div>

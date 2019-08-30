@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {RegionService} from '../../../shared/services/region.service';
 import {MatDialogRef} from '@angular/material';
-import {Candidate} from '../../../shared/models/candidate';
 import {Region} from '../../../shared/models/region';
 import {NotificationService} from '../../../shared/services/notification.service';
 

@@ -1,8 +1,9 @@
 .formContainer {
-  text-align: center;
-  margin-top: 5%;
-  padding: 5%;
-  max-width: 500px;
+    text-align: center;
+    margin-top: 5%;
+    padding: 5%;
+    max-width: 500px;
+    border: none;
 }
 
 .input-field {

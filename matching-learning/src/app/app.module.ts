@@ -89,6 +89,6 @@ import { LoginComponent } from './components/login/login.component';
     LoginService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent, RegionComponent]
 })
 export class AppModule { }

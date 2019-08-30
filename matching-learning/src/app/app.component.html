@@ -4,21 +4,21 @@
 </div>
 -->
 <mat-toolbar *ngIf="!currentUser">
-        <mat-toolbar-row>
-            <h2 class="brand">Matching Learning</h2>
-            <span class="menu-spacer"></span>            
-            <div class="logo-container"><img class="logo" src="../../../assets/logo.png" alt=""></div>
-        </mat-toolbar-row>
-    </mat-toolbar>
+    <mat-toolbar-row>
+        <h2 class="brand">Matching Learning</h2>
+        <span class="menu-spacer"></span>
+        <div class="logo-container"><img class="logo" src="../../../assets/logo.png" alt=""></div>
+    </mat-toolbar-row>
+</mat-toolbar>
 <div class="main-content" *ngIf="!currentUser">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6 offset-sm-3">
-                    <app-login></app-login>
-                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 offset-sm-3">
+                <app-login></app-login>
             </div>
         </div>
     </div>
-<app-menu  *ngIf="currentUser"></app-menu>
+</div>
+<app-menu *ngIf="currentUser"></app-menu>
 
 

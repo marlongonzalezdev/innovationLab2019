@@ -56,5 +56,6 @@ a.mat-list-item .mat-icon, .mat-subheader .mat-icon {
 }
 
 .userContainer{
-    margin-right: 10%
+    margin-right: 10%;
+    font-size: 12px;
 }
