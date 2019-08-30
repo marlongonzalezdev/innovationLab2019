@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.ML.Data;
 using System.Dynamic;
+using Microsoft.ML.Trainers;
 
 namespace matching_learning_algorithm
 {
     public class ProjectAnalyzer : IProjectAnalyzer
     {
-        private const int NumberOfClusters = 5;
+        private const int NumberOfClusters = 3;
 
         private readonly ISkillRepository _skillRepository;
 
@@ -95,10 +96,19 @@ namespace matching_learning_algorithm
                 var trainingDataView = trainTestData.TrainSet;
                 var testingDataView = trainTestData.TestSet;
 
+                var options = new KMeansTrainer.Options
+                {
+                    NumberOfClusters = 3,
+                    OptimizationTolerance = 1e-6f,
+                    NumberOfThreads = 1,
+                    MaximumNumberOfIterations = 20,
+                    FeatureColumnName = "Features"
+                };
+
                 var dataProcessPipeline = MLContext
                     .Transforms
                     .Concatenate("Features", result.Item2)
-                    .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: NumberOfClusters));
+                    .Append(MLContext.Clustering.Trainers.KMeans(options));
                 var trainedModel = dataProcessPipeline.Fit(trainingDataView);
 
                 IDataView predictions = trainedModel.Transform(testingDataView);
@@ -140,11 +150,11 @@ namespace matching_learning_algorithm
 
                 userData = userData
                     .Where(u => u.SelectedClusterId == prediction.SelectedClusterId)
-                    .OrderBy(x => x.Distance[prediction.SelectedClusterId])
+                    .OrderBy(x => x.Distance[prediction.SelectedClusterId - 1])
                     .ToArray();
                 foreach(var u in userData)
                 {
-                    responseValues.Add(int.Parse(u.CandidateId), u.Distance[u.SelectedClusterId]);
+                    responseValues.Add(int.Parse(u.CandidateId), u.Distance[u.SelectedClusterId - 1]);
                 }
                                 
                 return responseValues;
