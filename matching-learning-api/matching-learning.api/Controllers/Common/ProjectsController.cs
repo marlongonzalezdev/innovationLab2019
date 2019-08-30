@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.DTOs;
 using matching_learning.common.Repositories;
+using matching_learning_algorithm;
 using Microsoft.AspNetCore.Mvc;
 
 namespace matching_learning.api.Controllers.Common
@@ -14,31 +17,73 @@ namespace matching_learning.api.Controllers.Common
     public class ProjectsController : ControllerBase
     {
         private readonly ISkillRepository _skillRepository;
+        private readonly ICandidateRepository _candidateRepository;
+        private readonly IProjectAnalyzer _analyzer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkillsController"/> class.
         /// </summary>
         /// <param name="skillRepository">The skills repo.</param>
-        public ProjectsController(ISkillRepository skillRepository)
+        /// /// <param name="analizer">The skills repo.</param>
+        /// /// <param name="candidateRepository">The skills repo.</param>
+        public ProjectsController(ISkillRepository skillRepository, IProjectAnalyzer analizer, ICandidateRepository candidateRepository)
         {
             _skillRepository = skillRepository;
-         }
+            _analyzer = analizer;
+            _candidateRepository = candidateRepository;
+        }
 
         #region Retrieve
         /// <summary>
-        /// Get best candidates for a project.
+        /// Get best candidates for a project - no ML.
         /// </summary>
         /// <param name="pcr"></param>
         [HttpPost("GetProjectCandidates")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
-        public IActionResult GetProjectCandidates([FromBody] ProjectCandidateRequirement pcr)
+        public IActionResult GetProjectCandidatesOld([FromBody] ProjectCandidateRequirement pcr)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(SearchProjectCandidatesEngine.GetProjectCandidates(pcr, _skillRepository));
+        }
+
+        /// <summary>
+        /// Get best candidates for a project.
+        /// </summary>
+        /// <param name="pcr"></param>
+        [HttpPost("GetProjectCandidatesML")]
+        [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
+        [Consumes("application/json")]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetProjectCandidates([FromBody] ProjectCandidateRequirement pcr)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
+            var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
+            var candidateIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
+            var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
+
+            var candidateExpertices = _skillRepository.GetSkillEstimatedExpertiseByCandidateAndSkillIds(candidateIds, skillIds);
+
+            var result = candidates.Select(candidate => new ProjectCandidate
+            {
+                Candidate = candidate,
+                Ranking = 0,
+                SkillRankings = candidateExpertices
+                    .Where(exp => exp.Candidate.Id == candidate.Id)
+                    .Select(exp => new ProjectCandidateSkill()
+                    {
+                        Skill = exp.Skill,
+                        Ranking = exp.Expertise,
+                    }).ToList(),
+            });
+
+            return Ok(result);
         }
         #endregion
     }

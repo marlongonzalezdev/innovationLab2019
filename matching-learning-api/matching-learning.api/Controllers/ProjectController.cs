@@ -48,7 +48,7 @@ namespace matching_learning.api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var analysisResult = await _analyzer.GetRecommendationsAsync(model, true);
+            var analysisResult = await _analyzer.GetRecommendationsAsync(model, false);
             ProjectRecommendationsModel result = ProjectRecommendationsModel.FromRecommendationResponse(analysisResult, _linkGenerator, _httpContextAccessor);
 
             return Ok(result);

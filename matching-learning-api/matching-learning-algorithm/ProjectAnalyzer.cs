@@ -25,7 +25,7 @@ namespace matching_learning_algorithm
 
         private string InputPath { get; set; }
 
-        private List<TextLoader.Column> TexLoaderFields {get; set;}
+        private List<TextLoader.Column> TexLoaderFields { get; set; }
 
         private List<string> CsvHeaders { get; set; }
         public ProjectAnalyzer(ILogger logger, ISkillRepository skillRepository)
@@ -41,37 +41,18 @@ namespace matching_learning_algorithm
 
         public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet)
         {
-
-            GenerateDataset(candidateRequirement);
-            if (createDataSet)
-            {
-                TrainModelIfNotExists();
-            }
+            if (createDataSet) GenerateDataset();
 
             var predictionData = PredictValue(candidateRequirement);
 
-            var candidates = predictionData.userData
-                .Where(p => p.SelectedClusterId.Equals(predictionData.prediction.SelectedClusterId))
-                .OrderBy(x => x.Distance[x.SelectedClusterId])
-                .Select(c => c.CandidateId)
-                .ToList();
-
             return Task.FromResult(new RecommendationResponse
             {
-                Matches = candidates
+                Matches = predictionData.Select(c => c.CandidateId)
             });
         }
-        private void GenerateDataset(ProjectCandidateRequirement candidateRequirement)
+        private void GenerateDataset()
         {
-            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertises();
-            if (candidateRequirement.DeliveryUnitIdFilter != null)
-            {
-                estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.DeliveryUnitId == candidateRequirement.DeliveryUnitIdFilter).ToList();
-            }
-            if (candidateRequirement.InBenchFilter != null)
-            {
-                estimatedExpertises = estimatedExpertises.Where(exp => exp.Candidate.InBench == candidateRequirement.InBenchFilter).ToList();
-            }
+            var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
@@ -99,23 +80,25 @@ namespace matching_learning_algorithm
         {
             try
             {
+                GenerateDataset();
                 string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
                 if (File.Exists(modelPath))
                 {
                     Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
                     return;
                 }
-                TexLoaderFields.AddRange(CsvHeaders
-                    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
-                var textLoader = MLContext.Data.CreateTextLoader(TexLoaderFields.ToArray(), hasHeader: true, separatorChar: ',');
+                //TexLoaderFields.AddRange(CsvHeaders
+                //    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
+                var result = GenerateNames();
+                var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
                 DataOperationsCatalog.TrainTestData trainTestData = MLContext.Data.TrainTestSplit(data, testFraction: 0.2);
                 var trainingDataView = trainTestData.TrainSet;
                 var testingDataView = trainTestData.TestSet;
 
-                var dataProcessPipeline =  MLContext
+                var dataProcessPipeline = MLContext
                     .Transforms
-                    .Concatenate("Features", CsvHeaders.Where(header => !header.Equals("candidateId")).ToArray())
+                    .Concatenate("Features", result.Item2)
                     .Append(MLContext.Clustering.Trainers.KMeans("Features", numberOfClusters: NumberOfClusters));
                 var trainedModel = dataProcessPipeline.Fit(trainingDataView);
 
@@ -135,14 +118,13 @@ namespace matching_learning_algorithm
             }
 
         }
-        private (ClusteringPrediction[] userData, ClusteringPrediction prediction) PredictValue(ProjectCandidateRequirement candidateRequirement)
+        private ClusteringPrediction[] PredictValue(ProjectCandidateRequirement candidateRequirement)
         {
             string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
             try
             {
-                TexLoaderFields.AddRange(CsvHeaders
-                    .Select((text, index) => new TextLoader.Column(text, index == 0 ? DataKind.String : DataKind.Single, index)).ToList());
-                var textLoader = MLContext.Data.CreateTextLoader(TexLoaderFields.ToArray(), hasHeader: true, separatorChar: ',');
+                var result = GenerateNames();
+                var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
 
                 ITransformer trainedModel = MLContext.Model.Load(modelPath, out var modelSchema);
@@ -154,12 +136,15 @@ namespace matching_learning_algorithm
                 ClusteringPrediction[] userData = MLContext.Data
                     .CreateEnumerable<ClusteringPrediction>(transformedDataView, false)
                     .ToArray();
-                if (candidateRequirement.Max != null)
+                if (candidateRequirement.Max > 0)
                 {
                     userData = userData.ToList().Take(candidateRequirement.Max).ToArray();
                 }
-
-                return (userData, prediction);
+                userData = userData
+                    .Where(u => u.SelectedClusterId == prediction.SelectedClusterId && u.Distance[prediction.SelectedClusterId] <= prediction.Distance[prediction.SelectedClusterId])
+                    .OrderBy(x => x.Distance[prediction.SelectedClusterId])
+                    .ToArray();
+                return userData;
             }
             catch (Exception ex)
             {
@@ -169,19 +154,42 @@ namespace matching_learning_algorithm
 
         private DataModel ProcessRequest(ProjectCandidateRequirement candidateRequirement)
         {
-            //var newPrediction = new ExpandoObject() as IDictionary<string, Object>;
-            //foreach (var skill in candidateRequirement.SkillsFilter)
-            //{
-            //    newPrediction.Add(skill.RequiredSkillId.ToString(), skill.Weight);
-            //}
-            //return newPrediction as ExpandoObject;
+            var skills = _skillRepository.GetSkills();
             var dataModel = new DataModel();
+            if (CsvHeaders.Count == 0)
+            {
+                var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
+                CsvHeaders.Add("candidateId");
+                CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
+            }
             foreach (var skill in candidateRequirement.SkillsFilter)
             {
-                var propertyInfo = dataModel.GetType().GetProperty(skill.RequiredSkillId.ToString().ToLower());
-                propertyInfo.SetValue(dataModel, Convert.ChangeType(skill.Weight, propertyInfo.PropertyType), null);
+                var skillInfo = skills.FirstOrDefault(s => s.Id == skill.RequiredSkillId);
+                if (skillInfo != null)
+                {
+                    var index = CsvHeaders.IndexOf(skillInfo.Name);
+                    if (index > -1)
+                    {
+                        index += 1;
+                        var fieldInfo = dataModel.GetType().GetField("attr" + index);
+                        fieldInfo.SetValue(dataModel, Convert.ChangeType(skill.Weight, fieldInfo.FieldType));
+                    }
+                }
             }
             return dataModel;
+        }
+
+        private (TextLoader.Column[], string[]) GenerateNames()
+        {
+            var columns = new List<TextLoader.Column>();
+            columns.Add(new TextLoader.Column("candidateId", DataKind.String, 0));
+            var names = new List<string>();
+            for (var i = 1; i <= 150; i++)
+            {
+                columns.Add(new TextLoader.Column("attr" + i, DataKind.Single, i));
+                names.Add("attr" + i);
+            }
+            return (columns.ToArray(), names.ToArray());
         }
     }
 }
