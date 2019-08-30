@@ -25,7 +25,8 @@ html, body {
 footer {
   height: 40px;
   background-color: white;
-  padding: 0 40px;  
+  padding: 0 40px;
+  margin: 0 40px;
 }
 
 .endava_footer {
