@@ -64,6 +64,18 @@ namespace matching_learning.api.Controllers.Common
                 return BadRequest(ModelState);
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
             var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Select(c => int.Parse(c)).ToList());
+            if (pcr.DeliveryUnitIdFilter != null)
+            {
+                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.DeliveryUnitIdFilter)).ToList();
+            }
+            if (pcr.InBenchFilter != null)
+            {
+                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.InBenchFilter)).ToList();
+            }
+            if (pcr.Max != 0)
+            {
+                candidates = candidates.Take(pcr.Max).ToList();
+            }
             var result = candidates.Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = 0, SkillRankings = null });
 
             return Ok(result);
