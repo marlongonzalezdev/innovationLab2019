@@ -6,6 +6,9 @@ export interface Evaluation {
    id: number;
    candidateId: number;
    evaluationType: EvaluationType;
+   evaluationTypeId: number;
    date: Date;
    skills: Skill[];
+   notes: string;
+   expertise: number;
 }

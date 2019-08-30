@@ -18,10 +18,10 @@
   </div>
   <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="skill">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Skill</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.skill.name}}</mat-cell>
-      </ng-container>
+<!--      <ng-container matColumnDef="skill">-->
+<!--        <mat-header-cell *matHeaderCellDef mat-sort-header>Skill</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let element">{{element.skill.name}}</mat-cell>-->
+<!--      </ng-container>-->
       <ng-container matColumnDef="evaluationType">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Evaluation Type</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.evaluationType.name}}</mat-cell>
@@ -63,5 +63,7 @@
     </mat-table>
     <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
   </div>
+
+  <button mat-button [routerLink]="'/candidates'" color="warn"><mat-icon>supervisor_account</mat-icon>Go back to Candidates</button>
 </div>
 

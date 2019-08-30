@@ -31,11 +31,11 @@ namespace matching_learning.api.Controllers.Common
             _skillRepository = skillRepository;
             _analyzer = analizer;
             _candidateRepository = candidateRepository;
-         }
+        }
 
         #region Retrieve
         /// <summary>
-        /// Get best candidates for a project.
+        /// Get best candidates for a project - no ML.
         /// </summary>
         /// <param name="pcr"></param>
         [HttpPost("GetProjectCandidates")]
@@ -46,15 +46,15 @@ namespace matching_learning.api.Controllers.Common
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-           return Ok(SearchProjectCandidatesEngine.GetProjectCandidates(pcr, _skillRepository));
-                
+
+            return Ok(SearchProjectCandidatesEngine.GetProjectCandidates(pcr, _skillRepository));
         }
 
         /// <summary>
         /// Get best candidates for a project.
         /// </summary>
         /// <param name="pcr"></param>
-        [HttpPost("GetProjectCandidatesNew")]
+        [HttpPost("GetProjectCandidatesML")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
@@ -62,6 +62,8 @@ namespace matching_learning.api.Controllers.Common
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
             var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Select(c => int.Parse(c)).ToList());
             if (pcr.DeliveryUnitIdFilter != null)
@@ -79,7 +81,6 @@ namespace matching_learning.api.Controllers.Common
             var result = candidates.Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = 0, SkillRankings = null });
 
             return Ok(result);
-            
         }
         #endregion
     }
