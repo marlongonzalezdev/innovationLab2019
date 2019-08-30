@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {EvaluationType} from '../../../shared/models/evaluation-type';
 import {SkillService} from '../../../shared/services/skill.service';
 import {Candidate} from '../../../shared/models/candidate';
+import {NotificationService} from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-evaluation',
@@ -21,8 +22,8 @@ export class EvaluationComponent implements OnInit {
   skillsWithEvaluation: Skill[] = [];
 
   constructor(private evaluationService: EvaluationService, private skillService: SkillService,
-              public dialogRef: MatDialogRef<EvaluationComponent>,  @Inject(MAT_DIALOG_DATA) private data: any) {
-
+              private notificationService: NotificationService,
+              public dialogRef: MatDialogRef<EvaluationComponent>, @Inject(MAT_DIALOG_DATA) private data: any) {
   }
 
   ngOnInit() {
@@ -44,14 +45,14 @@ export class EvaluationComponent implements OnInit {
 
       console.log(evaluation);
 
-      // this.service.addCandidate(candidate).subscribe(
-      //   elem => {
-      //     this.notificationService.sucess('Candidate saved successfully.');
-      //     this.onClear();
-      //     console.log(elem);
-      //     this.onClose();
-      //   }
-      // );
+      this.evaluationService.addEvaluation(evaluation).subscribe(
+        elem => {
+          this.notificationService.sucess('Evaluation saved successfully.');
+          this.onClear();
+          console.log(elem);
+          this.onClose();
+        }
+      );
     }
   }
 
