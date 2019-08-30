@@ -134,6 +134,7 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
+
         private SkillRoleView getFromTechnologyRole(TechnologyRole tr, int parentTechnologyId)
         {
             SkillRoleView res;
@@ -895,15 +896,40 @@ namespace matching_learning.common.Repositories
         #region SkillEstimatedExpertise
         public List<SkillEstimatedExpertise> GetSkillEstimatedExpertise()
         {
+            return (GetSkillEstimatedExpertiseByCandidateAndSkillIds(null, null));
+        }
+
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseBySkillIds(List<int> skillIds)
+        {
+            return (GetSkillEstimatedExpertiseByCandidateAndSkillIds(null, skillIds));
+        }
+
+        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds)
+        {
             var res = new List<SkillEstimatedExpertise>();
+
+            string whereCondition = "";
+
+            if (candidateIds != null && candidateIds.Count > 0)
+            {
+                string reqCandidatesStr = DBCommon.ConvertListIntToString(candidateIds);
+                whereCondition = $"WHERE [SEE].[CandidateId] IN ({reqCandidatesStr})";
+            }
+
+            if (skillIds != null && skillIds.Count > 0)
+            {
+                string reqSkillsStr = DBCommon.ConvertListIntToString(skillIds);
+                whereCondition = $"{(string.IsNullOrEmpty(whereCondition) ? "WHERE" : " AND")} [SEE].[SkillId] IN ({reqSkillsStr})";
+            }
 
             var query = "SELECT [SEE].[Id], " +
                         "       [SEE].[CandidateId], " +
                         "       [SEE].[SkillId], " +
                         "       [SEE].[Expertise] " +
-                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE]" +
-                        "INNER JOIN [dbo].[candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
-                        "                                   AND [C].[IsActive] = 1";
+                        "FROM [dbo].[SkillEstimatedExpertise] AS [SEE] " +
+                        "INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
+                        "                                   AND [C].[IsActive] = 1 " +
+                        $"{whereCondition}";
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
@@ -1020,24 +1046,6 @@ namespace matching_learning.common.Repositories
             }
 
             return (res);
-        }
-        
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseBySkillIds(List<int> skillIds)
-        {
-            var all = GetSkillEstimatedExpertise();
-
-            var res = all.Where(see => skillIds.Contains(see.Skill.Id));
-
-            return (res.ToList());
-        }
-
-        public List<SkillEstimatedExpertise> GetSkillEstimatedExpertiseByCandidateAndSkillIds(List<int> candidateIds, List<int> skillIds)
-        {
-            var all = GetSkillEstimatedExpertise();
-
-            var res = all.Where(see => candidateIds.Contains(see.Candidate.Id) && skillIds.Contains(see.Skill.Id));
-
-            return (res.ToList());
         }
 
         private SkillEstimatedExpertise GetSkillEstimatedExpertiseFromDataRow(DataRow dr, Candidate candidate, Skill skill)

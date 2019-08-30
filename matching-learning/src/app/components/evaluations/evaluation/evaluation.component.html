@@ -5,41 +5,69 @@
     <mat-icon>clear</mat-icon>
   </button>
 </mat-toolbar>
-
 <form [formGroup]="evaluationService.form" class="normal-form" (submit)="onSubmit()">
   <mat-grid-list cols="2" rowHeight="300px">
     <mat-grid-tile>
       <div class="controls-container">
         <input type="hidden" formControlName="$key">
+
         <mat-form-field>
-          <input formControlName="weight" matInput placeholder="Weight*">
-          <mat-error>The Weight field is mandatory</mat-error>
+          <mat-select formControlName="evaluationTypeId" placeholder="Evaluation type">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let evaluationType of evaluationTypes | async">
+              <mat-option [value]="evaluationType.id">{{evaluationType.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select formControlName="skillId" placeholder="Skills">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let skill of skillsList | async">
+              <mat-option [value]="skill.id">{{skill.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <textarea formControlName="notes" matInput placeholder="Notes"></textarea>
         </mat-form-field>
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
-<!--      <div class="controls-container">-->
-<!--        <mat-form-field>-->
-<!--          <mat-select formControlName="du" placeholder="Delivery Unit">-->
-<!--            <mat-option>None</mat-option>-->
-<!--            <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">-->
-<!--              <mat-option [value]="deliveryUnit.id">{{deliveryUnit.name}}</mat-option>-->
-<!--            </ng-container>-->
-<!--          </mat-select>-->
-<!--        </mat-form-field>-->
-<!--        <mat-form-field>-->
-<!--          <mat-select formControlName="relationType" placeholder="Relation Type">-->
-<!--            <mat-option>None</mat-option>-->
-<!--            <ng-container *ngFor="let relationType of relationTypes | async">-->
-<!--              <mat-option [value]="relationType.id">{{relationType.name}}</mat-option>-->
-<!--            </ng-container>-->
-<!--          </mat-select>-->
-<!--        </mat-form-field>-->
-<!--        <div class="button-row">-->
-<!--          <button mat-raised-button color="primary" type="submit" [disabled]="evaluationService.form.invalid">Submit</button>-->
-<!--          <button mat-raised-button color="warn" (click)="onClear()">Clear</button>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="controls-container">
+        <div class="skills__score">
+          <mat-label>Score</mat-label>
+          <mat-slider formControlName="weight" color="warn" class="expected-core" min="0" max="1" thumbLabel step="0.1"
+                      tickInterval="0.1"
+                      name="expectedScore">
+          </mat-slider>
+          <div class="skills__add">
+            <a mat-mini-fab color="primary" (click)="addSkillEvaluation()">
+              <mat-icon>post_add</mat-icon>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="button-row">
+        <button mat-raised-button color="primary" type="submit" [disabled]="evaluationService.form.invalid">Submit
+        </button>
+        <button mat-raised-button color="warn" (click)="onClear()">Clear</button>
+      </div>
     </mat-grid-tile>
   </mat-grid-list>
 </form>
+
+<div class="matches-container">
+  <div class="selected-skills__container">
+    <ul class="list-group skills__selected">
+      <li class="list-group-item" *ngFor="let skill of skillsWithEvaluation">
+        <span class="badge">{{skill.id}}</span> --- <span class="badge">{{skill.defaultExpertise}}
+        %</span>
+        <button mat-icon-button aria-label="delete" (click)="deleteSkillWithEvaluation(skill)" color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+

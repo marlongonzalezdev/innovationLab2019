@@ -7,7 +7,7 @@ namespace matching_learning.common.Domain.BusinessLogic
 {
     public class SearchProjectCandidatesEngine
     {
-        public static List<ProjectCandidate> GetProjectCandidates(ProjectCandidateRequirement pcr, ISkillRepository skillRepository)
+        public static List<ProjectCandidate> GetProjectCandidatesWeightedAverage(ProjectCandidateRequirement pcr, ISkillRepository skillRepository)
         {
             pcr.Normalize();
 
@@ -19,7 +19,7 @@ namespace matching_learning.common.Domain.BusinessLogic
             {
                 Candidate = fc,
                 Ranking = getRanking(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
-                SkillRankings = getSkillRankings(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
+                SkillExpertises = getSkillExpertises(pcr.SkillsFilter, getCandidateSkillEstimatedExpertise(fc, estimated)),
             }).Where(pc => pc.Ranking > 0).OrderByDescending(pc => pc.Ranking).Take(pcr.Max).ToList();
 
             return (res);
@@ -47,7 +47,7 @@ namespace matching_learning.common.Domain.BusinessLogic
             return (res);
         }
 
-        private static List<ProjectCandidateSkill> getSkillRankings(List<ProjectSkillRequirement> skillsFilter, List<SkillEstimatedExpertise> candidateExpertise)
+        private static List<ProjectCandidateSkill> getSkillExpertises(List<ProjectSkillRequirement> skillsFilter, List<SkillEstimatedExpertise> candidateExpertise)
         {
             var res = new List<ProjectCandidateSkill>();
 
@@ -60,7 +60,7 @@ namespace matching_learning.common.Domain.BusinessLogic
                     res.Add(new ProjectCandidateSkill()
                     {
                         Skill = ce.Skill,
-                        Ranking = ce.Expertise,
+                        Expertise = ce.Expertise,
                     });
                 }
             }

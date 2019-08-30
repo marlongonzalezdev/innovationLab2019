@@ -35,52 +35,82 @@ namespace matching_learning.api.Controllers.Common
 
         #region Retrieve
         /// <summary>
-        /// Get best candidates for a project - no ML.
+        /// Get best candidates for a project - based on Weighted Average.
         /// </summary>
         /// <param name="pcr"></param>
         [HttpPost("GetProjectCandidates")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
-        public IActionResult GetProjectCandidatesOld([FromBody] ProjectCandidateRequirement pcr)
+        public IActionResult GetProjectCandidatesWeightedAverage([FromBody] ProjectCandidateRequirement pcr)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(SearchProjectCandidatesEngine.GetProjectCandidates(pcr, _skillRepository));
+            return Ok(SearchProjectCandidatesEngine.GetProjectCandidatesWeightedAverage(pcr, _skillRepository));
         }
 
         /// <summary>
-        /// Get best candidates for a project.
+        /// Get best candidates for a project - based on Machine Learning.
         /// </summary>
         /// <param name="pcr"></param>
-        [HttpPost("GetProjectCandidatesML")]
+        [HttpPost("GetProjectCandidatesNew")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetProjectCandidates([FromBody] ProjectCandidateRequirement pcr)
+        public async Task<IActionResult> GetProjectCandidatesMachineLearning([FromBody] ProjectCandidateRequirement pcr)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
-            var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Keys.ToList());
-            if (pcr.DeliveryUnitIdFilter != null)
+
+            var candidateIds = analysisResult.Matches.Keys.ToList();
+            var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
+            var candidateExpertises = _skillRepository.GetSkillEstimatedExpertiseByCandidateAndSkillIds(candidateIds, skillIds);
+
+            var query = candidates.AsQueryable();
+
+            if ((pcr.InBenchFilter.HasValue) && (pcr.InBenchFilter.Value))
             {
-                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.DeliveryUnitIdFilter)).ToList();
+                query = query.Where(c => c.InBench);
             }
-            if (pcr.InBenchFilter != null)
+
+            if (pcr.DeliveryUnitIdFilter.HasValue)
             {
-                candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.InBenchFilter)).ToList();
+                query = query.Where(c => c.DeliveryUnit.Id.Equals(pcr.DeliveryUnitIdFilter.Value));
             }
+
+            if (pcr.RoleIdFilter.HasValue)
+            {
+                query = query.Where(c => c.ActiveRole.Id.Equals(pcr.RoleIdFilter.Value));
+            }
+
+            if (pcr.RelationTypeFilter.HasValue)
+            {
+                query = query.Where(c => c.RelationType.Equals(pcr.RelationTypeFilter.Value));
+            }
+
             if (pcr.Max != 0)
             {
-                candidates = candidates.Take(pcr.Max).ToList();
+                query = query.Take(pcr.Max);
             }
-            var result = candidates
-                .Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = decimal.Parse(analysisResult.Matches[candidate.Id].ToString()), SkillRankings = null })
-                .OrderBy(r => r.Ranking);
+
+            var result = query.Select(candidate => new ProjectCandidate
+            {
+                Candidate = candidate,
+                Ranking = decimal.Parse(analysisResult.Matches[candidate.Id].ToString()),
+                SkillExpertises = candidateExpertises
+                    .Where(exp => exp.Candidate.Id == candidate.Id)
+                    .Select(exp => new ProjectCandidateSkill()
+                    {
+                        Skill = exp.Skill,
+                        Expertise = exp.Expertise,
+                    }).ToList(),
+            })
+                .OrderBy(r => r.Ranking)
+                .ToList();
 
             return Ok(result);
 

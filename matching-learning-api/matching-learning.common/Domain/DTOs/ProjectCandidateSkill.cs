@@ -4,11 +4,11 @@
     {
         public Skill Skill { get; set; }
 
-        public decimal Ranking { get; set; }
+        public decimal Expertise { get; set; }
 
         public override string ToString()
         {
-            return $"{this.Skill.Name} = {this.Ranking * 100:#.0}%";
+            return $"{this.Skill.Name} = {this.Expertise * 100:#0.0}%";
         }
     }
 }
