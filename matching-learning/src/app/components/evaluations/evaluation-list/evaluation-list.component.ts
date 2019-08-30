@@ -18,7 +18,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   candidate: Candidate;
 
   dataSource: any;
-  displayedColumns: string[] = ['evaluationType', 'expertise', 'date', 'actions'];
+  displayedColumns: string[] = ['evaluationType', 'date', 'actions'];
   searchKey: string;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
