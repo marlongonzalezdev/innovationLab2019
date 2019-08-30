@@ -9,18 +9,18 @@ namespace matching_learning.common.Domain.DTOs
 
         public decimal Ranking { get; set; }
 
-        public List<ProjectCandidateSkill> SkillRankings { get; set; }
+        public List<ProjectCandidateSkill> SkillExpertises { get; set; }
 
-        public string SkillRankingsSummary
+        public string SkillExpertisesSummary
         {
             get
             {
-                if (this.SkillRankings == null || this.SkillRankings.Count == 0) return ("");
+                if (this.SkillExpertises == null || this.SkillExpertises.Count == 0) return ("");
 
                 var skillValues = new StringBuilder();
                 var isFirst = true;
 
-                foreach (var sk in this.SkillRankings)
+                foreach (var sk in this.SkillExpertises)
                 {
                     if (isFirst)
                     {
