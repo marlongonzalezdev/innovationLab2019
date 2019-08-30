@@ -134,6 +134,7 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
+
         private SkillRoleView getFromTechnologyRole(TechnologyRole tr, int parentTechnologyId)
         {
             SkillRoleView res;
