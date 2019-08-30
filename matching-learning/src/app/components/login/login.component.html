@@ -1,13 +1,16 @@
-<mat-card>    
-    <form [formGroup]="loginService.loginForm" (submit)="onSubmit(loginService.loginForm.value)">     
-        <div class="form-group">
-            <input formControlName="user" matInput placeholder="User">
-        </div>
-        <div class="form-group">
-            <input formControlName="password" type="password" placeholder="Password">
+<mat-card class="formContainer">    
+    <form [formGroup]="loginService.loginForm" (submit)="onSubmit(loginService.loginForm.value)">
+        <mat-form-field color="warn" class="input-field">
+            <input formControlName="user" matInput placeholder="User">            
+        </mat-form-field>   
+        <mat-form-field color="warn" class="input-field">
+            <input matInput formControlName="password" type="password" placeholder="Password">            
+        </mat-form-field>             
+        <div>
+            <mat-label *ngIf="messageLogin">{{messageLogin}}</mat-label>
         </div>
         <div class="form-group">
             <button mat-raised-button color="warn" type="submit">Login</button>
-        </div>        
+        </div>                      
     </form>   
 </mat-card>

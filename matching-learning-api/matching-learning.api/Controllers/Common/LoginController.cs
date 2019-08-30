@@ -72,7 +72,7 @@ namespace matching_learning.api.Controllers.Common
 
         private bool validatePassword(UserCredentials uc)
         {
-            return (string.Compare(uc.UserName, uc.Password, StringComparison.InvariantCultureIgnoreCase) != 0);
+            return (string.Compare(uc.UserName, uc.Password, StringComparison.InvariantCultureIgnoreCase) == 0);
         }
     }
 }

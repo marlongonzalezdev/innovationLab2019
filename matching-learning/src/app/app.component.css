@@ -5,3 +5,22 @@
 }
 
 */
+mat-toolbar-row {
+    background-color: rgb(222, 65, 27);
+    color: white;
+    font-family: roboto_condensedbold, Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: -.028em;
+}
+
+.logo-container {
+    float: right;
+    position: absolute;
+    right: 80px;
+    top: 6px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+}

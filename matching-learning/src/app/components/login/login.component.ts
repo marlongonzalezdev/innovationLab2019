@@ -10,27 +10,30 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
+  messageLogin: string;
   constructor(public loginService: LoginService, private route: ActivatedRoute,
               private router: Router) { }
 
   ngOnInit() {
+    this.messageLogin = null;
   }
 
   onSubmit(loginData){
-     const credentials: LoginData = {
+    this.messageLogin = null;
+    const credentials: LoginData = {
        userName: loginData.user,
        password: loginData.password,
        authenticated: null,
        message: null
      };
-     this.loginService.getUserAuthenticated(credentials)
+    this.loginService.getUserAuthenticated(credentials)
      .subscribe(response => {
        if (response.authenticated) {
          this.router.navigate(['/build']);
        } else {
          this.router.navigate(['/']);
        }
+       this.messageLogin = response.message;
      });
   }
 

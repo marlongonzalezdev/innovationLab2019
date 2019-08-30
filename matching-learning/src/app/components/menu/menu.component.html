@@ -13,6 +13,9 @@
             <a mat-button [routerLink]="'/activities'"> Activities </a>
             <a mat-button [routerLink]="'/create-activity'"> Create Activity </a>-->
         </div>
+        <div class="userContainer">
+           <mat-label *ngIf="currentUser">User:{{currentUser.userName}}</mat-label>
+        </div>
         <div class="logo-container"><img class="logo" src="../../../assets/logo.png" alt=""></div>
     </mat-toolbar-row>
 </mat-toolbar>
@@ -70,7 +73,7 @@
                 </a>
             </div>
             <mat-divider></mat-divider>
-            <a mat-list-item (click)="sidenav.toggle()" href="">
+            <a mat-list-item (click)="Logout()" href="">
                 <mat-icon>exit_to_app</mat-icon>
                 Logout
             </a>
