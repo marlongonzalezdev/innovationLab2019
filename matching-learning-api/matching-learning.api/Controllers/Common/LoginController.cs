@@ -42,7 +42,8 @@ namespace matching_learning.api.Controllers.Common
                 res = new AuthenticationResult()
                 {
                     Authenticated = false,
-                    Message = $"Invalid user {uc.UserName}."
+                    //Message = $"Invalid user {uc.UserName}."
+                    Message = "Invalid user/password."
                 };
             }
             else if (!validatePassword(uc))
@@ -50,7 +51,8 @@ namespace matching_learning.api.Controllers.Common
                 res = new AuthenticationResult()
                 {
                     Authenticated = false,
-                    Message = $"Invalid password for user {uc.UserName}."
+                    //Message = $"Invalid user/password for user {uc.UserName}."
+                    Message = "Invalid user/password."
                 };
             }
             else

@@ -62,7 +62,7 @@ export class MatchesComponent implements OnInit {
       docType: match.candidate.docType,
       docNumber: match.candidate.docNumber,
       employeeNumber: match.candidate.employeeNumber,
-      skillRankingsSummary: match.skillRankingsSummary
+      skillExpertisesSummary: match.skillExpertisesSummary
     };
 
     const dialogRef = this.dialog.open(UserDetailsComponent, dialogConfig);

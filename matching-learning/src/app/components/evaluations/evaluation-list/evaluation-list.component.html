@@ -1,7 +1,7 @@
 <div class="container">
     <h1 *ngIf="candidate?.name">Evaluations: <b>{{candidate.name}}</b></h1>
     <div class="container">
-        <button class="add_button" mat-raised-button color="warn" (click)="onCreate()">
+        <button class="add_button" mat-raised-button color="warn" (click)="onCreate(candidate)">
             <mat-icon>add</mat-icon>
         </button>
         <div class="search-div">
@@ -26,6 +26,10 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Date</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{element.date|date}}</mat-cell>
             </ng-container>
+          <ng-container matColumnDef="notes">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Notes</mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.evaluationType.notes}}">{{element.notes?'See details':'No notes'}}</mat-cell>
+          </ng-container>
             <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let row">
@@ -55,6 +59,5 @@
         </mat-table>
         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
     </div>
+    <a class="go_candidates" [routerLink]="'/candidates'" color="warn"><mat-icon>supervisor_account</mat-icon>Go back to Candidates</a>
 </div>
-
-<a class="go_candidates" [routerLink]="'/candidates'" color="warn"><mat-icon>supervisor_account</mat-icon>Go back to Candidates</a>
