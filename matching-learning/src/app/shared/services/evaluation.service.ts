@@ -18,9 +18,10 @@ export class EvaluationService {
     $key: new FormControl(-1),
     candidateId: new FormControl(''),
     weight: new FormControl(0, Validators.required),
-    evaluationType: new FormControl(0, Validators.required),
-    skills: new FormControl(0, Validators.required),
-    candidateName: new FormControl('')
+    evaluationTypeId: new FormControl(0, Validators.required),
+    skillId: new FormControl(0, Validators.required),
+    candidateName: new FormControl(''),
+    notes: new FormControl('')
   });
 
   InitializeFormGroup() {
@@ -28,9 +29,10 @@ export class EvaluationService {
       $key: -1,
       candidateId: null,
       weight: 0,
-      evaluationType: 0,
-      skills: 0,
-      candidateName: ''
+      evaluationTypeId: 0,
+      skillId: 0,
+      candidateName: '',
+      notes: ''
     });
   }
 

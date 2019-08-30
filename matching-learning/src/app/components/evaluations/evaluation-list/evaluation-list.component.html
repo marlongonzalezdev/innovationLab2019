@@ -1,7 +1,7 @@
 <div class="container">
     <h1 *ngIf="candidate?.name">Evaluations: <b>{{candidate.name}}</b></h1>
     <div class="container">
-        <button class="add_button" mat-raised-button color="warn" (click)="onCreate()">
+        <button class="add_button" mat-raised-button color="warn" (click)="onCreate(candidate)">
             <mat-icon>add</mat-icon>
         </button>
         <div class="search-div">

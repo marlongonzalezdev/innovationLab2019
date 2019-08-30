@@ -36,9 +36,9 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   onEdit(row: any) {
   }
 
-  onCreate() {
+  onCreate(candidate: Candidate) {
     this.evaluationService.InitializeFormGroup();
-    this.openDialog();
+    this.openDialog(candidate);
   }
 
   applyFilter() {
@@ -50,11 +50,14 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     this.applyFilter();
   }
 
-  openDialog() {
+  openDialog(selectedCandidate) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '40%';
+    dialogConfig.data = {
+       id: selectedCandidate.id
+    };
     const dialogRef = this.dialog.open(EvaluationComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {

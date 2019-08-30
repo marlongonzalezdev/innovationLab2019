@@ -10,5 +10,4 @@ export interface Evaluation {
    date: Date;
    skills: Skill[];
    notes: string;
-   expertise: number;
 }
