@@ -65,7 +65,7 @@ namespace matching_learning.api.Controllers.Common
 
             var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
-            var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Select(c => int.Parse(c)).ToList());
+            var candidates = _candidateRepository.GetCandidateByIds(analysisResult.Matches.Keys.ToList());
             if (pcr.DeliveryUnitIdFilter != null)
             {
                 candidates = candidates.Where(c => c.DeliveryUnit.Id.Equals(pcr.DeliveryUnitIdFilter)).ToList();
@@ -78,9 +78,12 @@ namespace matching_learning.api.Controllers.Common
             {
                 candidates = candidates.Take(pcr.Max).ToList();
             }
-            var result = candidates.Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = 0, SkillRankings = null });
+            var result = candidates
+                .Select(candidate => new ProjectCandidate { Candidate = candidate, Ranking = decimal.Parse(analysisResult.Matches[candidate.Id].ToString()), SkillRankings = null })
+                .OrderBy(r => r.Ranking);
 
             return Ok(result);
+
         }
         #endregion
     }
