@@ -47,7 +47,7 @@ namespace matching_learning_algorithm
 
             return Task.FromResult(new RecommendationResponse
             {
-                Matches = predictionData.Select(c => c.CandidateId)
+                Matches = predictionData
             });
         }
         private void GenerateDataset()
@@ -117,7 +117,8 @@ namespace matching_learning_algorithm
             }
 
         }
-        private ClusteringPrediction[] PredictValue(ProjectCandidateRequirement candidateRequirement)
+
+        private Dictionary<int, float> PredictValue(ProjectCandidateRequirement candidateRequirement)
         {
             string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
             try
@@ -125,6 +126,7 @@ namespace matching_learning_algorithm
                 var result = GenerateNames();
                 var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
+                var responseValues = new Dictionary<int, float>();
 
                 ITransformer trainedModel = MLContext.Model.Load(modelPath, out var modelSchema);
 
@@ -140,8 +142,12 @@ namespace matching_learning_algorithm
                     .Where(u => u.SelectedClusterId == prediction.SelectedClusterId)
                     .OrderBy(x => x.Distance[prediction.SelectedClusterId])
                     .ToArray();
-
-                return userData;
+                foreach(var u in userData)
+                {
+                    responseValues.Add(int.Parse(u.CandidateId), u.Distance[u.SelectedClusterId]);
+                }
+                                
+                return responseValues;
             }
             catch (Exception ex)
             {

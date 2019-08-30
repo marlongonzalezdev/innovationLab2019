@@ -65,7 +65,8 @@ namespace matching_learning.api.Controllers.Common
 
             var skillIds = pcr.SkillsFilter.Select(sf => sf.RequiredSkillId).Distinct().ToList();
             var analysisResult = await _analyzer.GetRecommendationsAsync(pcr, false);
-            var candidateIds = analysisResult.Matches.Select(c => int.Parse(c)).ToList();
+
+            var candidateIds = analysisResult.Matches.Keys.ToList();
             var candidates = _candidateRepository.GetCandidateByIds(candidateIds);
             var candidateExpertises = _skillRepository.GetSkillEstimatedExpertiseByCandidateAndSkillIds(candidateIds, skillIds);
 
@@ -96,12 +97,10 @@ namespace matching_learning.api.Controllers.Common
                 query = query.Take(pcr.Max);
             }
 
-            candidates = query.ToList();
-
-            var result = candidates.Select(candidate => new ProjectCandidate
+            var result = query.Select(candidate => new ProjectCandidate
             {
                 Candidate = candidate,
-                Ranking = 0,
+                Ranking = decimal.Parse(analysisResult.Matches[candidate.Id].ToString()),
                 SkillExpertises = candidateExpertises
                     .Where(exp => exp.Candidate.Id == candidate.Id)
                     .Select(exp => new ProjectCandidateSkill()
@@ -109,9 +108,12 @@ namespace matching_learning.api.Controllers.Common
                         Skill = exp.Skill,
                         Expertise = exp.Expertise,
                     }).ToList(),
-            }).ToList();
+            })
+                .OrderBy(r => r.Ranking)
+                .ToList();
 
             return Ok(result);
+
         }
         #endregion
     }
