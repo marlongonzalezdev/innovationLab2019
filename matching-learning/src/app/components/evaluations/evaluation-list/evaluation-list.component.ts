@@ -18,7 +18,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
   candidate: Candidate;
 
   dataSource: any;
-  displayedColumns: string[] = ['evaluationType', 'date', 'actions'];
+  displayedColumns: string[] = ['evaluationType', 'date', 'notes', 'actions'];
   searchKey: string;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
@@ -77,5 +77,9 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
           this.dataSource.paginator = this.paginator;
         });
     });
+  }
+
+  getToolTipData(element: any): string {
+    return element.notes;
   }
 }

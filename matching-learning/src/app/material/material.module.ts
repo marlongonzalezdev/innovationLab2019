@@ -26,7 +26,7 @@ import * as Material from '@angular/material';
     Material.MatSliderModule,
     Material.MatSortModule,
     Material.MatDialogModule,
-    Material.MatTooltipModule
+    Material.MatTooltipModule,
   ],
   exports: [
     Material.MatSelectModule,
