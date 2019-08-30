@@ -100,7 +100,7 @@ namespace matching_learning.api.Controllers.Common
             var result = query.Select(candidate => new ProjectCandidate
             {
                 Candidate = candidate,
-                Ranking = (decimal) analysisResult.Matches[candidate.Id],
+                Ranking = ((decimal) analysisResult.Matches[candidate.Id]) / 100.0M,
                 SkillExpertises = candidateExpertises
                     .Where(exp => exp.Candidate.Id == candidate.Id)
                     .Select(exp => new ProjectCandidateSkill()
