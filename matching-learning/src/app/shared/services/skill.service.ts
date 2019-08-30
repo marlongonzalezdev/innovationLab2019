@@ -8,7 +8,6 @@ import { catchError } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {SkillServiceBase} from './skill-service-base';
 import { Skill } from '../models/skill';
-import { version } from 'punycode';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -43,7 +42,7 @@ export class SkillService implements SkillServiceBase {
     .pipe(
       catchError(this.handleError<Skill[]>('getSkill', []))
     );
-  } 
+  }
   getSkills(): Observable<Skill[]> {
     const route = '/Skills/SkillViews';
     return this.http.get<Skill[]>(`${this.baseUrl}${route}`, httpOptions)

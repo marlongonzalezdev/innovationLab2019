@@ -1,3 +1,4 @@
+import { LoginService } from './shared/services/login.service';
 import { SkillService } from './shared/services/skill.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -39,6 +40,8 @@ import { RegionListComponent } from './components/regions/region-list/region-lis
 import { RegionsComponent } from './components/regions/regions.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { LoginComponent } from './components/login/login.component';
+
 
 @NgModule({
   declarations: [
@@ -62,7 +65,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     RegionsComponent,
     RegionListComponent,
     PageNotFoundComponent,
-
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -82,7 +85,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     DeliveryUnitService,
     RelationTypeService,
     NotificationService,
-    EvaluationService
+    EvaluationService,
+    LoginService
   ],
   bootstrap: [AppComponent],
   entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent]
