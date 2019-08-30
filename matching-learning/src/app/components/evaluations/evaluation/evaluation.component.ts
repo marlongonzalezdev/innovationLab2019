@@ -32,8 +32,11 @@ export class EvaluationComponent implements OnInit {
         id: -1,
         candidateId: this.evaluationService.form.controls.candidateId.value,
         date: new Date(),
-        evaluationType: this.evaluationService.form.controls.evaluationType.value,
-        skills: []
+        evaluationType: null,
+        evaluationTypeId: this.evaluationService.form.controls.evaluationType.value,
+        skills: [],
+        notes: '',
+        expertise: null
         // deliveryUnitId: 13,
         // deliveryUnit: null,
         // relationType: 1,
