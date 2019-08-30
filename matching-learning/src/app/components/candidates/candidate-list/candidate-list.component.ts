@@ -50,7 +50,6 @@ export class CandidateListComponent implements OnInit {
   }
 
   onEdit(row) {
-    this.candidateService.populateForm(row);
     this.openDialog();
   }
 
