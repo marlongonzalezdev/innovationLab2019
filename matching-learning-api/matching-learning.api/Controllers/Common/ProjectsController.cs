@@ -38,7 +38,7 @@ namespace matching_learning.api.Controllers.Common
         /// Get best candidates for a project - based on Weighted Average.
         /// </summary>
         /// <param name="pcr"></param>
-        [HttpPost("GetProjectCandidates")]
+        [HttpPost("GetProjectCandidatesWA")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
@@ -54,7 +54,7 @@ namespace matching_learning.api.Controllers.Common
         /// Get best candidates for a project - based on Machine Learning.
         /// </summary>
         /// <param name="pcr"></param>
-        [HttpPost("GetProjectCandidatesNew")]
+        [HttpPost("GetProjectCandidates")]
         [ProducesResponseType(typeof(List<ProjectCandidate>), 200)]
         [Consumes("application/json")]
         [ProducesResponseType(500)]
@@ -100,7 +100,7 @@ namespace matching_learning.api.Controllers.Common
             var result = query.Select(candidate => new ProjectCandidate
             {
                 Candidate = candidate,
-                Ranking = decimal.Parse(analysisResult.Matches[candidate.Id].ToString()),
+                Ranking = (decimal) analysisResult.Matches[candidate.Id],
                 SkillExpertises = candidateExpertises
                     .Where(exp => exp.Candidate.Id == candidate.Id)
                     .Select(exp => new ProjectCandidateSkill()
@@ -109,11 +109,10 @@ namespace matching_learning.api.Controllers.Common
                         Expertise = exp.Expertise,
                     }).ToList(),
             })
-                .OrderBy(r => r.Ranking)
+                .OrderByDescending(r => r.Ranking)
                 .ToList();
 
             return Ok(result);
-
         }
         #endregion
     }
