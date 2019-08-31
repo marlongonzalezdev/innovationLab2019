@@ -16,7 +16,7 @@ import {UserDetailsComponent} from '../user-details/user-details.component';
 })
 export class MatchesComponent implements OnInit {
 
-    displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'inBench', 'matchingScore'];
+    displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'grade', 'projectName', 'projectSince', 'matchingScore'];
     dataSource: any;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
@@ -62,6 +62,9 @@ export class MatchesComponent implements OnInit {
       docType: match.candidate.docType,
       docNumber: match.candidate.docNumber,
       employeeNumber: match.candidate.employeeNumber,
+	  gradeDescription: match.candidate.gradeDescription,
+	  currentProjectDescription: match.candidate.currentProjectDescription,
+	  currentProjectDuration: match.candidate.currentProjectDuration,
       skillExpertisesSummary: match.skillExpertisesSummary
     };
 

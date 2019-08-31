@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GenFu;
 using matching_learning_algorithm.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

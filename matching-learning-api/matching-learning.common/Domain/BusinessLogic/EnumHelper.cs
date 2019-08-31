@@ -20,5 +20,10 @@ namespace matching_learning.common.Domain.BusinessLogic
 
             return value.ToString();
         }
+
+        public static string GetEnumShortDescription(Enum value)
+        {
+            return value.ToString();
+        }
     }
 }

@@ -101,113 +101,150 @@
 <!--</div>-->
 
 <mat-grid-list cols="2">
-    <mat-grid-tile class="photo_card" >
-        <mat-card class="mat-elevation-z0">
-            <mat-card-header>
-                <!-- <div mat-card-avatar class="example-header-image"></div>-->
-                <mat-card-title>{{data.name}}</mat-card-title>
-                <mat-card-subtitle>{{data.role}}</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image src="{{data.picture}}" alt="{{data.name}}">
-            <mat-card-content>
-                <p>
-                    <!--          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.-->
-                    <!--          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally-->
-                    <!--          bred for hunting.-->
-                </p>
-            </mat-card-content>
-            <!--<mat-card-actions>
+	<mat-grid-tile class="photo_card" >
+		<mat-card class="mat-elevation-z0">
+			<mat-card-header>
+				<!-- <div mat-card-avatar class="example-header-image"></div>-->
+				<mat-card-title>{{data.name}}</mat-card-title>
+				<mat-card-subtitle>{{data.role}}</mat-card-subtitle>
+			</mat-card-header>
+			<img mat-card-image src="{{data.picture}}" alt="{{data.name}}">
+				<mat-card-content>
+					<p>
+						<!--          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.-->
+						<!--          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally-->
+						<!--          bred for hunting.-->
+					</p>
+				</mat-card-content>
+				<!--<mat-card-actions>
               <button mat-button>LIKE</button>
               <button mat-button>SHARE</button>
             </mat-card-actions>-->
-        </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile class="user-card">
-        <div *ngIf="data">
-            <mat-card class="mat-elevation-z0">
-                <mat-card-content>
-                    <table class="user_details">
-                        <tr>
-                            <td width="50%">
-                                <mat-label><b>Delivery Unit:</b></mat-label>
-                            </td>
-                            <td width="50%">
-                                <mat-label>{{data.deliveryUnit}}</mat-label>
-                            </td>
-                        </tr>
+			</mat-card>
+		</mat-grid-tile>
+		<mat-grid-tile class="user-card">
+			<div *ngIf="data">
+				<mat-card class="mat-elevation-z0">
+					<mat-card-content>
+						<table class="user_details">
+							<tr>
+								<td width="50%">
+									<mat-label>
+										<b>Delivery Unit:</b>
+									</mat-label>
+								</td>
+								<td width="50%">
+									<mat-label>{{data.deliveryUnit}}</mat-label>
+								</td>
+							</tr>
 
-                        <tr>
-                            <td>
-                                <mat-label><b>Role:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.role}}</mat-label>
-                            </td>
-                        </tr>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Role:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.role}}</mat-label>
+								</td>
+							</tr>
 
-                        <tr>
-                            <td>
-                                <mat-label><b>Relation:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.relationType === 1 ? "Employee" : (data.relationType === 2 ? "Candidate" : (data.relationType === 3 ? "External" : " "))}}</mat-label>
-                            </td>
-                        </tr>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Relation:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.relationType === 1 ? "Employee" : (data.relationType === 2 ? "Candidate" : (data.relationType === 3 ? "External" : " "))}}</mat-label>
+								</td>
+							</tr>
 
-                        <tr>
-                            <td>
-                                <mat-label><b>Bench:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.inBench ? "&#10004;" : " "}}</mat-label>
-                            </td>
-                        </tr>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Grade:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.gradeDescription}}</mat-label>
+								</td>
+							</tr>
 
-                        <tr>
-                            <td>
-                                <mat-label><b>Doc. Type:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.docType === 1 ? "National Identity" : (data.docType === 2 ? "Passport" : " ")}}</mat-label>
-                            </td>
-                        </tr>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Project:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.currentProjectDescription}}</mat-label>
+								</td>
+							</tr>
 
-                        <tr>
-                            <td>
-                                <mat-label><b>Doc. Number:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.docNumber}}</mat-label>
-                            </td>
-                        </tr>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Project since:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.currentProjectDuration}}</mat-label>
+								</td>
+							</tr>
 
-<!--                        <tr>-->
-<!--                            <td>-->
-<!--                                <mat-label><b>Employee Number:</b></mat-label>-->
-<!--                            </td>-->
-<!--                            <td>-->
-<!--                                <mat-label>{{data.employeeNumber}}</mat-label>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td>-->
-<!--                                <mat-label><b>Skills Expertises:</b></mat-label>-->
-<!--                            </td>-->
-<!--                            <td>-->
-<!--                                <mat-label>{{data.skillExpertisesSummary}}</mat-label>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-                        <tr>
-                            <td>
-                                <mat-label><b>Ranking:</b></mat-label>
-                            </td>
-                            <td>
-                                <mat-label>{{data.ranking | percent:'1.1-1'}}</mat-label>
-                            </td>
-                        </tr>
-                    </table>
-                </mat-card-content>
-            </mat-card>
-        </div>
-    </mat-grid-tile>
-</mat-grid-list>
+							<tr>
+								<td>
+									<mat-label>
+										<b>Doc. Type:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.docType === 1 ? "National Identity" : (data.docType === 2 ? "Passport" : " ")}}</mat-label>
+								</td>
+							</tr>
+
+							<tr>
+								<td>
+									<mat-label>
+										<b>Doc. Number:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.docNumber}}</mat-label>
+								</td>
+							</tr>
+
+							<!--                        <tr>-->
+							<!--                            <td>-->
+							<!--                                <mat-label><b>Employee Number:</b></mat-label>-->
+							<!--                            </td>-->
+							<!--                            <td>-->
+							<!--                                <mat-label>{{data.employeeNumber}}</mat-label>-->
+							<!--                            </td>-->
+							<!--                        </tr>-->
+							<!--                        <tr>-->
+							<!--                            <td>-->
+							<!--                                <mat-label><b>Skills Expertises:</b></mat-label>-->
+							<!--                            </td>-->
+							<!--                            <td>-->
+							<!--                                <mat-label>{{data.skillExpertisesSummary}}</mat-label>-->
+							<!--                            </td>-->
+							<!--                        </tr>-->
+							<tr>
+								<td>
+									<mat-label>
+										<b>Ranking:</b>
+									</mat-label>
+								</td>
+								<td>
+									<mat-label>{{data.ranking | percent:'1.1-1'}}</mat-label>
+								</td>
+							</tr>
+						</table>
+					</mat-card-content>
+				</mat-card>
+			</div>
+		</mat-grid-tile>
+	</mat-grid-list>
+	

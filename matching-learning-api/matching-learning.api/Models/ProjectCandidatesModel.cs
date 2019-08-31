@@ -1,7 +1,5 @@
-﻿using matching_learning.common.Domain.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace matching_learning.api.Models
 {

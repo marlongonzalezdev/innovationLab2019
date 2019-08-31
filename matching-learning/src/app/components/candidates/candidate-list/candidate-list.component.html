@@ -27,10 +27,10 @@
     </ng-container>
     <ng-container matColumnDef="activeRole">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Active Role</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.activeRole.name}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.activeRole?.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="inBench">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>Bench</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Project</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.inBench ? "&#10004;" : " "}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="isActive">

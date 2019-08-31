@@ -9,7 +9,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.ML.Data;
-using System.Dynamic;
 using Microsoft.ML.Trainers;
 
 namespace matching_learning_algorithm
