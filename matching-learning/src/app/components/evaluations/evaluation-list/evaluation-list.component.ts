@@ -45,6 +45,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
 
+
   onSearchClear() {
     this.searchKey = '';
     this.applyFilter();
@@ -75,11 +76,16 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
           this.dataSource = new MatTableDataSource<Evaluation>(this.candidate.evaluations);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
+          this.dataSource.filterPredicate = (data, filter: string)  => {
+            const accumulator = (currentTerm, key) => {
+              return key === 'evaluationType' ? currentTerm + data.evaluationType.name : currentTerm + data[key];
+            };
+            const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+            // Transform the filter by converting it to lowercase and removing whitespace.
+            const transformedFilter = filter.trim().toLowerCase();
+            return dataStr.indexOf(transformedFilter) !== -1;
+          };
         });
     });
-  }
-
-  getToolTipData(element: any): string {
-    return element.notes;
   }
 }
