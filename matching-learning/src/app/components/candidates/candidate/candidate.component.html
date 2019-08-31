@@ -1,9 +1,9 @@
 <mat-toolbar>
-  <span>{{service.form.controls['$key'].value=== -1 ? "Add Candidate":"Modify Candidate"}}</span>
+  <span>{{candidateService.form.controls['$key'].value=== -1 ? "Add Candidate":"Modify Candidate"}}</span>
   <span class="fill-remaining-space"></span>
   <button color="warn" class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
 </mat-toolbar>
-<form [formGroup]="service.form" class="normal-form" (submit)="onSubmit()">
+<form [formGroup]="candidateService.form" class="normal-form" (submit)="onSubmit()">
   <mat-grid-list cols="2">
     <mat-grid-tile>
       <div class="controls-container">
@@ -23,7 +23,7 @@
           <mat-checkbox color="warn" formControlName="isInBench">Is in bench</mat-checkbox>
         </div>
         <div class="button-row">
-          <button mat-raised-button type="submit" [disabled]="service.form.invalid">Submit</button>
+          <button mat-raised-button type="submit" [disabled]="candidateService.form.invalid">Submit</button>
           <button mat-raised-button (click)="onClear()">Clear</button>
         </div>
       </div>
@@ -47,10 +47,10 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field color="warn">
-          <mat-select formControlName="relationType" placeholder="Role">
+          <mat-select formControlName="roleId" placeholder="Role">
             <mat-option>None</mat-option>
-            <ng-container *ngFor="let relationType of relationTypes | async">
-              <mat-option [value]="relationType.id">{{relationType.name}}</mat-option>
+            <ng-container *ngFor="let role of roles | async">
+              <mat-option [value]="role.id">{{role.name}}</mat-option>
             </ng-container>
           </mat-select>
         </mat-form-field>
