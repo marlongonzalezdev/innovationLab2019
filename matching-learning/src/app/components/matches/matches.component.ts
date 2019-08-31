@@ -55,7 +55,7 @@ export class MatchesComponent implements OnInit {
       name: match.candidate.name,
       picture: match.candidate.picture,
       deliveryUnit: match.candidate.deliveryUnit.name,
-      role: match.candidate.activeRole.name,
+      role: match.candidate.candidateRole.name,
       relationType: match.candidate.relationType,
       inBench: match.candidate.inBench,
       ranking: match.ranking,

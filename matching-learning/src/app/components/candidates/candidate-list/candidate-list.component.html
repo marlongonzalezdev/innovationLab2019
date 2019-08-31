@@ -25,9 +25,9 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Unit</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.deliveryUnit.name}}</mat-cell>
     </ng-container>
-    <ng-container matColumnDef="activeRole">
+    <ng-container matColumnDef="candidateRole">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Active Role</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.activeRole?.name}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.candidateRole.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="inBench">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Project</mat-header-cell>

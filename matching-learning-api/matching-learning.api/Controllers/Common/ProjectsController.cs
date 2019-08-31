@@ -123,7 +123,7 @@ namespace matching_learning.api.Controllers.Common
 
             if (pcr.RoleIdFilter.HasValue)
             {
-                query = query.Where(c => c.ActiveRole.Id.Equals(pcr.RoleIdFilter.Value));
+                query = query.Where(c => c.CandidateRoleId.Equals(pcr.RoleIdFilter.Value));
             }
 
             if (pcr.RelationTypeFilter.HasValue)

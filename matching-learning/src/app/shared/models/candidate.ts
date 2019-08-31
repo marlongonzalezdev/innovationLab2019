@@ -1,8 +1,7 @@
 import {DeliveryUnit} from './deliveryUnit';
 
-import {ActiveRole} from './activeRole';
+import {Role} from './role';
 import {Evaluation} from './evaluation';
-import {CandidateRolHistory} from './rolesHistory';
 
 export interface Candidate {
   id: number;
@@ -16,8 +15,8 @@ export interface Candidate {
   docType: number;
   docNumber: string;
   employeeNumber: number;
-  candidateRolHistory: CandidateRolHistory[];
-  activeRole: ActiveRole;
+  candidateRoleId: number;
+  candidateRole: Role;
   picture: string;
   isActive: boolean;
   gradeDescription: string;

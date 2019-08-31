@@ -10,7 +10,6 @@ import {RelationTypeService} from 'src/app/shared/services/relation-type.service
 import {NotificationService} from 'src/app/shared/services/notification.service';
 import {MatDialogRef} from '@angular/material';
 import {Role} from '../../../shared/models/role';
-import {CandidateRolHistory} from '../../../shared/models/rolesHistory';
 
 @Component({
   selector: 'app-candidate',
@@ -48,13 +47,6 @@ export class CandidateComponent implements OnInit {
         name: ''
       };
 
-      const candidateRolHistory: CandidateRolHistory = {
-        id: -1,
-        start: new Date(),
-        end: null,
-        role: currentRole,
-      };
-
       const candidate: Candidate = {
         id: -1,
         deliveryUnitId: this.candidateService.form.controls.du.value,
@@ -63,8 +55,8 @@ export class CandidateComponent implements OnInit {
         firstName: this.candidateService.form.controls.firstName.value,
         lastName: this.candidateService.form.controls.lastName.value,
         name: '',
-        candidateRolHistory: [],
-        activeRole: null,
+        candidateRoleId: null,
+        candidateRole: currentRole,
         docType: null,
         docNumber: null,
         employeeNumber: null,
@@ -76,7 +68,7 @@ export class CandidateComponent implements OnInit {
 		currentProjectDuration: null,
         evaluations: null
       };
-      candidate.candidateRolHistory.push(candidateRolHistory);
+//      candidate.candidateRolHistory.push(candidateRolHistory);
 
       this.candidateService.addCandidate(candidate).subscribe(
         elem => {

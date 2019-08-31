@@ -27,6 +27,10 @@ namespace matching_learning.common.Domain.DTOs
                 return (this.FirstName + ", " + this.LastName);
             }
         }
+        
+        public int CandidateRoleId { get; set; }
+
+        public CandidateRole CandidateRole { get; set; }
 
         public DocumentType? DocType { get; set; }
 
@@ -107,20 +111,6 @@ namespace matching_learning.common.Domain.DTOs
         }
 
         public List<Evaluation> Evaluations { get; set; }
-
-        public List<CandidateRoleHistory> RolesHistory { get; set; }
-
-        public CandidateRole ActiveRole
-        {
-            get
-            {
-                var crh = this.RolesHistory.FirstOrDefault(rh => !rh.End.HasValue);
-
-                if (crh == null) { return (null); }
-
-                return (crh.Role);
-            }
-        }
 
         public int CompareTo(Candidate other)
         {
