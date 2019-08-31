@@ -63,7 +63,8 @@ namespace matching_learning.common.Repositories
                         "       [C].[CurrentProjectId]," +
                         "       [C].[CurrentProjectJoin] " +
                         "FROM [dbo].[Candidate] AS [C] " +
-                        "ORDER BY [C].[Id] " +
+                        "ORDER BY [C].[FirstName]," +
+                        "         [C].[LastName]" +
                         "OFFSET(@pageIdx * @pageSize) ROWS " +
                         "FETCH NEXT @pageSize ROWS ONLY";
 

@@ -18,7 +18,7 @@ namespace matching_learning.common.Domain.DTOs.Views
         
         public int CompareTo(SkillVersionView other)
         {
-            return (Version.CompareTo(other.Version));
+            return (this.Version.CompareTo(other.Version));
         }
     }
 }

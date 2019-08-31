@@ -23,7 +23,7 @@ namespace matching_learning.common.Domain.DTOs
 
         public int CompareTo(Evaluation other)
         {
-            return (-1 * Date.CompareTo(other.Date));
+            return (-1 * this.Date.CompareTo(other.Date));
         }
     }
 }

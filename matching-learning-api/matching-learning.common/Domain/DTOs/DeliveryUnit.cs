@@ -1,6 +1,8 @@
-﻿namespace matching_learning.common.Domain.DTOs
+﻿using System;
+
+namespace matching_learning.common.Domain.DTOs
 {
-    public class DeliveryUnit
+    public class DeliveryUnit : IComparable<DeliveryUnit>
     {
         public int Id { get; set; }
 
@@ -11,5 +13,10 @@
         public int RegionId { get; set; }
 
         public Region Region { get; set; }
+
+        public int CompareTo(DeliveryUnit other)
+        {
+            return (this.Name.CompareTo(other.Name));
+        }
     }
 }

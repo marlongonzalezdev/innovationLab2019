@@ -16,7 +16,7 @@ namespace matching_learning.common.Domain.DTOs
         
         public int CompareTo(EvaluationDetail other)
         {
-            return (Skill.CompareTo(other.Skill));
+            return (this.Skill.CompareTo(other.Skill));
         }
     }
 }

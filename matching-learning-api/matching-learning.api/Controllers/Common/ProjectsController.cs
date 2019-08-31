@@ -57,7 +57,7 @@ namespace matching_learning.api.Controllers.Common
         [Route("ProjectsPaginated")]
         public ActionResult<List<Project>> GetRegionsPaginated(int pageIdx, int pageSize)
         {
-            return _projectRepository.GetProjects().OrderBy(r => r.Id).Skip(pageIdx * pageSize).Take(pageSize).ToList();
+            return _projectRepository.GetProjectsPaginated(pageIdx, pageSize);
         }
 
         /// <summary>

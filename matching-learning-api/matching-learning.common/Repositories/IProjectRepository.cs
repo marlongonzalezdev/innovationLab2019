@@ -7,6 +7,8 @@ namespace matching_learning.common.Repositories
     {
         List<Project> GetProjects();
 
+        List<Project> GetProjectsPaginated(int pageIdx, int pageSize);
+
         Project GetProjectById(int id);
     }
 }
