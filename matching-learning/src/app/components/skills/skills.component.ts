@@ -74,7 +74,7 @@ export class SkillsComponent implements OnInit {
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
-      dialogConfig.width = '75%';
+      dialogConfig.width = '40%';
       this.dialog.open(SkilldetailsComponent, dialogConfig);
     }
 }

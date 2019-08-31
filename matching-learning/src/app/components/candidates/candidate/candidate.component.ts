@@ -38,20 +38,21 @@ export class CandidateComponent implements OnInit {
     if (this.service.form.valid) {
       const candidate: Candidate = {
         id: -1,
-        deliveryUnitId: 13,
+        deliveryUnitId: this.service.form.controls.du.value,
         deliveryUnit: null,
-        relationType: 1,
-        firstName: 'Juan',
-        lastName: 'Perez',
-        name: '',
+        relationType: this.service.form.controls.relationType.value,
+        firstName: this.service.form.controls.firstName.value,
+        lastName: this.service.form.controls.lastName.value,
+        name: this.service.form.controls.firstName.value + ', ' + this.service.form.controls.lastName.value,
         activeRole: null,
         rolesHistory: null,
         docType: null,
         docNumber: null,
         employeeNumber: 43245,
-        inBench: true,
+        inBench: this.service.form.controls.isInBench.value,
         picture: null,
-        isActive: true, evaluations: null
+        isActive: this.service.form.controls.isActive.value,
+        evaluations: null
       };
 
       this.service.addCandidate(candidate).subscribe(

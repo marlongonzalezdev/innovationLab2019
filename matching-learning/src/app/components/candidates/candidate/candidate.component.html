@@ -22,6 +22,10 @@
         <div class="add-bottom-padding">
           <mat-checkbox color="warn" formControlName="isInBench">Is in bench</mat-checkbox>
         </div>
+        <div class="button-row">
+          <button mat-raised-button type="submit" [disabled]="service.form.invalid">Submit</button>
+          <button mat-raised-button (click)="onClear()">Clear</button>
+        </div>
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
@@ -42,10 +46,14 @@
             </ng-container>
           </mat-select>
         </mat-form-field>
-        <div class="button-row">
-          <button mat-raised-button type="submit" [disabled]="service.form.invalid">Submit</button>
-          <button mat-raised-button (click)="onClear()">Clear</button>
-        </div>
+        <mat-form-field color="warn">
+          <mat-select formControlName="relationType" placeholder="Role">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let relationType of relationTypes | async">
+              <mat-option [value]="relationType.id">{{relationType.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
       </div>
     </mat-grid-tile>
   </mat-grid-list>
