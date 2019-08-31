@@ -40,7 +40,7 @@ namespace matching_learning.common.Repositories
                     res = getCandidates(conn, cmd);
                 }
             }
-
+            
             return (res);
         }
 
@@ -163,6 +163,8 @@ namespace matching_learning.common.Repositories
 
                 res.Add(getCandidateFromDataRow(dr, deliveryUnit, project, evaluations, rolesHistory));
             }
+
+            res.Sort();
 
             return (res);
         }
