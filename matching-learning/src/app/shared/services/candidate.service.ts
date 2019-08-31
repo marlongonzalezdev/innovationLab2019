@@ -98,7 +98,8 @@ export class CandidateService {
       du: candidate.deliveryUnitId,
       relationType: candidate.relationType,
       isActive: candidate.isActive,
-      isInBench: candidate.inBench
+      isInBench: candidate.inBench,
+      roleId: candidate.activeRole.id
     });
   }
 }
