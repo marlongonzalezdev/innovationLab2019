@@ -7,7 +7,7 @@ namespace matching_learning.common.Domain.Enums
         [Description("Intern")] 
         IN = 1,
 
-        [Description("Junior technician")]
+        [Description("Junior Technician")]
         JT,
         
         [Description("Technician")]

@@ -33,6 +33,14 @@ GET
 https://localhost:44374/EnumEntities/SkillRelationTypes
 http://localhost:62460/EnumEntities/SkillRelationTypes
 
+GET
+https://localhost:44374/EnumEntities/CandidateGrades
+http://localhost:62460/EnumEntities/CandidateGrades
+
+GET
+https://localhost:44374/EnumEntities/CandidateGradesCodes
+http://localhost:62460/EnumEntities/CandidateGradesCodes
+
 ----------------------------------------------------------------------------------------------------
 
 GET
@@ -311,6 +319,20 @@ Accept-Language: en,es-ES;q=0.9,es;q=0.8
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
+
+GET
+https://localhost:44374/Projects/Projects
+http://localhost:62460/Projects/Projects
+
+GET
+https://localhost:44374/Projects/ProjectsPaginated?pageIdx=5&pageSize=10
+http://localhost:62460/Projects/ProjectsPaginated?pageIdx=5&pageSize=10
+
+GET
+https://localhost:44374/Projects/Project?id=5
+http://localhost:62460/Projects/Project?id=5
+
+
 
 POST
 https://localhost:44374/Projects/GetProjectCandidates
