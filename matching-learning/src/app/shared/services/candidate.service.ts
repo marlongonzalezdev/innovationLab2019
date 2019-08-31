@@ -7,6 +7,7 @@ import { HttpHeaders } from '@angular/common/http';
 
 import { Candidate } from '../models/candidate';
 import { environment } from 'src/environments/environment';
+import {Role} from '../models/role';
 
 
 const httpOptions = {
@@ -33,6 +34,7 @@ export class CandidateService {
     lastName: new FormControl('', Validators.required),
     du: new FormControl(0),
     relationType: new FormControl(0),
+    roleId: new FormControl(0),
    /* email: new FormControl('', Validators.email),
     gender: new FormControl(0),*/
     isActive: new FormControl(false),
@@ -47,6 +49,7 @@ export class CandidateService {
       lastName: '',
       du: 13, // Montevideo
       relationType: 0,
+      roleId: 0,
       isActive: true,
       isInBench: false
     });
@@ -55,6 +58,11 @@ export class CandidateService {
   getCandidates(): Observable<Candidate[]> {
     this.url = environment.dbConfig.baseUrl + environment.dbConfig.GetCandidates;
     return this.http.get<Candidate[]>(this.url, {responseType: 'json'});
+  }
+
+  getCandidateRoles(): Observable<Role[]> {
+    this.url = 'https://localhost:44374/Candidates/CandidateRoles';
+    return this.http.get<Role[]>(this.url, {responseType: 'json'});
   }
 
   addCandidate(candidate: Candidate): Observable<Candidate> {
