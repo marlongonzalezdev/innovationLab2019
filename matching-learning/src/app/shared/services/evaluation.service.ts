@@ -46,6 +46,18 @@ export class EvaluationService {
     });
   }
 
+  PopulateForm(evaluation) {
+    this.form.setValue({
+      $key: evaluation.id,
+      candidateId: evaluation.candidateId,
+      weight: evaluation.weight,
+      evaluationTypeId: evaluation.evaluationTypeId,
+      skillId: evaluation.skillId,
+      candidateName: evaluation.candidateName,
+      notes: evaluation.nodes
+    });
+  }
+
   getEvaluations(id): Observable<Candidate> {
     this.url = `https://localhost:44374/Candidates/Candidate?id=${id}`;
     return this.http.get<Candidate>(this.url, {responseType: 'json'});

@@ -1,6 +1,6 @@
+import { EvaluationService } from './../../../shared/services/evaluation.service';
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {EvaluationService} from '../../../shared/services/evaluation.service';
 import {Evaluation} from '../../../shared/models/evaluation';
 import {MatDialog, MatDialogConfig, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Candidate} from '../../../shared/models/candidate';
@@ -33,7 +33,9 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  onEdit(row: any) {
+  onEdit(row: any, candidate: Candidate) {
+    this.evaluationService.PopulateForm(row);
+    this.openDialog(candidate);
   }
 
   onCreate(candidate: Candidate) {
