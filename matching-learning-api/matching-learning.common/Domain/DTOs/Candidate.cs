@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using matching_learning.common.Domain.BusinessLogic;
 using matching_learning.common.Domain.Enums;
 
 namespace matching_learning.common.Domain.DTOs
@@ -39,8 +40,74 @@ namespace matching_learning.common.Domain.DTOs
 
         public bool IsActive { get; set; }
 
+        public CandidateGrade? Grade { get; set; }
+
+        public string GradeDescription
+        {
+            get
+            {
+                if (!this.Grade.HasValue) { return (""); }
+
+                return EnumHelper.GetEnumDescription(this.Grade.Value);
+            }
+        }
+
+        public string GradeShortDescription
+        {
+            get
+            {
+                if (!this.Grade.HasValue) { return (""); }
+
+                return EnumHelper.GetEnumShortDescription(this.Grade.Value);
+            }
+        }
+
+        public int? CurrentProjectId { get; set; }
+
+        public Project CurrentProject { get; set; }
+
+        public DateTime? CurrentProjectJoin { get; set; }
+
+        public string CurrentProjectDescription
+        {
+            get
+            {
+                if (this.RelationType != CandidateRelationType.Employee) { return (""); }
+
+                if (this.InBench) { return ("Bench"); }
+
+                if (this.CurrentProject == null) { return (""); }
+
+                return (this.CurrentProject.Name);
+            }
+        }
+
+        public string CurrentProjectDuration
+        {
+            get
+            {
+                if (!this.CurrentProjectJoin.HasValue) { return (""); }
+
+                var start = this.CurrentProjectJoin.Value;
+                var today = DateTime.Today;
+
+                TimeSpan difference = today - start;
+
+                if (difference.Days < 90) { return ($"{difference.Days} days"); }
+
+                if (difference.Days < 24)
+                {
+                    int months = (int)(difference.TotalDays / (365.25D / 12.0D));
+                    return ($"{months} months");
+                }
+
+                int years = (int)(difference.TotalDays / 365.25D);
+                return ($"{years} years");
+            }
+        }
+
         public List<Evaluation> Evaluations { get; set; }
-        
+
         public List<CandidateRoleHistory> RolesHistory { get; set; }
 
         public CandidateRole ActiveRole
@@ -57,7 +124,7 @@ namespace matching_learning.common.Domain.DTOs
 
         public int CompareTo(Candidate other)
         {
-            return (Name.CompareTo(other.Name));
+            return (this.Name.CompareTo(other.Name));
         }
     }
 }

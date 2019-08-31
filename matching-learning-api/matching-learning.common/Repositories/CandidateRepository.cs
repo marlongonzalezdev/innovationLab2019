@@ -27,7 +27,10 @@ namespace matching_learning.common.Repositories
                           "       [C].[EmployeeNumber]," +
                           "       [C].[InBench]," +
                           "       [C].[Picture]," +
-                          "       [C].[IsActive] " +
+                          "       [C].[IsActive]," +
+                          "       [C].[Grade]," +
+                          "       [C].[CurrentProjectId]," +
+                          "       [C].[CurrentProjectJoin] " +
                           "FROM [dbo].[Candidate] AS [C]";
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
@@ -55,7 +58,10 @@ namespace matching_learning.common.Repositories
                         "       [C].[EmployeeNumber]," +
                         "       [C].[InBench]," +
                         "       [C].[Picture]," +
-                        "       [C].[IsActive] " +
+                        "       [C].[IsActive]," +
+                        "       [C].[Grade]," +
+                        "       [C].[CurrentProjectId]," +
+                        "       [C].[CurrentProjectJoin] " +
                         "FROM [dbo].[Candidate] AS [C] " +
                         "ORDER BY [C].[Id] " +
                         "OFFSET(@pageIdx * @pageSize) ROWS " +
@@ -80,7 +86,7 @@ namespace matching_learning.common.Repositories
 
             string idsStr = DBCommon.ConvertListIntToString(ids);
             string whereCondition = $"WHERE [C].[Id] IN ({idsStr})";
-            
+
             var query = "SELECT [C].[Id], " +
                         "       [C].[DeliveryUnitId]," +
                         "       [C].[RelationType]," +
@@ -91,7 +97,10 @@ namespace matching_learning.common.Repositories
                         "       [C].[EmployeeNumber]," +
                         "       [C].[InBench]," +
                         "       [C].[Picture]," +
-                        "       [C].[IsActive] " +
+                        "       [C].[IsActive]," +
+                        "       [C].[Grade]," +
+                        "       [C].[CurrentProjectId]," +
+                        "       [C].[CurrentProjectJoin] " +
                         "FROM [dbo].[Candidate] AS [C] " +
                         $"{whereCondition}";
 
@@ -112,6 +121,9 @@ namespace matching_learning.common.Repositories
 
             var deliveryUnitsRepository = new DeliveryUnitRepository();
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
+
+            var projectRepository = new ProjectRepository();
+            var projects = projectRepository.GetProjects();
 
             var candidateEvaluations = getCandidatesEvaluations();
             var candidateRolesHistory = getCandidatesRoleHistory();
@@ -142,7 +154,14 @@ namespace matching_learning.common.Repositories
 
                 var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
 
-                res.Add(getCandidateFromDataRow(dr, deliveryUnit, evaluations, rolesHistory));
+                Project project = null;
+                var projectId = dr.Db2NullableInt("CurrentProjectId");
+                if (projectId.HasValue)
+                {
+                    project = projects.FirstOrDefault(du => du.Id == projectId.Value);
+                }
+
+                res.Add(getCandidateFromDataRow(dr, deliveryUnit, project, evaluations, rolesHistory));
             }
 
             return (res);
@@ -169,7 +188,10 @@ namespace matching_learning.common.Repositories
                         "       [C].[EmployeeNumber]," +
                         "       [C].[InBench]," +
                         "       [C].[Picture]," +
-                        "       [C].[IsActive] " +
+                        "       [C].[IsActive]," +
+                        "       [C].[Grade]," +
+                        "       [C].[CurrentProjectId]," +
+                        "       [C].[CurrentProjectJoin] " +
                         "FROM [dbo].[Candidate] AS [C] " +
                         "WHERE [C].[Id] = @id";
 
@@ -192,7 +214,17 @@ namespace matching_learning.common.Repositories
 
                         var deliveryUnit = deliveryUnits.FirstOrDefault(du => du.Id == dr.Db2Int("DeliveryUnitId"));
 
-                        res = getCandidateFromDataRow(dr, deliveryUnit, evaluations, candidateRolesHistory);
+                        Project project = null;
+
+                        var projectId = dr.Db2NullableInt("CurrentProjectId");
+
+                        if (projectId.HasValue)
+                        {
+                            var projectRepository = new ProjectRepository();
+                             project = projectRepository.GetProjectById(projectId.Value);
+                        }
+
+                        res = getCandidateFromDataRow(dr, deliveryUnit, project, evaluations, candidateRolesHistory);
                     }
                 }
             }
@@ -200,7 +232,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, List<Evaluation> evaluations, List<CandidateRoleHistory> candidateRolesHistory)
+        private Candidate getCandidateFromDataRow(DataRow dr, DeliveryUnit deliveryUnit, Project currentProject, List<Evaluation> evaluations, List<CandidateRoleHistory> candidateRolesHistory)
         {
             Candidate res = null;
 
@@ -234,6 +266,11 @@ namespace matching_learning.common.Repositories
                 InBench = dr.Db2Bool("InBench"),
                 Picture = picturePath,
                 IsActive = dr.Db2Bool("IsActive"),
+                Grade = (CandidateGrade?)dr.Db2NullableInt("Grade"),
+                CurrentProjectId = dr.Db2NullableInt("CurrentProjectId"),
+                CurrentProjectJoin = dr.Db2NullableDateTime("CurrentProjectJoin"),
+
+                CurrentProject = currentProject,
                 Evaluations = evaluations,
                 RolesHistory = candidateRolesHistory,
             };
@@ -396,7 +433,10 @@ namespace matching_learning.common.Repositories
                           " [EmployeeNumber]," +
                           " [InBench]," +
                           " [Picture]," +
-                          " [IsActive] " +
+                          " [IsActive]," +
+                          " [Grade]," +
+                          " [CurrentProjectId]," +
+                          " [CurrentProjectJoin] " +
                           ") " +
                           "VALUES (" +
                           "  @deliveryUnitId," +
@@ -408,7 +448,10 @@ namespace matching_learning.common.Repositories
                           "  @employeeNumber," +
                           "  @inBench," +
                           "  @picture," +
-                          "  @isActive" +
+                          "  @isActive," +
+                          "  @grade," +
+                          "  @currentProjectId," +
+                          "  @currentProjectJoin" +
                           ")";
 
             var stmntId = "SELECT @@IDENTITY";
@@ -440,6 +483,25 @@ namespace matching_learning.common.Repositories
                         res = ca.Id;
                     }
 
+                    //if (ca.RolesHistory == null || ca.RolesHistory.Count == 0)
+                    //{
+                    //    // Default role developer is defined.
+
+                    //    ca.RolesHistory = new List<CandidateRoleHistory>();
+                    //    ca.RolesHistory.Add(new CandidateRoleHistory()
+                    //    {
+                    //        Id = -1,
+                    //        Role = new CandidateRole()
+                    //        {
+                    //            Id = 3,
+                    //            Code = "DEV",
+                    //            Name = "Developer",
+                    //        },
+                    //        Start = DateTime.Today,
+                    //        End = null,
+                    //    });
+                    //}
+
                     SaveCandidateEvaluations(ca, conn, trans);
 
                     SaveCandidateRoles(ca, conn, trans);
@@ -468,7 +530,10 @@ namespace matching_learning.common.Repositories
                         "    [EmployeeNumber] = @employeeNumber," +
                         "    [InBench] = @inBench," +
                         "    [Picture] = @picture," +
-                        "    [IsActive] = @isActive " +
+                        "    [IsActive] = @isActive," +
+                        "    [Grade] = @grade," +
+                        "    [CurrentProjectId] = @currentProjectId," +
+                        "    [CurrentProjectJoin] = @currentProjectJoin " +
                         "WHERE [Id] = @id";
 
             SqlTransaction trans;
@@ -571,6 +636,39 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@isActive", SqlDbType.Bit);
             cmd.Parameters["@isActive"].Value = ca.IsActive;
+
+            cmd.Parameters.Add("@grade", SqlDbType.Int);
+            cmd.Parameters["@grade"].IsNullable = true;
+            if (ca.Grade.HasValue)
+            {
+                cmd.Parameters["@grade"].Value = ca.Grade.Value;
+            }
+            else
+            {
+                cmd.Parameters["@grade"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@currentProjectId", SqlDbType.Int);
+            cmd.Parameters["@currentProjectId"].IsNullable = true;
+            if (ca.CurrentProjectId.HasValue)
+            {
+                cmd.Parameters["@currentProjectId"].Value = ca.CurrentProjectId.Value;
+            }
+            else
+            {
+                cmd.Parameters["@currentProjectId"].Value = DBNull.Value;
+            }
+
+            cmd.Parameters.Add("@currentProjectJoin", SqlDbType.DateTime);
+            cmd.Parameters["@currentProjectJoin"].IsNullable = true;
+            if (ca.CurrentProjectJoin.HasValue)
+            {
+                cmd.Parameters["@currentProjectJoin"].Value = ca.CurrentProjectJoin.Value;
+            }
+            else
+            {
+                cmd.Parameters["@currentProjectJoin"].Value = DBNull.Value;
+            }
         }
         #endregion
 

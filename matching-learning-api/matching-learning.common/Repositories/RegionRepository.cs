@@ -36,8 +36,7 @@ namespace matching_learning.common.Repositories
 
             return (res);
         }
-
-
+        
         private Region getRegionFromDataRow(DataRow dr)
         {
             Region res = null;

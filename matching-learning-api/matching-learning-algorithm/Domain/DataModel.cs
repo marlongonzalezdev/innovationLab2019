@@ -1,5 +1,4 @@
 ﻿using Microsoft.ML.Data;
-using System.Collections.Generic;
 
 namespace matching_learning_algorithm.Domain
 {
