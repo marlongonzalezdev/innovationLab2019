@@ -19,5 +19,8 @@ export interface Candidate {
   activeRole: ActiveRole;
   picture: string;
   isActive: boolean;
+  gradeDescription: string;
+  currentProjectDescription: string;
+  currentProjectDuration: string;	  
   evaluations: Evaluation[];
 }

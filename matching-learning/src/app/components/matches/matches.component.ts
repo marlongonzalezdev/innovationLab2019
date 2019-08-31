@@ -62,6 +62,9 @@ export class MatchesComponent implements OnInit {
       docType: match.candidate.docType,
       docNumber: match.candidate.docNumber,
       employeeNumber: match.candidate.employeeNumber,
+	  gradeDescription: match.candidate.gradeDescription,
+	  currentProjectDescription: match.candidate.currentProjectDescription,
+	  currentProjectDuration: match.candidate.currentProjectDuration,
       skillExpertisesSummary: match.skillExpertisesSummary
     };
 

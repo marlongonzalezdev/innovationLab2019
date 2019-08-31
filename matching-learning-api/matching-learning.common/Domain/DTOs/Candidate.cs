@@ -76,7 +76,7 @@ namespace matching_learning.common.Domain.DTOs
 
                 if (this.InBench) { return ("Bench"); }
 
-                if (this.CurrentProject == null) { return (""); }
+                if (this.CurrentProject == null) { return ("Unknown"); }
 
                 return (this.CurrentProject.Name);
             }
@@ -95,14 +95,14 @@ namespace matching_learning.common.Domain.DTOs
 
                 if (difference.Days < 90) { return ($"{difference.Days} days"); }
 
-                if (difference.Days < 24)
+                if (difference.Days < (24 * 366))
                 {
                     int months = (int)(difference.TotalDays / (365.25D / 12.0D));
-                    return ($"{months} months");
+                    return ($"{months} month{(months > 1 ? "s" : "")}");
                 }
 
                 int years = (int)(difference.TotalDays / 365.25D);
-                return ($"{years} years");
+                return ($"{years} year{(years > 1 ? "s" : "")}");
             }
         }
 

@@ -52,6 +52,9 @@ export class CandidateComponent implements OnInit {
         inBench: this.service.form.controls.isInBench.value,
         picture: null,
         isActive: this.service.form.controls.isActive.value,
+		gradeDescription: null,
+        currentProjectDescription: null,
+		currentProjectDuration: null,
         evaluations: null
       };
 
