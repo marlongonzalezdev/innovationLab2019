@@ -413,6 +413,7 @@ CREATE TABLE [dbo].[Technology] (
   [Name]                          [MLName] NOT NULL,
   [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_Technology_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
   [IsVersioned]                   BIT NOT NULL,
+  [IsActive]                      BIT NOT NULL CONSTRAINT [DF_Technology_IsActive] DEFAULT 1,
 
   CONSTRAINT [PK_Technology] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -426,6 +427,7 @@ CREATE TABLE [dbo].[TechnologyVersion] (
   [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_TechnologyVersion_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
   [Version]                       [MLCode] NOT NULL,
   [StartDate]                     DATETIME  NOT NULL,
+  [IsActive]                      BIT NOT NULL CONSTRAINT [DF_TechnologyVersion_IsActive] DEFAULT 1,
 
   CONSTRAINT [PK_TechnologyVersion] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -441,6 +443,7 @@ CREATE TABLE [dbo].[TechnologyRole] (
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
   [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_TechnologyRole_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
+  [IsActive]                      BIT NOT NULL CONSTRAINT [DF_TechnologyRole_IsActive] DEFAULT 1,
 
   CONSTRAINT [PK_TechnologyRole] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -455,7 +458,8 @@ CREATE TABLE [dbo].[SoftSkill] (
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
   [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_SoftSkill_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
-
+  [IsActive]                      BIT NOT NULL CONSTRAINT [DF_SoftSkill_IsActive] DEFAULT 1,
+  
   CONSTRAINT [PK_SoftSkill] PRIMARY KEY CLUSTERED ([Id] ASC),
 
   CONSTRAINT [UC_SoftSkill_Code] UNIQUE NONCLUSTERED ([Code] ASC),
@@ -467,6 +471,7 @@ CREATE TABLE [dbo].[BusinessArea] (
   [Code]                          [MLCode] NOT NULL,
   [Name]                          [MLName] NOT NULL,
   [DefaultExpertise]              [MLDecimal] NOT NULL CONSTRAINT [CH_BusinessArea_DefaultExpertise] CHECK ([DefaultExpertise] BETWEEN 0.0 AND 1.0),
+  [IsActive]                      BIT NOT NULL CONSTRAINT [DF_BusinessArea_IsActive] DEFAULT 1,
 
   CONSTRAINT [PK_BusinessArea] PRIMARY KEY CLUSTERED ([Id] ASC),
 
@@ -617,8 +622,6 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-GO
-
 CREATE VIEW [dbo].[GlobalSkill]
 AS
   SELECT [S].[Id] AS [SkillId],
@@ -626,6 +629,7 @@ AS
          1 AS [Category],
          [T].[Code],
          [T].[Name],
+         [T].[IsActive],
          [T].[DefaultExpertise]
   FROM [dbo].[Technology] AS [T]
   INNER JOIN [dbo].[Skill] AS [S] ON [S].[TechnologyId] = [T].[Id]
@@ -635,6 +639,7 @@ AS
          2 AS [Category],
          [T].[Code] + ' v' + [TV].[Version] AS [Code],
          [T].[Name] + ' v' + [TV].[Version] AS [Name],
+         [TV].[IsActive],
          [TV].[DefaultExpertise]
   FROM [dbo].[Technology] AS [T]
   INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]
@@ -645,6 +650,7 @@ AS
          3 AS [Category],
          [TR].[Code],
          [TR].[Name],
+         [TR].[IsActive],
          [TR].[DefaultExpertise]
   FROM [dbo].[Technology] AS [T]
   INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]
@@ -655,6 +661,7 @@ AS
          4 AS [Category],
          [SK].[Code],
          [SK].[Name],
+         [SK].[IsActive],
          [SK].[DefaultExpertise]
   FROM [dbo].[SoftSkill] AS [SK]
   INNER JOIN [dbo].[Skill] AS [S] ON [S].[SoftSkillId] = [SK].[Id]
@@ -664,6 +671,7 @@ AS
          5 AS [Category],
          [BA].[Code],
          [BA].[Name],
+         [BA].[IsActive],
          [BA].[DefaultExpertise]
   FROM [dbo].[BusinessArea] AS [BA]
   INNER JOIN [dbo].[Skill] AS [S] ON [S].[BusinessAreaId] = [BA].[Id]
