@@ -30,7 +30,7 @@ namespace matching_learning_algorithm
         private List<string> CsvHeaders { get; set; }
         public ProjectAnalyzer(ILogger logger, ISkillRepository skillRepository)
         {
-            MLContext = new MLContext(seed: 1);
+            MLContext = new MLContext();
             Logger = logger;
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
@@ -58,6 +58,9 @@ namespace matching_learning_algorithm
             estimatedExpertises = estimatedExpertises.Where(exp => exp.Expertise != 0).ToList();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
+            if (File.Exists(InputPath)) {
+                File.Delete(InputPath);
+            }
             using (var file = File.CreateText(InputPath))
             {
                 file.WriteLine(string.Join(',', CsvHeaders));
@@ -74,7 +77,11 @@ namespace matching_learning_algorithm
                                 : "0"
                             );
                     }
-                    file.WriteLine(string.Join(',', row));
+                    //if (row.Count(r => r == "0") <= 100)
+                    //{
+                    //    file.WriteLine(string.Join(',', row));
+                    //}
+                    
                 }
             }
         }
@@ -104,7 +111,7 @@ namespace matching_learning_algorithm
                     NumberOfClusters = NumberOfClusters,
                     OptimizationTolerance = 1e-6f,
                     NumberOfThreads = 1,
-                    MaximumNumberOfIterations = 20,
+                    MaximumNumberOfIterations = 10,
                     FeatureColumnName = "Features"
                 };
 
