@@ -15,6 +15,7 @@ DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 DROP FUNCTION IF EXISTS [dbo].[RandomProject]
+DROP FUNCTION IF EXISTS [dbo].[RandomNotes]
 
 DROP FUNCTION IF EXISTS [dbo].[GradeFromStr]
 GO
@@ -210,6 +211,38 @@ AS
   ELSE
    BEGIN
     SET @res = 13 -- DR
+   END
+   
+  RETURN @res
+ END
+GO
+
+----------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION [dbo].[RandomNotes] (@rnd FLOAT) RETURNS NVARCHAR(MAX)
+AS
+ BEGIN
+  DECLARE @res NVARCHAR(MAX)
+
+  IF (@rnd < 0.2)
+   BEGIN
+    SET @res = NULL
+   END
+  ELSE IF (@rnd < 0.4)
+   BEGIN
+    SET @res = 'It is recommended to repeat evaluation in 3 months.'
+   END
+  ELSE IF (@rnd < 0.6)
+   BEGIN
+    SET @res = 'It is recommended to repeat evaluation in 6 months.'
+   END
+  ELSE IF (@rnd < 0.8)
+   BEGIN
+    SET @res = 'It is recommended to repeat evaluation in 1 year.'
+   END
+  ELSE
+   BEGIN
+    SET @res = 'It is recommended to repeat evaluation in 2 years.'
    END
    
   RETURN @res
@@ -2163,12 +2196,14 @@ WHILE @@FETCH_STATUS = 0
          INSERT INTO [dbo].[Evaluation] (
            [CandidateId],
            [EvaluationTypeId],
-           [Date]
+           [Date],
+           [Notes]
          )
          VALUES (
            @candidateId,
            [dbo].[RandomEvaluationType](RAND()),
-           [dbo].[RandomDate](2000, RAND())
+           [dbo].[RandomDate](2000, RAND()),
+           [dbo].[RandomNotes](RAND())
          )
          
          SET @evalForCandidate = 1
@@ -2311,6 +2346,7 @@ DROP FUNCTION IF EXISTS [dbo].[RandomDeliveryUnit]
 DROP FUNCTION IF EXISTS [dbo].[RandomRelationType]
 DROP FUNCTION IF EXISTS [dbo].[RandomEvaluationType]
 DROP FUNCTION IF EXISTS [dbo].[RandomProject]
+DROP FUNCTION IF EXISTS [dbo].[RandomNotes]
 
 DROP FUNCTION IF EXISTS [dbo].[GradeFromStr]
 GO
