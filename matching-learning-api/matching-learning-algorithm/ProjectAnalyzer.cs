@@ -15,7 +15,7 @@ namespace matching_learning_algorithm
 {
     public class ProjectAnalyzer : IProjectAnalyzer
     {
-        private const int NumberOfClusters = 3;
+        private const int NumberOfClusters = 10;
 
         private readonly ISkillRepository _skillRepository;
 
@@ -97,7 +97,7 @@ namespace matching_learning_algorithm
 
                 var options = new KMeansTrainer.Options
                 {
-                    NumberOfClusters = 3,
+                    NumberOfClusters = NumberOfClusters,
                     OptimizationTolerance = 1e-6f,
                     NumberOfThreads = 1,
                     MaximumNumberOfIterations = 20,
