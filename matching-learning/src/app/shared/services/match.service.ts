@@ -4,7 +4,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { HandleError, HttpErrorHandler } from '../../http-error-handler.service';
 
 import { catchError } from 'rxjs/operators';
-import { Project } from '../models/project';
+import { ProjectPositionCriteria } from '../models/projectPositionCriteria';
 import { Match } from '../models/match';
 import {environment} from '../../../environments/environment';
 
@@ -30,8 +30,8 @@ export class MatchService {
     this.handleError = httpErrorHandler.createHandleError('MatchService');
   }
 
-  getMatches(project: Project): Observable<Match[]> {
-    return this.http.post<Match[]>(this.matchesUrl, project, httpOptions)
+  getMatches(projectPositionCriteria: ProjectPositionCriteria): Observable<Match[]> {
+    return this.http.post<Match[]>(this.matchesUrl, projectPositionCriteria, httpOptions)
       .pipe(
        /* catchError(this.handleError<Match[]>('getMatches', {matches: []}))*/
       );

@@ -1,6 +1,6 @@
-import { Project } from './project';
+import { ProjectPositionCriteria } from './projectPositionCriteria';
 export class Criteria {
-    project: Project;
+    projectPositionCriteria: ProjectPositionCriteria;
     deliveryUnit: string[];
     role: string;
 }

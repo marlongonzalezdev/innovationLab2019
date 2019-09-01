@@ -1,6 +1,6 @@
 import {SkillsFilter} from './skillsFilter';
 
-export interface Project {
+export interface ProjectPositionCriteria {
   max: number;
   name: string;
   skillsFilter: SkillsFilter[];
