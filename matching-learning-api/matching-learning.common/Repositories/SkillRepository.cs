@@ -18,7 +18,7 @@ namespace matching_learning.common.Repositories
         {
             var res = new List<SkillView>();
 
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             if ((skills == null) || (skills.Count == 0)) { return (res); }
 
@@ -175,6 +175,41 @@ namespace matching_learning.common.Repositories
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
                         "       [GS].[Name]," +
+                        "       [GS].[IsActive]," +
+                        "       [GS].[DefaultExpertise] " +
+                        "FROM [dbo].[GlobalSkill] AS [GS] " +
+                        "WHERE [GS].[IsActive] = 1";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(getSkillFromDataRow(dr));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<Skill> GetAllSkills()
+        {
+            var res = new List<Skill>();
+
+            var query = "SELECT [GS].[SkillId], " +
+                        "       [GS].[RelatedId]," +
+                        "       [GS].[Category]," +
+                        "       [GS].[Code]," +
+                        "       [GS].[Name]," +
+                        "       [GS].[IsActive]," +
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS]";
 
@@ -207,6 +242,7 @@ namespace matching_learning.common.Repositories
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
                         "       [GS].[Name]," +
+                        "       [GS].[IsActive]," +
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[SkillId] = @skillId";
@@ -243,6 +279,7 @@ namespace matching_learning.common.Repositories
                         "       [GS].[Category]," +
                         "       [GS].[Code]," +
                         "       [GS].[Name]," +
+                        "       [GS].[IsActive]," +
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[Code] = @code";
@@ -298,6 +335,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [BA].[Code]," +
                         "       [BA].[Name]," +
+                        "       [BA].[IsActive]," +
                         "       [BA].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S] " +
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
@@ -338,6 +376,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [BA].[Code]," +
                         "       [BA].[Name]," +
+                        "       [BA].[IsActive]," +
                         "       [BA].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S] " +
                         "INNER JOIN [dbo].[BusinessArea] AS [BA] ON [BA].[Id] = [S].[BusinessAreaId] " +
@@ -397,6 +436,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [SK].[Code]," +
                         "       [SK].[Name]," +
+                        "       [SK].[IsActive]," +
                         "       [SK].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
@@ -437,6 +477,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [SK].[Code]," +
                         "       [SK].[Name]," +
+                        "       [SK].[IsActive]," +
                         "       [SK].[DefaultExpertise] " +
                         "FROM [dbo].[Skill] AS [S]" +
                         "INNER JOIN [dbo].[SoftSkill] AS [SK] ON [SK].[Id] = [S].[SoftSkillId]" +
@@ -496,6 +537,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [T].[Code]," +
                         "       [T].[Name]," +
+                        "       [T].[IsActive]," +
                         "       [T].[DefaultExpertise]," +
                         "       [T].[IsVersioned] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -537,6 +579,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [T].[Code]," +
                         "       [T].[Name]," +
+                        "       [T].[IsActive]," +
                         "       [T].[DefaultExpertise]," +
                         "       [T].[IsVersioned] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -601,14 +644,15 @@ namespace matching_learning.common.Repositories
             TechnologyVersion res = null;
 
             var query = "SELECT [S].[Id] AS [SkillId], " +
-                         "       [TV].[Id] AS [RelatedId]," +
-                         "       @category AS [Category]," +
-                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
-                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
-                         "       [TV].[DefaultExpertise]," +
-                         "       [TV].[Version]," +
-                         "       [TV].[StartDate]," +
-                         "       [TV].[TechnologyId] " +
+                         "      [TV].[Id] AS [RelatedId]," +
+                         "      @category AS [Category]," +
+                         "      [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
+                         "      [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                         "      [TV].[IsActive]," +
+                         "      [TV].[DefaultExpertise]," +
+                         "      [TV].[Version]," +
+                         "      [TV].[StartDate]," +
+                         "      [TV].[TechnologyId] " +
                          "FROM [dbo].[Skill] AS [S]" +
                          "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[Id] = [S].[TechnologyVersionId]" +
                          "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId]" +
@@ -649,6 +693,7 @@ namespace matching_learning.common.Repositories
                          "       @category AS [Category]," +
                          "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                          "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                         "       [TV].[IsActive]," +
                          "       [TV].[DefaultExpertise]," +
                          "       [TV].[Version]," +
                          "       [TV].[StartDate]," +
@@ -713,14 +758,17 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [T].[Code] + ' v' + [TV].[Version] AS [Code]," +
                         "       [T].[Name] + ' v' + [TV].[Version] AS [Name]," +
+                        "       [TV].[IsActive]," +
                         "       [TV].[DefaultExpertise]," +
                         "       [TV].[TechnologyId]," +
                         "       [TV].[Version]," +
                         "       [TV].[StartDate] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[TechnologyId] = [T].[Id]" +
-                        "WHERE [S].[Id] = @skillId";
+                        "FROM [dbo].[Skill] AS [S] " +
+                        "INNER JOIN [dbo].[TechnologyVersion] AS [TV] ON [TV].[Id] = [S].[TechnologyVersionId] " +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TV].[TechnologyId] " +
+                        "INNER JOIN [dbo].[Skill] AS [ST] ON [ST].[TechnologyId] = [TV].[TechnologyId] " +
+                        "WHERE [ST].[Id] = @skillId " +
+                        "  AND [TV].[IsActive] = 1";
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -759,6 +807,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +
+                        "       [TR].[IsActive]," +
                         "       [TR].[DefaultExpertise]," +
                         "       [TR].[TechnologyId] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -800,6 +849,7 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +
+                        "       [TR].[IsActive]," +
                         "       [TR].[DefaultExpertise]," +
                         "       [TR].[TechnologyId] " +
                         "FROM [dbo].[Skill] AS [S]" +
@@ -859,12 +909,15 @@ namespace matching_learning.common.Repositories
                         "       @category AS [Category]," +
                         "       [TR].[Code]," +
                         "       [TR].[Name]," +
+                        "       [TR].[IsActive]," +
                         "       [TR].[DefaultExpertise]," +
                         "       [TR].[TechnologyId] " +
-                        "FROM [dbo].[Skill] AS [S]" +
-                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [S].[TechnologyId]" +
-                        "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[TechnologyId] = [T].[Id]" +
-                        "WHERE [S].[Id] = @skillId";
+                        "FROM [dbo].[Skill] AS [S] " +
+                        "INNER JOIN [dbo].[TechnologyRole] AS [TR] ON [TR].[Id] = [S].[TechnologyRoleId]" +
+                        "INNER JOIN [dbo].[Technology] AS [T] ON [T].[Id] = [TR].[TechnologyId] " +
+                        "INNER JOIN [dbo].[Skill] AS [ST] ON [ST].[TechnologyId] = [TR].[TechnologyId] " +
+                        "WHERE [ST].[Id] = @skillId " +
+                        "  AND [TR].[IsActive] = 1";
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -933,7 +986,7 @@ namespace matching_learning.common.Repositories
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -999,7 +1052,7 @@ namespace matching_learning.common.Repositories
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -1276,17 +1329,17 @@ namespace matching_learning.common.Repositories
 
             if (ba.Id < 0)
             {
-                res = InsertBusinessArea(ba);
+                res = insertBusinessArea(ba);
             }
             else
             {
-                res = UpdateBusinessArea(ba);
+                res = updateBusinessArea(ba);
             }
 
             return (res);
         }
 
-        private int InsertBusinessArea(BusinessArea ba)
+        private int insertBusinessArea(BusinessArea ba)
         {
             int res;
 
@@ -1359,7 +1412,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int UpdateBusinessArea(BusinessArea ba)
+        private int updateBusinessArea(BusinessArea ba)
         {
             var stmnt = "UPDATE [dbo].[BusinessArea] " +
                         "SET [Code] = @code," +
@@ -1420,17 +1473,17 @@ namespace matching_learning.common.Repositories
 
             if (ss.Id < 0)
             {
-                res = InsertSoftSkill(ss);
+                res = insertSoftSkill(ss);
             }
             else
             {
-                res = UpdateSoftSkill(ss);
+                res = updateSoftSkill(ss);
             }
 
             return (res);
         }
 
-        private int InsertSoftSkill(SoftSkill ss)
+        private int insertSoftSkill(SoftSkill ss)
         {
             int res;
 
@@ -1503,7 +1556,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int UpdateSoftSkill(SoftSkill ss)
+        private int updateSoftSkill(SoftSkill ss)
         {
             var stmnt = "UPDATE [dbo].[SoftSkill] " +
                         "SET [Code] = @code," +
@@ -1565,17 +1618,17 @@ namespace matching_learning.common.Repositories
 
             if (tech.Id < 0)
             {
-                res = InsertTechnology(tech);
+                res = insertTechnology(tech);
             }
             else
             {
-                res = UpdateTechnology(tech);
+                res = updateTechnology(tech);
             }
 
             return (res);
         }
 
-        private int InsertTechnology(Technology tech)
+        private int insertTechnology(Technology tech)
         {
             int res;
 
@@ -1648,7 +1701,7 @@ namespace matching_learning.common.Repositories
                         res = tech.Id;
                     }
 
-                    SaveRelatedEntities(tech, conn, trans);
+                    saveRelatedEntities(tech, conn, trans);
 
                     trans.Commit();
                 }
@@ -1662,7 +1715,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int UpdateTechnology(Technology tech)
+        private int updateTechnology(Technology tech)
         {
             var stmnt = "UPDATE [dbo].[Technology] " +
                         "SET [Code] = @code," +
@@ -1672,6 +1725,8 @@ namespace matching_learning.common.Repositories
                         "WHERE [Id] = @techId";
 
             SqlTransaction trans;
+
+            var previous = GetTechnologyById(tech.Id);
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -1692,7 +1747,9 @@ namespace matching_learning.common.Repositories
                         cmd.ExecuteNonQuery();
                     }
 
-                    SaveRelatedEntities(tech, conn, trans);
+                    saveRelatedEntities(tech, conn, trans);
+
+                    deleteRemovedRelatedEntities(tech, previous, conn, trans);
 
                     trans.Commit();
                 }
@@ -1721,13 +1778,13 @@ namespace matching_learning.common.Repositories
             cmd.Parameters["@isVersioned"].Value = tech.IsVersioned;
         }
 
-        private void SaveRelatedEntities(Technology tech, SqlConnection conn, SqlTransaction trans)
+        private void saveRelatedEntities(Technology tech, SqlConnection conn, SqlTransaction trans)
         {
             if (tech.IsVersioned && tech.Versions != null && tech.Versions.Count > 0)
             {
                 foreach (var tv in tech.Versions)
                 {
-                    SaveTechnologyVersion(tv, tech.RelatedId, conn, trans);
+                    saveTechnologyVersion(tv, tech.RelatedId, conn, trans);
                 }
             }
 
@@ -1735,14 +1792,39 @@ namespace matching_learning.common.Repositories
             {
                 foreach (var tr in tech.Roles)
                 {
-                    SaveTechnologyRole(tr, tech.RelatedId, conn, trans);
+                    saveTechnologyRole(tr, tech.RelatedId, conn, trans);
+                }
+            }
+        }
+
+        private void deleteRemovedRelatedEntities(Technology tech, Technology previous, SqlConnection conn, SqlTransaction trans)
+        {
+            if (previous.IsVersioned && previous.Versions != null && previous.Versions.Count > 0)
+            {
+                foreach (var ptv in previous.Versions)
+                {
+                    if (tech.Versions == null || !tech.Versions.Any(tv => tv.Id == ptv.Id))
+                    {
+                        deleteTechnologyVersion(ptv, conn, trans);
+                    }
+                }
+            }
+
+            if (previous.Roles != null && previous.Roles.Count > 0)
+            {
+                foreach (var ptr in previous.Roles)
+                {
+                    if (tech.Roles == null || !tech.Roles.Any(tr => tr.Id == ptr.Id))
+                    {
+                        deleteTechnologyRole(ptr, conn, trans);
+                    }
                 }
             }
         }
         #endregion
 
         #region Save TechnologyVersion
-        private int SaveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
+        private int saveTechnologyVersion(TechnologyVersion tv, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1751,17 +1833,17 @@ namespace matching_learning.common.Repositories
 
             if (tv.Id < 0)
             {
-                res = InsertTechnologyVersion(tv, conn, trans);
+                res = insertTechnologyVersion(tv, conn, trans);
             }
             else
             {
-                res = UpdateTechnologyVersion(tv, conn, trans);
+                res = updateTechnologyVersion(tv, conn, trans);
             }
 
             return (res);
         }
 
-        private int InsertTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        private int insertTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1822,7 +1904,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int UpdateTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        private int updateTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
         {
             var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1846,6 +1928,23 @@ namespace matching_learning.common.Repositories
             return (tv.Id);
         }
 
+        private void deleteTechnologyVersion(TechnologyVersion tv, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
+                        "SET [IsActive] = 0 " +
+                        "WHERE [Id] = @technologyVersionId";
+
+           using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@technologyVersionId", SqlDbType.Int);
+                cmd.Parameters["@technologyVersionId"].Value = tv.RelatedId;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         private void setParamsTechnologyVersion(SqlCommand cmd, TechnologyVersion tv)
         {
             cmd.Parameters.Add("@technologyId", SqlDbType.Int);
@@ -1863,7 +1962,7 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Save TechnologyRole
-        private int SaveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
+        private int saveTechnologyRole(TechnologyRole tr, int techId, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1872,17 +1971,17 @@ namespace matching_learning.common.Repositories
 
             if (tr.Id < 0)
             {
-                res = InsertTechnologyRole(tr, conn, trans);
+                res = insertTechnologyRole(tr, conn, trans);
             }
             else
             {
-                res = UpdateTechnologyRole(tr, conn, trans);
+                res = updateTechnologyRole(tr, conn, trans);
             }
 
             return (res);
         }
 
-        private int InsertTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        private int insertTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             int res;
 
@@ -1916,7 +2015,7 @@ namespace matching_learning.common.Repositories
                 cmdTR.Parameters.Add("@technologyId", SqlDbType.Int);
                 cmdTR.Parameters["@technologyId"].Value = tr.ParentTechnologyId;
 
-                SetParamsTechnologyRole(cmdTR, tr);
+                setParamsTechnologyRole(cmdTR, tr);
 
                 cmdTR.ExecuteNonQuery();
             }
@@ -1943,7 +2042,7 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
-        private int UpdateTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        private int updateTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
         {
             var stmnt = "UPDATE [dbo].[TechnologyRole] " +
                         "SET [TechnologyId] = @technologyId," +
@@ -1963,7 +2062,7 @@ namespace matching_learning.common.Repositories
                 cmd.Parameters.Add("@ssId", SqlDbType.Int);
                 cmd.Parameters["@ssId"].Value = tr.RelatedId;
 
-                SetParamsTechnologyRole(cmd, tr);
+                setParamsTechnologyRole(cmd, tr);
 
                 cmd.ExecuteNonQuery();
             }
@@ -1971,7 +2070,24 @@ namespace matching_learning.common.Repositories
             return (tr.Id);
         }
 
-        private void SetParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
+        private void deleteTechnologyRole(TechnologyRole tr, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "UPDATE [dbo].[TechnologyRole] " +
+                        "SET [IsActive] = 0 " +
+                        "WHERE [Id] = @technologyRoleId";
+            
+            using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@technologyRoleId", SqlDbType.Int);
+                cmd.Parameters["@technologyRoleId"].Value = tr.Id;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void setParamsTechnologyRole(SqlCommand cmd, TechnologyRole tr)
         {
             cmd.Parameters.Add("@code", SqlDbType.NVarChar);
             cmd.Parameters["@code"].Value = tr.Code;

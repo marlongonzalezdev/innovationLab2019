@@ -166,7 +166,7 @@ namespace matching_learning_algorithm
 
         private DataModel ProcessRequest(ProjectCandidateRequirement candidateRequirement)
         {
-            var skills = _skillRepository.GetSkills();
+            var skills = _skillRepository.GetAllSkills();
             var dataModel = new DataModel();
             if (CsvHeaders.Count == 0)
             {
