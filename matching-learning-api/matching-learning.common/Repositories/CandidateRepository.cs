@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace matching_learning.common.Repositories
                     res = getCandidates(conn, cmd);
                 }
             }
-            
+
             return (res);
         }
 
@@ -174,7 +175,7 @@ namespace matching_learning.common.Repositories
 
             var deliveryUnitsRepository = new DeliveryUnitRepository();
             var deliveryUnits = deliveryUnitsRepository.GetDeliveryUnits();
-            
+
             var evaluations = getCandidatesEvaluationsByCandidateId(id);
 
             var query = "SELECT [C].[Id], " +
@@ -216,7 +217,7 @@ namespace matching_learning.common.Repositories
 
                         var candidateRoleRepository = new CandidateRoleRepository();
                         var candidateRole = candidateRoleRepository.GetCandidateRoleById(dr.Db2Int("CandidateRoleId"));
-                            
+
                         Project project = null;
 
                         var projectId = dr.Db2NullableInt("CurrentProjectId");
@@ -224,7 +225,7 @@ namespace matching_learning.common.Repositories
                         if (projectId.HasValue)
                         {
                             var projectRepository = new ProjectRepository();
-                             project = projectRepository.GetProjectById(projectId.Value);
+                            project = projectRepository.GetProjectById(projectId.Value);
                         }
 
                         res = getCandidateFromDataRow(dr, deliveryUnit, candidateRole, project, evaluations);
@@ -239,21 +240,7 @@ namespace matching_learning.common.Repositories
         {
             Candidate res = null;
 
-            string picturePath;
-            string picturesRootFolder = Config.GetPicturesRootFolder();
-
-            var pictureUser = dr.Db2String("Picture");
-
-            if (string.IsNullOrEmpty(pictureUser))
-            {
-                string defaultPicture = Config.GetDefaultPicture();
-
-                picturePath = picturesRootFolder + defaultPicture;
-            }
-            else
-            {
-                picturePath = picturesRootFolder + pictureUser;
-            }
+            string pictureFullUrl = getPictureFromDB(dr.Db2String("Picture"));
 
             res = new Candidate()
             {
@@ -263,13 +250,13 @@ namespace matching_learning.common.Repositories
                 RelationType = (CandidateRelationType)dr.Db2Int("RelationType"),
                 FirstName = dr.Db2String("FirstName"),
                 LastName = dr.Db2String("LastName"),
-                CandidateRoleId =  dr.Db2Int("CandidateRoleId"),
+                CandidateRoleId = dr.Db2Int("CandidateRoleId"),
                 CandidateRole = candidateRole,
                 DocType = (DocumentType?)dr.Db2NullableInt("DocType"),
                 DocNumber = dr.Db2String("DocNumber"),
                 EmployeeNumber = dr.Db2NullableInt("EmployeeNumber"),
                 InBench = dr.Db2Bool("InBench"),
-                Picture = picturePath,
+                Picture = pictureFullUrl,
                 IsActive = dr.Db2Bool("IsActive"),
                 Grade = (CandidateGrade?)dr.Db2NullableInt("Grade"),
                 CurrentProjectId = dr.Db2NullableInt("CurrentProjectId"),
@@ -387,7 +374,7 @@ namespace matching_learning.common.Repositories
                     }
 
                     SaveCandidateEvaluations(ca, conn, trans);
-                    
+
                     trans.Commit();
                 }
                 catch
@@ -441,7 +428,7 @@ namespace matching_learning.common.Repositories
                     }
 
                     SaveCandidateEvaluations(ca, conn, trans);
-                    
+
                     trans.Commit();
                 }
                 catch
@@ -456,6 +443,9 @@ namespace matching_learning.common.Repositories
 
         private void setParamsCandidate(SqlCommand cmd, Candidate ca)
         {
+
+            string pictureOriginal = getPictureToDB(ca.Picture);
+
             cmd.Parameters.Add("@deliveryUnitId", SqlDbType.Int);
             cmd.Parameters["@deliveryUnitId"].Value = ca.DeliveryUnitId;
 
@@ -470,7 +460,7 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@candidateRoleId", SqlDbType.Int);
             cmd.Parameters["@candidateRoleId"].Value = ca.CandidateRoleId;
-            
+
             cmd.Parameters.Add("@docType", SqlDbType.Int);
             cmd.Parameters["@docType"].IsNullable = true;
             if (ca.DocType.HasValue)
@@ -509,9 +499,9 @@ namespace matching_learning.common.Repositories
 
             cmd.Parameters.Add("@picture", SqlDbType.NVarChar);
             cmd.Parameters["@picture"].IsNullable = true;
-            if (!string.IsNullOrEmpty(ca.Picture))
+            if (!string.IsNullOrEmpty(pictureOriginal))
             {
-                cmd.Parameters["@picture"].Value = ca.Picture;
+                cmd.Parameters["@picture"].Value = pictureOriginal;
             }
             else
             {
@@ -569,6 +559,65 @@ namespace matching_learning.common.Repositories
                     evalRepository.SaveEvaluation(eval, conn, trans);
                 }
             }
+        }
+        #endregion
+
+        #region Picture transformations
+        /// <summary>
+        /// Picture URL is defined with picture root prefix and database picture field.
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        private string getPictureFromDB(string picture)
+        {
+            string res;
+
+            string picturesRootFolder = Config.GetPicturesRootFolder();
+
+            if (string.IsNullOrEmpty(picture))
+            {
+                string defaultPicture = Config.GetDefaultPicture();
+
+                res = picturesRootFolder + defaultPicture;
+            }
+            else
+            {
+                res = picturesRootFolder + picture;
+            }
+
+            return (res);
+        }
+
+        /// <summary>
+        /// Picture default or rootPath prefix transformations has to be reverted.
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        private string getPictureToDB(string picture)
+        {
+            string res;
+
+            string picturesRootFolder = Config.GetPicturesRootFolder();
+            string defaultPicturePath = picturesRootFolder + Config.GetDefaultPicture();
+
+            if (string.IsNullOrEmpty(picture))
+            {
+                res = null;
+            }
+            else if (string.Compare(picture, defaultPicturePath, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                res = null;
+            }
+            else if (picture.StartsWith(picturesRootFolder))
+            {
+                res = picture.Substring(picturesRootFolder.Length);
+            }
+            else
+            {
+                res = picture;
+            }
+
+            return (res);
         }
         #endregion
     }
