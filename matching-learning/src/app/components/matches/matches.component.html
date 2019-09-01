@@ -45,13 +45,13 @@
 
         <!-- In ProjectPositionCriteria Name Column -->
         <ng-container matColumnDef="projectName">
-            <th mat-header-cell *matHeaderCellDef> <b>ProjectPositionCriteria</b> </th>
+            <th mat-header-cell *matHeaderCellDef> <b>Project</b> </th>
             <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> {{element.candidate.currentProjectDescription}}</td>
         </ng-container>
 
         <!-- In ProjectPositionCriteria Since Column -->
         <ng-container matColumnDef="projectSince">
-            <th mat-header-cell *matHeaderCellDef> <b>ProjectPositionCriteria Since</b> </th>
+            <th mat-header-cell *matHeaderCellDef> <b>In Project Since</b> </th>
             <td mat-cell *matCellDef="let element" (click)="openDialog(element)"> {{element.candidate.currentProjectDuration}}</td>
         </ng-container>
 

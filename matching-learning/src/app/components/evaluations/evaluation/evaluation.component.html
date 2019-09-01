@@ -52,8 +52,7 @@
                     <div class="selected-skills__container">
                         <ul class="list-group skills__selected">
                             <li class="list-group-item" *ngFor="let skill of skillsWithEvaluation">
-                                <span class="badge">{{skill.skill.name}}</span> --- <span class="badge">{{skill.expertise * 100}}
-                                %</span>
+                                <span class="badge">{{skill.skill.name}}</span> - <span class="badge">{{skill.expertise|percent}}</span>
                                 <button mat-icon-button aria-label="delete" (click)="deleteSkillWithEvaluation(skill)" color="warn">
                                     <mat-icon>delete</mat-icon>
                                 </button>
