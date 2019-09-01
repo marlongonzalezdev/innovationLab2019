@@ -224,19 +224,19 @@ AS
  BEGIN
   DECLARE @res NVARCHAR(MAX)
 
-  IF (@rnd < 0.2)
+  IF (@rnd < 0.5)
    BEGIN
     SET @res = NULL
    END
-  ELSE IF (@rnd < 0.4)
+  ELSE IF (@rnd < 0.6)
    BEGIN
     SET @res = 'It is recommended to repeat evaluation in 3 months.'
    END
-  ELSE IF (@rnd < 0.6)
+  ELSE IF (@rnd < 0.75)
    BEGIN
     SET @res = 'It is recommended to repeat evaluation in 6 months.'
    END
-  ELSE IF (@rnd < 0.8)
+  ELSE IF (@rnd < 0.95)
    BEGIN
     SET @res = 'It is recommended to repeat evaluation in 1 year.'
    END
