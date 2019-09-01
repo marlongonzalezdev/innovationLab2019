@@ -45,6 +45,7 @@ import { ProjectsComponent } from './components/projects/projects.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { LoginComponent } from './components/login/login.component';
+import { TeamComponent } from './team/team.component';
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import { LoginComponent } from './components/login/login.component';
     ProjectsComponent,
     ProjectListComponent,
     PageNotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    TeamComponent
   ],
   imports: [
     BrowserModule,
