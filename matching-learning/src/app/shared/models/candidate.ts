@@ -2,6 +2,7 @@ import {DeliveryUnit} from './deliveryUnit';
 
 import {Role} from './role';
 import {Evaluation} from './evaluation';
+import {Project} from './project';
 
 export interface Candidate {
   id: number;
@@ -13,11 +14,13 @@ export interface Candidate {
   name: string;
   candidateRoleId: number;
   candidateRole: Role;
-  candidateGrade: number;
+  grade: number;
   inBench: boolean;
   docType: number;
   docNumber: string;
   employeeNumber: number;
+  project: Project;
+  currentProjectId: number;
 
   picture: string;
   isActive: boolean;
