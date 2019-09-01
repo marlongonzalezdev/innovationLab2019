@@ -22,13 +22,13 @@
       <div class="form-checkbox">
         <mat-checkbox color="warn" formControlName="isActive">Is Active</mat-checkbox>
       </div>
-      <div class="form-checkbox">
+      <div class="form-checkbox" *ngIf="isEmployee">
         <mat-checkbox color="warn" formControlName="isInBench" (change)="selected($event)">Is in bench
         </mat-checkbox>
       </div>
     </div>
     <div class="row">
-      <mat-form-field color="warn">
+      <mat-form-field color="warn" *ngIf="isEmployee && !isInBench">
         <mat-select ng-show="false" formControlName="project" placeholder="Project">
           <mat-option>None</mat-option>
           <ng-container *ngFor="let project of projects | async">
@@ -36,8 +36,8 @@
           </ng-container>
         </mat-select>
       </mat-form-field>
-      <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="In project since">
+      <mat-form-field *ngIf="isEmployee">
+        <input matInput [matDatepicker]="picker" placeholder="{{isInBench? 'In bench since': 'In project since'}}">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -56,7 +56,7 @@
         <mat-select formControlName="relationType" placeholder="Relation Type">
           <mat-option>None</mat-option>
           <ng-container *ngFor="let relationType of relationTypes | async">
-            <mat-option [value]="relationType.id">{{relationType.name}}</mat-option>
+            <mat-option (onSelectionChange)="onSelect($event)" [value]="relationType.id">{{relationType.name}}</mat-option>
           </ng-container>
         </mat-select>
       </mat-form-field>
@@ -70,7 +70,7 @@
           </ng-container>
         </mat-select>
       </mat-form-field>
-      <mat-form-field color="warn">
+      <mat-form-field color="warn" *ngIf="isEmployee">
         <mat-select ng-show="false" formControlName="grade" placeholder="Grade">
           <mat-option>None</mat-option>
           <ng-container *ngFor="let grade of grades | async">

@@ -1,4 +1,3 @@
-import {EvaluationService} from './../../../shared/services/evaluation.service';
 import {Component, OnInit} from '@angular/core';
 
 import {Observable} from 'rxjs';
@@ -126,8 +125,8 @@ export class CandidateComponent implements OnInit {
 
   onSelect(change: MatOptionSelectionChange) {
     if (change.source.selected) {
-      const relationselected = change.source.viewValue;
-      if (relationselected === 'Employee') {
+      const relationSelected = change.source.viewValue;
+      if (relationSelected === 'Employee') {
         this.isEmployee = true;
         this.isInBench = this.candidateService.form.controls.isInBench.value;
       } else {
