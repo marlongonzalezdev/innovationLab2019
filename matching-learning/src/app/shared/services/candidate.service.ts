@@ -8,6 +8,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { Candidate } from '../models/candidate';
 import { environment } from 'src/environments/environment';
 import {Role} from '../models/role';
+import {CandidateGrade} from '../models/candidate-grade';
 
 
 const httpOptions = {
@@ -38,7 +39,9 @@ export class CandidateService {
    /* email: new FormControl('', Validators.email),
     gender: new FormControl(0),*/
     isActive: new FormControl(false),
-    isInBench: new FormControl(false)
+    isInBench: new FormControl(false),
+    project: new FormControl(false),
+    grade: new FormControl(false)
   });
 
   InitializeFormGroup() {
@@ -51,7 +54,9 @@ export class CandidateService {
       relationType: 0,
       roleId: 0,
       isActive: true,
-      isInBench: false
+      isInBench: false,
+      project: 0,
+      grade: 0
     });
   }
 
@@ -104,7 +109,14 @@ export class CandidateService {
       relationType: candidate.relationType,
       isActive: candidate.isActive,
       isInBench: candidate.inBench,
-      roleId: candidate.candidateRoleId
+      roleId: candidate.candidateRoleId,
+      project: candidate.currentProjectId,
+      grade: candidate.grade
     });
+  }
+
+  getGrades() {
+    this.url = environment.dbConfig.baseUrl + environment.dbConfig.GetCandiGrades;
+    return this.http.get<CandidateGrade[]>(this.url, {responseType: 'json'});
   }
 }

@@ -1,3 +1,4 @@
+import { EvaluationService } from './../../../shared/services/evaluation.service';
 import {Component, OnInit} from '@angular/core';
 
 import {Observable} from 'rxjs';
@@ -8,9 +9,11 @@ import {CandidateService} from 'src/app/shared/services/candidate.service';
 import {DeliveryUnitService} from 'src/app/shared/services/delivery-unit.service';
 import {RelationTypeService} from 'src/app/shared/services/relation-type.service';
 import {NotificationService} from 'src/app/shared/services/notification.service';
-import {MatDialogRef, MatTableDataSource} from '@angular/material';
+import {MatDialogRef, MatOptionSelectionChange} from '@angular/material';
 import {Role} from '../../../shared/models/role';
-import {Evaluation} from '../../../shared/models/evaluation';
+import {ProjectService} from '../../../shared/services/project.service';
+import {Projects} from '@angular/cli/lib/config/schema';
+import {CandidateGrade} from '../../../shared/models/candidate-grade';
 
 @Component({
   selector: 'app-candidate',
@@ -21,18 +24,26 @@ export class CandidateComponent implements OnInit {
 
   deliveryUnits: Observable<DeliveryUnit[]>;
   relationTypes: Observable<RelationType[]>;
+  projects: Observable<Projects[]>;
+  grades: Observable<CandidateGrade[]>;
   roles: Observable<Role[]>;
   public candidate: Candidate;
+  isInBench: boolean;
+  isEmployee: boolean;
 
   constructor(private candidateService: CandidateService, private deliveryUnitService: DeliveryUnitService,
               private relationTypeService: RelationTypeService, private notificationService: NotificationService,
-              public dialogRef: MatDialogRef<CandidateComponent>) {
+              private projectService: ProjectService, public dialogRef: MatDialogRef<CandidateComponent>) {
   }
 
   ngOnInit() {
     this.deliveryUnits = this.deliveryUnitService.getDeliveryUnits();
     this.relationTypes = this.relationTypeService.getRelationTypes();
+    this.projects = this.projectService.getProjects();
+    this.grades = this.candidateService.getGrades();
     this.roles = this.candidateService.getCandidateRoles();
+    this.isInBench = this.candidateService.form.controls.isInBench.value;
+    console.log(this.grades);
   }
 
   onClear() {
@@ -75,4 +86,21 @@ export class CandidateComponent implements OnInit {
     this.onClear();
     this.dialogRef.close();
   }
+
+    selected(event) {
+      this.isInBench = event.checked ? true : false;
+    }
+
+    onSelect(change: MatOptionSelectionChange) {
+      if (change.source.selected) {
+        const relationselected = change.source.viewValue;
+        if (relationselected === 'Employee') {
+          this.isEmployee = true;
+          this.isInBench = this.candidateService.form.controls.isInBench.value;
+        } else {
+          this.isEmployee = false;
+          this.isInBench = this.candidateService.form.controls.isInBench.value;
+        }
+      }
+    }
 }

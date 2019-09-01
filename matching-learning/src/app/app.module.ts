@@ -45,6 +45,7 @@ import { ProjectsComponent } from './components/projects/projects.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { LoginComponent } from './components/login/login.component';
+import {MatDatepickerModule, MatNativeDateModule} from '@angular/material';
 import { TeamComponent } from './team/team.component';
 
 
@@ -76,16 +77,18 @@ import { TeamComponent } from './team/team.component';
     LoginComponent,
     TeamComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MaterialModule,
-    ReactiveFormsModule,
-    FlexLayoutModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        MatDatepickerModule,
+        MatNativeDateModule
+    ],
   providers: [
     HttpErrorHandler,
     MessageService,
