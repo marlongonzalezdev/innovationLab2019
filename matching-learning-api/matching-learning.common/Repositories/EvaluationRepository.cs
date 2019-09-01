@@ -509,7 +509,7 @@ namespace matching_learning.common.Repositories
             
             cmd.Parameters.Add("@notes", SqlDbType.NVarChar);
             cmd.Parameters["@notes"].IsNullable = true;
-            if (!string.IsNullOrEmpty(ev.EvaluationKey))
+            if (!string.IsNullOrEmpty(ev.Notes))
             {
                 cmd.Parameters["@notes"].Value = ev.Notes;
             }
