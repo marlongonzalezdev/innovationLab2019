@@ -33,7 +33,7 @@
             <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                    <button mat-icon-button (click)="onEdit(row)">
+                    <button mat-icon-button (click)="onEdit(row, candidate)">
                         <mat-icon>launch</mat-icon>
                     </button>
                     <button mat-icon-button color="warn">

@@ -30,19 +30,19 @@ export class EvaluationService {
     weight: new FormControl(0, Validators.required),
     evaluationTypeId: new FormControl(0, Validators.required),
     skillId: new FormControl(0, Validators.required),
-    candidateName: new FormControl(''),
-    notes: new FormControl('')
+    notes: new FormControl(''),
+    evaluationDetails: new FormControl('')
   });
 
   InitializeFormGroup() {
     this.form.setValue({
-      $key: -1,
+      $key: null,
       candidateId: null,
       weight: 0,
       evaluationTypeId: 0,
       skillId: 0,
-      candidateName: '',
-      notes: ''
+      notes: '',
+      evaluationDetails: ''
     });
   }
 
@@ -50,11 +50,11 @@ export class EvaluationService {
     this.form.setValue({
       $key: evaluation.id,
       candidateId: evaluation.candidateId,
-      weight: evaluation.weight,
+      weight: 0,
       evaluationTypeId: evaluation.evaluationTypeId,
-      skillId: evaluation.skillId,
-      candidateName: evaluation.candidateName,
-      notes: evaluation.nodes
+      skillId: 0,
+      notes: evaluation.notes,
+      evaluationDetails: evaluation.details
     });
   }
 
@@ -69,7 +69,7 @@ export class EvaluationService {
   }
 
   addEvaluation(evaluation: Evaluation): Observable<Evaluation> {
-    this.url = 'https://localhost:44374/Evaluations/SaveEvaluation'
+    this.url = 'https://localhost:44374/Evaluations/SaveEvaluation';
     return this.http.post<Evaluation>(this.url, evaluation, httpOptions)
       .pipe(
         catchError(this.handleError)

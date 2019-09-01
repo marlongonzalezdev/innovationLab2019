@@ -1,3 +1,4 @@
+import { EvaluationDetails } from './../../../shared/models/evaluation-details';
 import {Component, Inject, OnInit} from '@angular/core';
 import {EvaluationService} from '../../../shared/services/evaluation.service';
 import {MAT_DIALOG_DATA, MatDialogRef, MatOption, MatSelectChange} from '@angular/material';
@@ -16,18 +17,24 @@ import {NotificationService} from '../../../shared/services/notification.service
 export class EvaluationComponent implements OnInit {
 
     evaluationTypes: Observable<EvaluationType[]>;
-    skillsList: Observable<Skill[]>;
+    skillsList: Skill[];
     skillName: string;
-    skillsWithEvaluation: Skill[] = [];
+    skillsWithEvaluation: any = [];
+    evaluationDisable: boolean;
 
-    constructor(private evaluationService: EvaluationService, private skillService: SkillService,
+    constructor(public evaluationService: EvaluationService, private skillService: SkillService,
                 private notificationService: NotificationService,
                 public dialogRef: MatDialogRef<EvaluationComponent>, @Inject(MAT_DIALOG_DATA) private data: any) {
     }
 
     ngOnInit() {
-        this.evaluationTypes = this.evaluationService.getEvaluationTypes();
-        this.skillsList = this.skillService.getSkills();
+      this.skillsWithEvaluation = this.evaluationService.form.controls.evaluationDetails.value;
+      this.evaluationTypes = this.evaluationService.getEvaluationTypes();
+      this.skillService.getSkills()
+      .subscribe (response => {
+          this.skillsList = response;
+      });
+      if (this.evaluationService.form.controls.$key.value) {this.evaluationDisable = true; } else {this.evaluationDisable = false; }
     }
 
     onSubmit() {
@@ -38,7 +45,7 @@ export class EvaluationComponent implements OnInit {
                 date: new Date(),
                 evaluationType: null,
                 evaluationTypeId: this.evaluationService.form.controls.evaluationTypeId.value,
-                skills: this.skillsWithEvaluation,
+                details: this.skillsWithEvaluation,
                 notes: this.evaluationService.form.controls.notes.value,
             };
 
@@ -66,23 +73,19 @@ export class EvaluationComponent implements OnInit {
     }
 
     addSkillEvaluation() {
-        const skill: Skill = {
-            name: this.skillName,
-            defaultExpertise: this.evaluationService.form.controls.weight.value,
-            id: this.evaluationService.form.controls.skillId.value,
-            versions: null,
-            parentTechnologyId: null,
-            isVersioned: null,
-            code: null,
-            category: null,
-            relatedId: null,
-            weight: null
+        const skillData: Skill = this.skillsList.find(s => s.id === this.evaluationService.form.controls.skillId.value);
+        const skillEvaluationDetails: EvaluationDetails = {
+          id: -1,
+          evaluationId: -1,
+          skillId: this.evaluationService.form.controls.skillId.value,
+          skill: skillData,
+          expertise: this.evaluationService.form.controls.weight.value
         };
 
-        this.skillsWithEvaluation.push(skill);
+        this.skillsWithEvaluation.push(skillEvaluationDetails);
     }
 
-    deleteSkillWithEvaluation(skill: Skill) {
+    deleteSkillWithEvaluation(skill: EvaluationDetails) {
         const index = this.skillsWithEvaluation.indexOf(skill, 0);
         if (index > -1) {
             this.skillsWithEvaluation.splice(index, 1);
