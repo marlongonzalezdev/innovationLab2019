@@ -31,7 +31,8 @@ export class EvaluationService {
     evaluationTypeId: new FormControl(0, Validators.required),
     skillId: new FormControl(0, Validators.required),
     notes: new FormControl(''),
-    evaluationDetails: new FormControl('')
+    evaluationDetails: new FormControl(''),
+    date: new FormControl('')
   });
 
   InitializeFormGroup() {
@@ -42,7 +43,8 @@ export class EvaluationService {
       evaluationTypeId: 0,
       skillId: 0,
       notes: '',
-      evaluationDetails: ''
+      evaluationDetails: '',
+      date: ''
     });
   }
 
@@ -54,7 +56,8 @@ export class EvaluationService {
       evaluationTypeId: evaluation.evaluationTypeId,
       skillId: 0,
       notes: evaluation.notes,
-      evaluationDetails: evaluation.details
+      evaluationDetails: evaluation.details,
+      date: evaluation.date
     });
   }
 

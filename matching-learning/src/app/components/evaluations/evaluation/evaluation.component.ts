@@ -21,6 +21,7 @@ export class EvaluationComponent implements OnInit {
   skillName: string;
   skillsWithEvaluation: EvaluationDetails[];
   evaluationDisable: boolean;
+  evaluationDate: Date;
 
   constructor(public evaluationService: EvaluationService, private skillService: SkillService,
               private notificationService: NotificationService,
@@ -29,7 +30,7 @@ export class EvaluationComponent implements OnInit {
 
   ngOnInit() {
     this.skillsWithEvaluation = this.evaluationService.form.controls.evaluationDetails.value ?
-      this.evaluationService.form.controls.evaluationDetails.value : this.skillsWithEvaluation = [];
+    this.evaluationService.form.controls.evaluationDetails.value : this.skillsWithEvaluation = [];
     this.evaluationTypes = this.evaluationService.getEvaluationTypes();
     this.skillService.getSkills()
       .subscribe(response => {
@@ -40,24 +41,25 @@ export class EvaluationComponent implements OnInit {
     } else {
       this.evaluationDisable = false;
     }
-
+    this.evaluationDate = this.evaluationService.form.controls.date.value;
   }
 
-  onSubmit() {
-    if (this.evaluationService.form.valid) {
-      const evaluation: Evaluation = {
-        id: -1,
-        candidateId: this.data.id,
-        date: new Date(),
-        evaluationType: null,
-        evaluationTypeId: this.evaluationService.form.controls.evaluationTypeId.value,
-        details: this.skillsWithEvaluation,
-        notes: this.evaluationService.form.controls.notes.value,
-      };
+    onSubmit() {
+        if (this.evaluationService.form.valid) {
+            const evaluation: Evaluation = {
+                id: this.evaluationService.form.controls.$key.value ? this.evaluationService.form.controls.$key.value : -1,
+                candidateId: this.data.id,
+                date: new Date(),
+                evaluationType: null,
+                evaluationTypeId: this.evaluationService.form.controls.evaluationTypeId.value,
+                details: this.skillsWithEvaluation,
+                notes: this.evaluationService.form.controls.notes.value,
+            };
 
-      console.log(evaluation);
 
-      this.evaluationService.addEvaluation(evaluation).subscribe(
+            console.log(evaluation);
+
+            this.evaluationService.addEvaluation(evaluation).subscribe(
         elem => {
           this.notificationService.sucess('Evaluation saved successfully.');
           this.onClear();
