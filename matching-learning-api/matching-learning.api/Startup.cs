@@ -93,6 +93,7 @@ namespace matching_learning.api
 
             services.AddSingleton<IRegionRepository, RegionRepository>();
             services.AddSingleton<IDeliveryUnitRepository, DeliveryUnitRepository>();
+            services.AddSingleton<IProjectRepository, ProjectRepository>();
             services.AddSingleton<ICandidateRepository, CandidateRepository>();
             services.AddSingleton<ICandidateRoleRepository, CandidateRoleRepository>();
             services.AddSingleton<IEvaluationRepository, EvaluationRepository>();

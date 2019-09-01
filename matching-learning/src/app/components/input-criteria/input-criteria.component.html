@@ -27,7 +27,7 @@
     <div class="matches-container">
         <div class="selected-skills__container">
             <ul class="list-group skills__selected">
-                <li class="list-group-item" *ngFor="let skill of project.skillsFilter;">
+                <li class="list-group-item" *ngFor="let skill of projectPositionCriteria.skillsFilter;">
                     <span class="badge">{{skill.name}}</span> --- <span class="badge">{{skill.weight * 100 | number}}
                     %</span>
                     <button mat-icon-button aria-label="delete" (click)="delete(skill)" color="warn">
@@ -41,7 +41,7 @@
         <div class="role">
             <mat-label>Roles</mat-label>
             <mat-form-field class="role_select" color="warn">
-                <mat-select [(ngModel)]="project.roleIdFilter">
+                <mat-select [(ngModel)]="projectPositionCriteria.roleIdFilter">
                     <mat-option>None</mat-option>
                     <ng-container *ngFor="let role of candidateRoles | async">
                         <mat-option value="{{role.id}}">{{role.name}}</mat-option>
@@ -52,7 +52,7 @@
         <div class="max_quantity">
             <mat-label>Quantity</mat-label>
             <mat-form-field class="max_input">
-                <input [(ngModel)]="project.max" matInput type="number" min="1">
+                <input [(ngModel)]="projectPositionCriteria.max" matInput type="number" min="1">
             </mat-form-field>
         </div>
     </div>
@@ -60,7 +60,7 @@
         <div class="delivery-unit">
             <mat-label>Delivery Unit</mat-label>
             <mat-form-field class="du_select" color="warn">
-                <mat-select [(ngModel)]="project.deliveryUnitIdFilter">
+                <mat-select [(ngModel)]="projectPositionCriteria.deliveryUnitIdFilter">
                     <mat-option>None</mat-option>
                     <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
                         <mat-option value="{{deliveryUnit.id}}">{{deliveryUnit.name}}</mat-option>
@@ -69,10 +69,10 @@
             </mat-form-field>
         </div>
         <div class="bench">
-            <mat-checkbox [(ngModel)]="project.inBenchFilter" color="warn">Only bench</mat-checkbox>
+            <mat-checkbox [(ngModel)]="projectPositionCriteria.inBenchFilter" color="warn">Only bench</mat-checkbox>
         </div>
     </div>
 </div>
 <div class="matches">
-    <app-matches [project]="project" [display]="display"></app-matches>
+    <app-matches [projectPositionCriteria]="projectPositionCriteria" [display]="display"></app-matches>
 </div>

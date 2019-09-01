@@ -99,7 +99,7 @@ export class CandidateService {
       relationType: candidate.relationType,
       isActive: candidate.isActive,
       isInBench: candidate.inBench,
-      roleId: candidate.activeRole.id
+      roleId: candidate.CandidateRoleid
     });
   }
 }

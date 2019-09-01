@@ -18,22 +18,61 @@ namespace matching_learning.api.Controllers.Common
     {
         private readonly ISkillRepository _skillRepository;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IProjectAnalyzer _analyzer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkillsController"/> class.
         /// </summary>
+        /// <param name="projectRepository">The projects repo.</param>
         /// <param name="skillRepository">The skills repo.</param>
-        /// /// <param name="analizer">The skills repo.</param>
-        /// /// <param name="candidateRepository">The skills repo.</param>
-        public ProjectsController(ISkillRepository skillRepository, IProjectAnalyzer analizer, ICandidateRepository candidateRepository)
+        /// <param name="candidateRepository">The candidates repo.</param>
+        /// <param name="analyzer">The ML analyzer.</param>
+        public ProjectsController(IProjectRepository projectRepository, ISkillRepository skillRepository, ICandidateRepository candidateRepository, IProjectAnalyzer analyzer)
         {
+            _projectRepository = projectRepository;
             _skillRepository = skillRepository;
-            _analyzer = analizer;
             _candidateRepository = candidateRepository;
+            _analyzer = analyzer;
         }
 
         #region Retrieve
+        #region Projects
+        /// <summary>
+        /// Gets the projects.
+        /// </summary>
+        /// <returns></returns>
+        [Route("Projects")]
+        public ActionResult<List<Project>> GetProjects()
+        {
+            return _projectRepository.GetProjects();
+        }
+
+        /// <summary>
+        /// Gets the projects paginated.
+        /// </summary>
+        /// <param name="pageIdx">Page index (0 based).</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns></returns>
+        [Route("ProjectsPaginated")]
+        public ActionResult<List<Project>> GetRegionsPaginated(int pageIdx, int pageSize)
+        {
+            return _projectRepository.GetProjectsPaginated(pageIdx, pageSize);
+        }
+
+        /// <summary>
+        /// Gets the project with the identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        [Route("Project")]
+        public ActionResult<Project> GetProjectById(int id)
+        {
+            return _projectRepository.GetProjectById(id);
+        }
+        #endregion
+
+        #region Search best candidate for position
         /// <summary>
         /// Get best candidates for a project - based on Weighted Average.
         /// </summary>
@@ -84,7 +123,7 @@ namespace matching_learning.api.Controllers.Common
 
             if (pcr.RoleIdFilter.HasValue)
             {
-                query = query.Where(c => c.ActiveRole.Id.Equals(pcr.RoleIdFilter.Value));
+                query = query.Where(c => c.CandidateRoleId.Equals(pcr.RoleIdFilter.Value));
             }
 
             if (pcr.RelationTypeFilter.HasValue)
@@ -100,7 +139,7 @@ namespace matching_learning.api.Controllers.Common
             var result = query.Select(candidate => new ProjectCandidate
             {
                 Candidate = candidate,
-                Ranking =  1m - ((decimal) analysisResult.Matches[candidate.Id]) / 100.0M,
+                Ranking = 1m - ((decimal)analysisResult.Matches[candidate.Id]) / 100.0M,
                 SkillExpertises = candidateExpertises
                     .Where(exp => exp.Candidate.Id == candidate.Id)
                     .Select(exp => new ProjectCandidateSkill()
@@ -114,6 +153,7 @@ namespace matching_learning.api.Controllers.Common
 
             return Ok(result);
         }
+        #endregion
         #endregion
     }
 }

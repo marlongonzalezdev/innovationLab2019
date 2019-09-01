@@ -3,7 +3,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 
 import { Match } from 'src/app/shared/models/match';
-import { Project } from 'src/app/shared/models/project';
+import { ProjectPositionCriteria } from 'src/app/shared/models/projectPositionCriteria';
 import { MatchService } from 'src/app/shared/services/match.service';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {UserDetailsComponent} from '../user-details/user-details.component';
@@ -25,14 +25,14 @@ export class MatchesComponent implements OnInit {
 
     loading: boolean;
 
-    @Input() project: Project;
+    @Input() projectPositionCriteria: ProjectPositionCriteria;
     @Input() display: boolean;
     showContent = false;
 
     processData() {
       /*  this.showContent = false;*/
         this.loading = true;
-        this.getUsers(this.project);
+        this.getUsers(this.projectPositionCriteria);
     }
 
  /*   onSelect(match: Match): void {
@@ -55,7 +55,7 @@ export class MatchesComponent implements OnInit {
       name: match.candidate.name,
       picture: match.candidate.picture,
       deliveryUnit: match.candidate.deliveryUnit.name,
-      role: match.candidate.activeRole.name,
+      role: match.candidate.candidateRole.name,
       relationType: match.candidate.relationType,
       inBench: match.candidate.inBench,
       ranking: match.ranking,
@@ -76,9 +76,9 @@ export class MatchesComponent implements OnInit {
     });
   }
 
-    getUsers(project: Project): void {
+    getUsers(projectPositionCriteria: ProjectPositionCriteria): void {
 
-        this.matchService.getMatches(project)
+        this.matchService.getMatches(projectPositionCriteria)
             .subscribe(response => {
                 this.matches = response;
                 this.dataSource = new MatTableDataSource<Match>(this.matches);

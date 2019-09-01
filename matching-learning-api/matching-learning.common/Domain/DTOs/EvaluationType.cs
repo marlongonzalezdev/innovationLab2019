@@ -14,7 +14,7 @@ namespace matching_learning.common.Domain.DTOs
 
         public int CompareTo(EvaluationType other)
         {
-            return (Name.CompareTo(other.Name));
+            return (this.Name.CompareTo(other.Name));
         }
     }
 }

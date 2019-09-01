@@ -115,33 +115,33 @@ AS
  BEGIN
   DECLARE @res INT
 
-  IF (@rnd < 0.85)
+  IF (@rnd < 0.65)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DEV')
    END
-  ELSE IF (@rnd < 0.85)
+  ELSE IF (@rnd < 0.75)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'TST')
    END
-  ELSE IF (@rnd < 0.95)
+  ELSE IF (@rnd < 0.8)
+   BEGIN
+    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'BA')
+   END
+  ELSE IF (@rnd < 0.85)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'PM')
    END
-  ELSE IF (@rnd < 0.93)
+  ELSE IF (@rnd < 0.9)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DBA')
    END
-  ELSE IF (@rnd < 0.95)
+  ELSE IF (@rnd < 0.93)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'UX')
    END
-  ELSE IF (@rnd < 0.97)
+  ELSE IF (@rnd < 0.96)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'OPS')
-   END
-  ELSE IF (@rnd < 0.985)
-   BEGIN
-    SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'BA')
    END
   ELSE
    BEGIN
@@ -383,40 +383,27 @@ CREATE TABLE [dbo].[Candidate] (
   [RelationType]                  INT NOT NULL CONSTRAINT [CH_Candidate_RelationType] CHECK ([RelationType] IN (1, 2, 3)), -- 1: Employee, 2: Candidate, 3: External
   [FirstName]                     [MLName] NOT NULL,
   [LastName]                      [MLName] NOT NULL,
+  [CandidateRoleId]               INT NOT NULL,
   [DocType]                       INT NULL CONSTRAINT [CH_Candidate_DocType] CHECK ([DocType] IN (1, 2)), -- 1: NationalIdentity, 2: Passport
   [DocNumber]                     NVARCHAR(64) NULL,
   [EmployeeNumber]                INT NULL,
-  [InBench]                       BIT NOT NULL,
   [Picture]                       NVARCHAR(1024) NULL,
-  [IsActive]                      BIT NOT NULL,
   [Grade]                         INT CONSTRAINT [CH_Candidate_Grade] CHECK ([Grade] BETWEEN 1 AND 13), -- 1: IN, 2: JT, 3: TL, 4: ST, 5: EN, 6: SE, 7: CL, 8: SC, 9: ML, 10: SM, 11: BM, 12: BD, 13: DR
+  [InBench]                       BIT NOT NULL,
   [CurrentProjectId]              INT NULL,
   [CurrentProjectJoin]            DATETIME NULL,
+  [IsActive]                      BIT NOT NULL,
 
   CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED ([Id] ASC),
   
   CONSTRAINT [FK_Candidate_DeliveryUnit_DeliveryUnitId] FOREIGN KEY ([DeliveryUnitId]) REFERENCES [dbo].[DeliveryUnit] ([Id]),
+  CONSTRAINT [FK_Candidate_CandidateRole_CandidateRoleId] FOREIGN KEY ([CandidateRoleId]) REFERENCES [dbo].[CandidateRole] ([Id]),
   CONSTRAINT [FK_Candidate_Project_CurrentProjectId] FOREIGN KEY ([CurrentProjectId]) REFERENCES [dbo].[Project] ([Id]),
 )
 GO
 
 -- CONSTRAINT [UC_Candidate_EmployeeNumber] NONCLUSTERED ([EmployeeNumber] ASC),
 -- CONSTRAINT [UC_Candidate_Doc] NONCLUSTERED ([DocType] ASC, [DocNumber] ASC),
-
-CREATE TABLE [dbo].[CandidateCandidateRole] (
-  [Id]                            INT IDENTITY(1, 1) NOT NULL,
-  [CandidateId]                   INT NOT NULL,
-  [CandidateRoleId]               INT NOT NULL,
-  [StartDate]                     DATETIME NOT NULL,
-  [EndDate]                       DATETIME NULL,
-
-  CONSTRAINT [PK_CandidateCandidateRole] PRIMARY KEY CLUSTERED ([Id] ASC),
-  
-  CONSTRAINT [FK_CandidateCandidateRole_Candidate_CandidateId] FOREIGN KEY ([CandidateId]) REFERENCES [dbo].[Candidate] ([Id]),
-
-  CONSTRAINT [FK_CandidateCandidateRole_CandidateRole_CandidateRoleId] FOREIGN KEY ([CandidateRoleId]) REFERENCES [dbo].[CandidateRole] ([Id]),
-)
-GO
 
 ----------------------------------------------------------------------------------------------------
 
@@ -1050,194 +1037,102 @@ GO
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Adrián', 'Belen', NULL, NULL, 71548, 0 , 'MVD/Adrian_Belen.JPG', 0, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Adrián', 'Lopez', NULL, NULL, 87969, 0 , 'MVD/Adrian_Lopez.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alberto', 'Da Cunha', NULL, NULL, 49723, 1 , 'MVD/Alberto_Dacunha.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alberto', 'Hernández', NULL, NULL, 62289, 0 , 'MVD/Alberto_Hernandez.jpg', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alejandro', 'Capece', NULL, NULL, 24890, 0 , 'MVD/Alejandro Capece.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alejandro', 'Latchinian', NULL, NULL, 19450, 0 , 'MVD/Alejandro_Latchinian.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alfonso', 'Rodriguez', NULL, NULL, 19819, 1 , 'MVD/Alfonso_Rodriguez.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Alvaro', 'Restuccia', NULL, NULL, 74146, 1 , 'MVD/Alvaro_Restuccia.jpeg', 1, [dbo].[GradeFromStr]('CL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Andrés', 'Bores', NULL, NULL, 19581, 0 , 'MVD/Andres_Bores.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Andrés', 'Maedo', NULL, NULL, 10509, 1 , 'MVD/Andres_Maedo.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Andrés', 'Nieves', NULL, NULL, 31005, 0 , 'MVD/Andres_Nieves.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Aniela', 'Amy', NULL, NULL, 78364, 0 , 'MVD/Aniela_Amy.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ariel', 'Sisro', NULL, NULL, 28424, 0 , 'MVD/Ariel_Sisro.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Beerbal', 'Abdulkhader', NULL, NULL, 24953, 1 , 'MVD/Beerbal_Abdulkhader.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Bruno', 'Candia', NULL, NULL, 3429, 1 , 'MVD/Bruno_Candia.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Camila', 'Roji', NULL, NULL, 543, 0 , 'MVD/Camila_Roji.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Camila', 'Sorio', NULL, NULL, 71157, 0 , 'MVD/Camila_Sorio.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Camilo', 'Gomez', NULL, NULL, 33111, 1 , 'MVD/Camilo_Gomez.jpeg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Damián', 'Pereira', NULL, NULL, 52846, 1 , 'MVD/Damian_Pereira.JPG', 1, [dbo].[GradeFromStr]('CL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Daniel', 'Cabrera', NULL, NULL, 94483, 0 , 'MVD/Daniel_Cabrera.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Delia', 'Alvarez', NULL, NULL, 51761, 0 , 'MVD/Delia_Alvarez.jpg', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Eduardo', 'Ducer', NULL, NULL, 80042, 0 , 'MVD/Eduardo_Ducer.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Eugenia', 'Pais', NULL, NULL, 13160, 1 , 'MVD/Maria_Pais.jpg', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Federico', 'Canet', NULL, NULL, 69093, 1 , 'MVD/Federico_Canet.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Federico', 'García', NULL, NULL, 21080, 0 , 'MVD/Federico_Garcia.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Federico', 'Trujillo', NULL, NULL, 81091, 1 , 'MVD/Federico_Trujillo.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Fernando', 'Olmos', NULL, NULL, 8655, 1 , 'MVD/Fernando_Olmos.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Fernando', 'Cañas', NULL, NULL, 84854, 0 , 'MVD/Fernando_Canas.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Fernando', 'Stromillo', NULL, NULL, 87871, 0 , 'MVD/Fernando_Stromillo.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Gastón', 'Aroztegui', NULL, NULL, 90764, 0 , 'MVD/Gaston_Aroztegui.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Gerardo', 'Barbitta', NULL, NULL, 43613, 0 , 'MVD/Gerardo_Barbitta.jpg', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Giovanina', 'Chirione', NULL, NULL, 67402, 0 , 'MVD/Giovanina_Chirione.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Hernán', 'Rumbo', NULL, NULL, 49566, 0 , 'MVD/Hernan_Rumbo.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Horacio', 'Blanco', NULL, NULL, 5971, 0 , 'MVD/Horacio_Blanco.JPG', 1, [dbo].[GradeFromStr]('CL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Hugo', 'Ocampo', NULL, NULL, 2059, 0 , 'MVD/Hugo_Ocampo.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ignacio', 'Assandri', NULL, NULL, 72580, 1 , 'MVD/Ignacio_Assandri.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ignacio', 'Loureiro', NULL, NULL, 72259, 0 , 'MVD/Ignacio_Loureiro.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ignacio', 'Secco', NULL, NULL, 39204, 0 , 'MVD/Ignacio_Secco.jpeg', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Javier', 'Barrios', NULL, NULL, 7938, 0 , 'MVD/Javier_Barrios.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Javier', 'Calero', NULL, NULL, 35010, 0 , 'MVD/Javier_Calero.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Jimena', 'Irigaray', NULL, NULL, 9494, 0 , 'MVD/Jimena_Irigaray.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Jorge', 'Jova', NULL, NULL, 76049, 1 , NULL, 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Juan', 'Aguerre', NULL, NULL, 63712, 0 , 'MVD/Juan_Aguerre.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Juan', 'Estrada', NULL, NULL, 16777, 0 , 'MVD/Juan_Estrada.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Juan Manuel', 'Fagundez', NULL, NULL, 16744, 0 , NULL, 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Leonardo', 'Mendizabal', NULL, NULL, 51876, 0 , 'MVD/Leonardo_Mendizabal.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Luciano', 'Deluca', NULL, NULL, 8098, 0 , 'MVD/Luciano_Deluca.JPG', 1, [dbo].[GradeFromStr]('SC') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Malvina', 'Jaume', NULL, NULL, 34423, 0 , 'MVD/Malvina_Jaume.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Marcelo', 'Zepedeo', NULL, NULL, 9472, 0 , 'MVD/Marcelo_Zepedeo.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Marcos', 'Guimaraes', NULL, NULL, 29563, 0 , 'MVD/Marcos_Guimaraes.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'María Julia', 'Etcheverry', NULL, NULL, 55612, 0 , 'MVD/Maria_Etcheverry.jpg', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'María Noel', 'Mosqueira', NULL, NULL, 74625, 0 , 'MVD/Maria_Mosqueira.JPG', 1, [dbo].[GradeFromStr]('TL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Marlon', 'González', NULL, NULL, 17979, 0 , 'MVD/Marlon_Gonzalez.jpg', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Martín', 'Acosta', NULL, NULL, 96407, 0 , 'MVD/Martin_Acosta.jpg', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Martin', 'Caetano', NULL, NULL, 83517, 0 , 'MVD/Martin_Caetano.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Mathías', 'Rodríguez', NULL, NULL, 47924, 1 , 'MVD/Mathias_Rodriguez.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Mauricio', 'Mora', NULL, NULL, 95184, 0 , 'MVD/Mauricio_Mora.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Nicolás', 'Gómez', NULL, NULL, 87246, 1 , 'MVD/Nicolas_Gomez.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Nicolás', 'Lasarte', NULL, NULL, 55683, 1 , 'MVD/Nicolas_Lasarte.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Nicolas', 'Mañay', NULL, NULL, 52658, 0 , 'MVD/Nicolas_Manay.jpg', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Octavio', 'Garbarino', NULL, NULL, 65204, 1 , 'MVD/Octavio_Garbarino.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'Cawen', NULL, NULL, 13493, 0 , 'MVD/Pablo_Cawen.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'Da Silva', NULL, NULL, 61913, 0 , 'MVD/Pablo_DaSilva.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'García', NULL, NULL, 20851, 0 , 'MVD/Pablo_Garcia.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'Gus', NULL, NULL, 94261, 0 , NULL, 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'Queirolo', NULL, NULL, 45259, 0 , 'MVD/Pablo_Queirolo.jpg', 1, [dbo].[GradeFromStr]('SC') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pablo', 'Uriarte', NULL, NULL, 80883, 0 , 'MVD/Pablo_Uriarte.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pedro', 'Minetti', NULL, NULL, 59765, 0 , 'MVD/Pedro_Minetti.jpg', 1, [dbo].[GradeFromStr]('SM') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Pedro', 'Tournier', NULL, NULL, 51598, 1 , 'MVD/Pedro_Tournier.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Raidel', 'Gonzalez', NULL, NULL, 79674, 0 , 'MVD/Raidel_Gonzalez.jpeg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Raúl', 'Fossemale', NULL, NULL, 23331, 0 , 'MVD/Raul_Fossemale.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Roberto', 'Assandri', NULL, NULL, 13530, 0 , 'MVD/Roberto_Assandri.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Rodrigo', 'Alvarez', NULL, NULL, 93282, 0 , 'MVD/Rodrigo_Alvarez.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Rodrigo', 'Valdez', NULL, NULL, 2994, 0 , 'MVD/Rodrigo_Valdez.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ruben', 'Bracco', NULL, NULL, 32547, 0 , 'MVD/Ruben_Bracco.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Santiago', 'Ferreiro', NULL, NULL, 99107, 0 , 'MVD/Santiago_Ferreiro.jpg', 1, [dbo].[GradeFromStr]('CL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Sebastian', 'Queirolo', NULL, NULL, 25302, 0 , 'MVD/Sebastian_Queirolo.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Silvia', 'Derkoyorikian', NULL, NULL, 44500, 0 , 'MVD/Silvia_Derkoyorikian.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Valentín', 'Gadola', NULL, NULL, 88656, 0 , 'MVD/Valentin_Gadola.jpg', 1, [dbo].[GradeFromStr]('SC') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Valeria', 'Rotunno', NULL, NULL, 4264, 0 , 'MVD/Valeria_Rotunno.JPG', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Victoria', 'Andrada', NULL, NULL, 82715, 0 , 'MVD/Victoria_Andrada.JPG', 1, [dbo].[GradeFromStr]('ST') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'William', 'Claro', NULL, NULL, 10899, 1 , 'MVD/William_Claro.JPG', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Yago', 'Auza', NULL, NULL, 51094, 0 , 'MVD/Yago_Auza.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Yanara', 'Valdes', NULL, NULL, 86941, 0 , 'MVD/Yanara_Valdes.jpg', 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Yony', 'Gómez', NULL, NULL, 48926, 0 , 'MVD/Yony_Gomez.JPG', 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'MVD'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Adrián', 'Costa', NULL, NULL, 64124, 0 , NULL, 1, [dbo].[GradeFromStr]('CL') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Agustín', 'Narvaez', NULL, NULL, 30043, 1 , NULL, 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Andrea', 'Sabella', NULL, NULL, 86576, 1 , NULL, 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Ezequiel', 'Konjuh', NULL, NULL, 68067, 0 , NULL, 1, [dbo].[GradeFromStr]('EN') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [DocType], [DocNumber], [EmployeeNumber], [InBench], [Picture], [IsActive], [Grade]) SELECT [Id], 1, 'Luis', 'Fregeiro', NULL, NULL, 44167, 0 , NULL, 1, [dbo].[GradeFromStr]('SE') FROM [dbo].[DeliveryUnit] WHERE [Code] = 'ROS'
-
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Belen' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Lopez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alberto' AND [P].[LastName] = 'Da Cunha' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alberto' AND [P].[LastName] = 'Hernández' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alejandro' AND [P].[LastName] = 'Capece' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alejandro' AND [P].[LastName] = 'Latchinian' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alfonso' AND [P].[LastName] = 'Rodriguez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Alvaro' AND [P].[LastName] = 'Restuccia' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Bores' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Maedo' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrés' AND [P].[LastName] = 'Nieves' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Aniela' AND [P].[LastName] = 'Amy' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ariel' AND [P].[LastName] = 'Sisro' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Beerbal' AND [P].[LastName] = 'Abdulkhader' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Bruno' AND [P].[LastName] = 'Candia' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camila' AND [P].[LastName] = 'Roji' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camila' AND [P].[LastName] = 'Sorio' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Camilo' AND [P].[LastName] = 'Gomez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Damián' AND [P].[LastName] = 'Pereira' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Daniel' AND [P].[LastName] = 'Cabrera' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Delia' AND [P].[LastName] = 'Alvarez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Eduardo' AND [P].[LastName] = 'Ducer' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Eugenia' AND [P].[LastName] = 'Pais' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'Canet' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'García' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Federico' AND [P].[LastName] = 'Trujillo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Olmos' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Cañas' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Fernando' AND [P].[LastName] = 'Stromillo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Gastón' AND [P].[LastName] = 'Aroztegui' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Gerardo' AND [P].[LastName] = 'Barbitta' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Giovanina' AND [P].[LastName] = 'Chirione' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Hernán' AND [P].[LastName] = 'Rumbo' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Horacio' AND [P].[LastName] = 'Blanco' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Hugo' AND [P].[LastName] = 'Ocampo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Assandri' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Loureiro' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ignacio' AND [P].[LastName] = 'Secco' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Javier' AND [P].[LastName] = 'Barrios' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Javier' AND [P].[LastName] = 'Calero' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Jimena' AND [P].[LastName] = 'Irigaray' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Jorge' AND [P].[LastName] = 'Jova' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan' AND [P].[LastName] = 'Aguerre' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan' AND [P].[LastName] = 'Estrada' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Juan Manuel' AND [P].[LastName] = 'Fagundez' AND [PR].[Code] = 'OPS'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Leonardo' AND [P].[LastName] = 'Mendizabal' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luciano' AND [P].[LastName] = 'Deluca' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Malvina' AND [P].[LastName] = 'Jaume' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marcelo' AND [P].[LastName] = 'Zepedeo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marcos' AND [P].[LastName] = 'Guimaraes' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'María Julia' AND [P].[LastName] = 'Etcheverry' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'María Noel' AND [P].[LastName] = 'Mosqueira' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Marlon' AND [P].[LastName] = 'González' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Martín' AND [P].[LastName] = 'Acosta' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Martin' AND [P].[LastName] = 'Caetano' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Mathías' AND [P].[LastName] = 'Rodríguez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Mauricio' AND [P].[LastName] = 'Mora' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolás' AND [P].[LastName] = 'Gómez' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolás' AND [P].[LastName] = 'Lasarte' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Nicolas' AND [P].[LastName] = 'Mañay' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Octavio' AND [P].[LastName] = 'Garbarino' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Cawen' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Da Silva' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'García' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Gus' AND [PR].[Code] = 'OPS'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Queirolo' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pablo' AND [P].[LastName] = 'Uriarte' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pedro' AND [P].[LastName] = 'Minetti' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Pedro' AND [P].[LastName] = 'Tournier' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Raidel' AND [P].[LastName] = 'Gonzalez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Raúl' AND [P].[LastName] = 'Fossemale' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Roberto' AND [P].[LastName] = 'Assandri' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Rodrigo' AND [P].[LastName] = 'Alvarez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Rodrigo' AND [P].[LastName] = 'Valdez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ruben' AND [P].[LastName] = 'Bracco' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Santiago' AND [P].[LastName] = 'Ferreiro' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Sebastian' AND [P].[LastName] = 'Queirolo' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Silvia' AND [P].[LastName] = 'Derkoyorikian' AND [PR].[Code] = 'DBA'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Valentín' AND [P].[LastName] = 'Gadola' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Valeria' AND [P].[LastName] = 'Rotunno' AND [PR].[Code] = 'ADMIN'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Victoria' AND [P].[LastName] = 'Andrada' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'William' AND [P].[LastName] = 'Claro' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yago' AND [P].[LastName] = 'Auza' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yanara' AND [P].[LastName] = 'Valdes' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Yony' AND [P].[LastName] = 'Gómez' AND [PR].[Code] = 'UX'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Adrián' AND [P].[LastName] = 'Costa' AND [PR].[Code] = 'PM'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Agustín' AND [P].[LastName] = 'Narvaez' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Andrea' AND [P].[LastName] = 'Sabella' AND [PR].[Code] = 'TST'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Ezequiel' AND [P].[LastName] = 'Konjuh' AND [PR].[Code] = 'DEV'
-INSERT INTO [dbo].[CandidateCandidateRole] ([CandidateId], [CandidateRoleId], [StartDate], [EndDate]) SELECT [P].[Id], [PR].[Id], '2015-01-01', NULL FROM [dbo].[Candidate] AS P, [dbo].[CandidateRole] AS [PR] WHERE [P].[FirstName] = 'Luis' AND [P].[LastName] = 'Fregeiro' AND [PR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Adrián', 'Belen', 0 , 'MVD/Adrian_Belen.JPG', 0, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Adrián', 'Lopez', 0 , 'MVD/Adrian_Lopez.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alberto', 'Da Cunha', 1 , 'MVD/Alberto_Dacunha.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alberto', 'Hernández', 0 , 'MVD/Alberto_Hernandez.jpg', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alejandro', 'Capece', 0 , 'MVD/Alejandro Capece.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alejandro', 'Latchinian', 0 , 'MVD/Alejandro_Latchinian.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alfonso', 'Rodriguez', 1 , 'MVD/Alfonso_Rodriguez.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Alvaro', 'Restuccia', 1 , 'MVD/Alvaro_Restuccia.jpeg', 1, [dbo].[GradeFromStr]('CL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Andrés', 'Bores', 0 , 'MVD/Andres_Bores.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Andrés', 'Maedo', 1 , 'MVD/Andres_Maedo.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Andrés', 'Nieves', 0 , 'MVD/Andres_Nieves.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Aniela', 'Amy', 0 , 'MVD/Aniela_Amy.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ariel', 'Sisro', 0 , 'MVD/Ariel_Sisro.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Beerbal', 'Abdulkhader', 1 , 'MVD/Beerbal_Abdulkhader.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Bruno', 'Candia', 1 , 'MVD/Bruno_Candia.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Camila', 'Roji', 0 , 'MVD/Camila_Roji.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Camila', 'Sorio', 0 , 'MVD/Camila_Sorio.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Camilo', 'Gomez', 1 , 'MVD/Camilo_Gomez.jpeg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Damián', 'Pereira', 1 , 'MVD/Damian_Pereira.JPG', 1, [dbo].[GradeFromStr]('CL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Daniel', 'Cabrera', 0 , 'MVD/Daniel_Cabrera.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Delia', 'Alvarez', 0 , 'MVD/Delia_Alvarez.jpg', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Eduardo', 'Ducer', 0 , 'MVD/Eduardo_Ducer.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Eugenia', 'Pais', 1 , 'MVD/Maria_Pais.jpg', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Federico', 'Canet', 1 , 'MVD/Federico_Canet.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Federico', 'García', 0 , 'MVD/Federico_Garcia.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Federico', 'Trujillo', 1 , 'MVD/Federico_Trujillo.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Fernando', 'Olmos', 1 , 'MVD/Fernando_Olmos.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Fernando', 'Cañas', 0 , 'MVD/Fernando_Canas.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Fernando', 'Stromillo', 0 , 'MVD/Fernando_Stromillo.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Gastón', 'Aroztegui', 0 , 'MVD/Gaston_Aroztegui.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Gerardo', 'Barbitta', 0 , 'MVD/Gerardo_Barbitta.jpg', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Giovanina', 'Chirione', 0 , 'MVD/Giovanina_Chirione.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Hernán', 'Rumbo', 0 , 'MVD/Hernan_Rumbo.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Horacio', 'Blanco', 0 , 'MVD/Horacio_Blanco.JPG', 1, [dbo].[GradeFromStr]('CL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Hugo', 'Ocampo', 0 , 'MVD/Hugo_Ocampo.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ignacio', 'Assandri', 1 , 'MVD/Ignacio_Assandri.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ignacio', 'Loureiro', 0 , 'MVD/Ignacio_Loureiro.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ignacio', 'Secco', 0 , 'MVD/Ignacio_Secco.jpeg', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Javier', 'Barrios', 0 , 'MVD/Javier_Barrios.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Javier', 'Calero', 0 , 'MVD/Javier_Calero.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Jimena', 'Irigaray', 0 , 'MVD/Jimena_Irigaray.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Jorge', 'Jova', 1 , NULL, 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Juan', 'Aguerre', 0 , 'MVD/Juan_Aguerre.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Juan', 'Estrada', 0 , 'MVD/Juan_Estrada.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Juan Manuel', 'Fagundez', 0 , NULL, 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'OPS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Leonardo', 'Mendizabal', 0 , 'MVD/Leonardo_Mendizabal.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Luciano', 'Deluca', 0 , 'MVD/Luciano_Deluca.JPG', 1, [dbo].[GradeFromStr]('SC'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Malvina', 'Jaume', 0 , 'MVD/Malvina_Jaume.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Marcelo', 'Zepedeo', 0 , 'MVD/Marcelo_Zepedeo.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Marcos', 'Guimaraes', 0 , 'MVD/Marcos_Guimaraes.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'María Julia', 'Etcheverry', 0 , 'MVD/Maria_Etcheverry.jpg', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'María Noel', 'Mosqueira', 0 , 'MVD/Maria_Mosqueira.JPG', 1, [dbo].[GradeFromStr]('TL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Marlon', 'González', 0 , 'MVD/Marlon_Gonzalez.jpg', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Martín', 'Acosta', 0 , 'MVD/Martin_Acosta.jpg', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Martin', 'Caetano', 0 , 'MVD/Martin_Caetano.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Mathías', 'Rodríguez', 1 , 'MVD/Mathias_Rodriguez.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Mauricio', 'Mora', 0 , 'MVD/Mauricio_Mora.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Nicolás', 'Gómez', 1 , 'MVD/Nicolas_Gomez.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Nicolás', 'Lasarte', 1 , 'MVD/Nicolas_Lasarte.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Nicolas', 'Mañay', 0 , 'MVD/Nicolas_Manay.jpg', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Octavio', 'Garbarino', 1 , 'MVD/Octavio_Garbarino.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'Cawen', 0 , 'MVD/Pablo_Cawen.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'Da Silva', 0 , 'MVD/Pablo_DaSilva.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'García', 0 , 'MVD/Pablo_Garcia.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'Gus', 0 , NULL, 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'OPS'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'Queirolo', 0 , 'MVD/Pablo_Queirolo.jpg', 1, [dbo].[GradeFromStr]('SC'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pablo', 'Uriarte', 0 , 'MVD/Pablo_Uriarte.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pedro', 'Minetti', 0 , 'MVD/Pedro_Minetti.jpg', 1, [dbo].[GradeFromStr]('SM'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Pedro', 'Tournier', 1 , 'MVD/Pedro_Tournier.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Raidel', 'Gonzalez', 0 , 'MVD/Raidel_Gonzalez.jpeg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Raúl', 'Fossemale', 0 , 'MVD/Raul_Fossemale.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Roberto', 'Assandri', 0 , 'MVD/Roberto_Assandri.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Rodrigo', 'Alvarez', 0 , 'MVD/Rodrigo_Alvarez.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Rodrigo', 'Valdez', 0 , 'MVD/Rodrigo_Valdez.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ruben', 'Bracco', 0 , 'MVD/Ruben_Bracco.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Santiago', 'Ferreiro', 0 , 'MVD/Santiago_Ferreiro.jpg', 1, [dbo].[GradeFromStr]('CL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Sebastian', 'Queirolo', 0 , 'MVD/Sebastian_Queirolo.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Silvia', 'Derkoyorikian', 0 , 'MVD/Silvia_Derkoyorikian.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DBA'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Valentín', 'Gadola', 0 , 'MVD/Valentin_Gadola.jpg', 1, [dbo].[GradeFromStr]('SC'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Valeria', 'Rotunno', 0 , 'MVD/Valeria_Rotunno.JPG', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'ADMIN'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Victoria', 'Andrada', 0 , 'MVD/Victoria_Andrada.JPG', 1, [dbo].[GradeFromStr]('ST'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'William', 'Claro', 1 , 'MVD/William_Claro.JPG', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Yago', 'Auza', 0 , 'MVD/Yago_Auza.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Yanara', 'Valdes', 0 , 'MVD/Yanara_Valdes.jpg', 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Yony', 'Gómez', 0 , 'MVD/Yony_Gomez.JPG', 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'MVD' AND [CR].[Code] = 'UX'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Adrián', 'Costa', 0 , NULL, 1, [dbo].[GradeFromStr]('CL'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'ROS' AND [CR].[Code] = 'PM'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Agustín', 'Narvaez', 1 , NULL, 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'ROS' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Andrea', 'Sabella', 1 , NULL, 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'ROS' AND [CR].[Code] = 'TST'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Ezequiel', 'Konjuh', 0 , NULL, 1, [dbo].[GradeFromStr]('EN'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'ROS' AND [CR].[Code] = 'DEV'
+INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [LastName], [InBench], [Picture], [IsActive], [Grade], [CandidateRoleId]) SELECT [DU].[Id], 1, 'Luis', 'Fregeiro', 0 , NULL, 1, [dbo].[GradeFromStr]('SE'), [CR].[Id] FROM [dbo].[DeliveryUnit] AS [DU] CROSS JOIN [dbo].[CandidateRole] AS [CR] WHERE [DU].[Code] = 'ROS' AND [CR].[Code] = 'DEV'
 
 ----------------------------------------------------------------------------------------------------
 
-DECLARE @candidateLimit INT = 100
+DECLARE @candidateLimit INT = 500
 DECLARE @candidateIdx INT = 1
 
-DECLARE @candidateId INT
 DECLARE @candidateRoleId INT
 DECLARE @deliveryUnitId INT
 DECLARE @relationType INT
@@ -1250,6 +1145,7 @@ WHILE (@candidateIdx <= @candidateLimit)
   SET @relationType = [dbo].[RandomRelationType](RAND())
   SET @inBench =  [dbo].[RandomBench](RAND())
   SET @candidateGrade =  [dbo].[RandomCandidateGrade](RAND())
+  SET @candidateRoleId = [dbo].[RandomCandidateRole](RAND())
 
   INSERT INTO [dbo].[Candidate] (
     [DeliveryUnitId],
@@ -1263,6 +1159,7 @@ WHILE (@candidateIdx <= @candidateLimit)
     [Picture],
     [IsActive],
     [Grade],
+    [CandidateRoleId],
     [CurrentProjectId],
     [CurrentProjectJoin]
   )
@@ -1278,33 +1175,14 @@ WHILE (@candidateIdx <= @candidateLimit)
     NULL,
     1,
     @candidateGrade,
+    @candidateRoleId,
     NULL,
     NULL
   )
-
-  SET @candidateId = @@IDENTITY
-  SET @candidateRoleId = [dbo].[RandomCandidateRole](RAND())
-
-  INSERT INTO [dbo].[CandidateCandidateRole] (
-    [CandidateId],
-    [CandidateRoleId],
-    [StartDate],
-    [EndDate]
-  )
-  VALUES (
-    @candidateId,
-    @candidateRoleId,
-    '2015-01-01',
-    NULL
-  )
-
+  
   SET @candidateIdx = @candidateIdx + 1
  END
 
-----------------------------------------------------------------------------------------------------
-
-UPDATE [dbo].[CandidateCandidateRole]
-SET [StartDate] = [dbo].[RandomDate](2000, RAND())
 GO
 
 ----------------------------------------------------------------------------------------------------
@@ -1433,48 +1311,64 @@ WHERE NOT EXISTS (SELECT 1
 UPDATE [dbo].[SkillEstimatedExpertise]
 SET [Expertise] = 0
 WHERE [CandidateId] IN (SELECT [CandidateId]
-                        FROM [dbo].[CandidateCandidateRole] AS [CCR]
-                        INNER JOIN [dbo].[CandidateRole] AS [CR] ON [CR].[Id] = [CCR].[CandidateRoleId]
+                        FROM [dbo].[Candidate] AS [C]
+                        INNER JOIN [dbo].[CandidateRole] AS [CR] ON [CR].[Id] = [C].[CandidateRoleId]
                         WHERE [CR].[Code] IN ('ADMIN'))
   AND [SkillId] IN (SELECT [Id]
                     FROM [dbo].[Skill] AS [S]
                     WHERE [S].[TechnologyId] IS NOT NULL OR [S].[TechnologyRoleId] IS NOT NULL OR [S].[TechnologyVersionId] IS NOT NULL OR [S].[BusinessAreaId] IS NOT NULL)
 
-----------------------------------------------------------------------------------------------------
+GO
 
-DECLARE @candidateInBench BIT
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+/*
+UPDATE [C]
+SET [DocNumber] = (SELECT MIN([D].[DocNumber]) FROM [Documentos].[dbo].[Docs] AS [D] WHERE ([D].[FirstName] LIKE ([C].[FirstName] + '%')) AND ([D].[LastName] LIKE ([C].[LastName] + '%')))
+FROM [dbo].[Candidate] AS [C]
+WHERE [C].[DeliveryUnitId] = 13
+*/
+
+DECLARE @candidateId INT
+DECLARE @rndDocId INT
 
 DECLARE candidateproject_cursor CURSOR FOR   
-SELECT [Id],
-       [InBench]
+SELECT [Id]
 FROM [dbo].[Candidate]
   
 OPEN candidateproject_cursor  
-  
+
 FETCH NEXT FROM candidateproject_cursor   
-INTO @candidateId,
-     @candidateInBench
+INTO @candidateId
 
 WHILE @@FETCH_STATUS = 0  
  BEGIN
-  IF (@candidateInBench = 1)
-   BEGIN
-    UPDATE [dbo].[Candidate]
-    SET [CurrentProjectId] = NULL,
-        [CurrentProjectJoin] = [dbo].[RandomDate](50, RAND())
-    WHERE [Id] = @candidateId
-   END
-  ELSE
-   BEGIN
-    UPDATE [dbo].[Candidate]
-    SET [CurrentProjectId] = [dbo].[RandomProject](RAND()),
-        [CurrentProjectJoin] = [dbo].[RandomDate](1000, RAND())
-    WHERE [Id] = @candidateId
-    END
+  SET @rndDocId = CAST((2000000.0 + (RAND() * 1000000.0)) AS INT)
+
+/*
+  UPDATE [C]
+  SET [CurrentProjectId] = CASE WHEN [C].[RelationType] <> 1 THEN NULL WHEN [C].[InBench] = 1 THEN NULL ELSE [dbo].[RandomProject](RAND()) END,
+      [CurrentProjectJoin] = CASE WHEN [C].[RelationType] <> 1 THEN NULL WHEN [C].[InBench] = 1 THEN [dbo].[RandomDate](50, RAND()) ELSE [dbo].[RandomDate](1000, RAND()) END,
+      [FirstName] = CASE WHEN [C].[DeliveryUnitId] = 13 AND [C].[FirstName] IS NOT NULL THEN [C].[FirstName] WHEN [D].[FirstName] IS NULL THEN [C].[FirstName] ELSE [D].[FirstName] END,
+      [LastName] = CASE WHEN [C].[DeliveryUnitId] = 13 AND [C].[LastName] IS NOT NULL THEN [C].[LastName] WHEN [D].[LastName] IS NULL THEN [C].[LastName] ELSE [D].[LastName] END,
+      [DocType] = 1, -- 1: NationalIdentity, 2: Passport
+      [DocNumber] = [D].[DocNumber],
+      [EmployeeNumber] = CASE WHEN [C].[RelationType] = 1 THEN CAST((RAND() * 10000.0) AS INT) ELSE NULL END
+  FROM [dbo].[Candidate] AS [C]
+  CROSS JOIN [Documentos].[dbo].[Docs] AS [D]
+  WHERE [C].[Id] = @candidateId
+    AND [D].[Id] = @rndDocId
+*/
+
+  UPDATE [C]
+  SET [CurrentProjectId] = CASE WHEN [C].[RelationType] <> 1 THEN NULL WHEN [C].[InBench] = 1 THEN NULL ELSE [dbo].[RandomProject](RAND()) END,
+      [CurrentProjectJoin] = CASE WHEN [C].[RelationType] <> 1 THEN NULL WHEN [C].[InBench] = 1 THEN [dbo].[RandomDate](50, RAND()) ELSE [dbo].[RandomDate](1000, RAND()) END,
+      [EmployeeNumber] = CASE WHEN [C].[RelationType] = 1 THEN CAST((RAND() * 10000.0) AS INT) ELSE NULL END
+  FROM [dbo].[Candidate] AS [C]
+  WHERE [C].[Id] = @candidateId
 
   FETCH NEXT FROM candidateproject_cursor   
-  INTO @candidateId,
-       @candidateInBench
+  INTO @candidateId
  END   
 
 CLOSE candidateproject_cursor;  

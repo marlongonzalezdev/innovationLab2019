@@ -20,9 +20,9 @@ import { SkilldetailsComponent } from './components/skilldetails/skilldetails.co
 import { CandidatesComponent } from './components/candidates/candidates.component';
 import { CandidateComponent } from './components/candidates/candidate/candidate.component';
 
-
 import {MaterialModule} from './material/material.module';
 import { RelationTypeService } from './shared/services/relation-type.service';
+
 import { CandidateService } from './shared/services/candidate.service';
 import { DeliveryUnitService } from './shared/services/delivery-unit.service';
 import { NotificationService } from './shared/services/notification.service';
@@ -38,6 +38,10 @@ import { DeliveryUnitsComponent } from './components/delivery-units/delivery-uni
 import { RegionComponent } from './components/regions/region/region.component';
 import { RegionListComponent } from './components/regions/region-list/region-list.component';
 import { RegionsComponent } from './components/regions/regions.component';
+import { ProjectComponent } from './components/projects/project/project.component';
+import { ProjectListComponent } from './components/projects/project-list/project-list.component';
+import { ProjectsComponent } from './components/projects/projects.component';
+
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { LoginComponent } from './components/login/login.component';
@@ -64,6 +68,9 @@ import { LoginComponent } from './components/login/login.component';
     RegionComponent,
     RegionsComponent,
     RegionListComponent,
+    ProjectComponent,
+    ProjectsComponent,
+    ProjectListComponent,
     PageNotFoundComponent,
     LoginComponent
   ],
@@ -89,6 +96,6 @@ import { LoginComponent } from './components/login/login.component';
     LoginService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent, RegionComponent]
+  entryComponents: [CandidateComponent, UserDetailsComponent, SkilldetailsComponent, EvaluationComponent, RegionComponent, ProjectComponent]
 })
 export class AppModule { }

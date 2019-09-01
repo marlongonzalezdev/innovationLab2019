@@ -89,7 +89,7 @@ export class EvaluationComponent implements OnInit {
         const index = this.skillsWithEvaluation.indexOf(skill, 0);
         if (index > -1) {
             this.skillsWithEvaluation.splice(index, 1);
-            // if (this.project.skillsFilter.length === 0) {
+            // if (this.projectPositionCriteria.skillsFilter.length === 0) {
             //   this.display = false;
             //   this.showContent = false;
             // }

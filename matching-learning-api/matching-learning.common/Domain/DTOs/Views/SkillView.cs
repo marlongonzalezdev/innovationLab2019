@@ -29,7 +29,7 @@ namespace matching_learning.common.Domain.DTOs.Views
 
         public int CompareTo(SkillView other)
         {
-            return (Name.CompareTo(other.Name));
+            return (this.Name.CompareTo(other.Name));
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Project } from '../../shared/models/project';
+import { ProjectPositionCriteria } from '../../shared/models/projectPositionCriteria';
 import { Skill } from 'src/app/shared/models/skill';
 import { SkillsFilter } from '../../shared/models/skillsFilter';
 import { DeliveryUnitService } from 'src/app/shared/services/delivery-unit.service';
@@ -16,7 +16,7 @@ import {Role} from '../../shared/models/role';
 })
 export class InputCriteriaComponent implements OnInit {
 
-  project: Project;
+  projectPositionCriteria: ProjectPositionCriteria;
   display: boolean;
   skillList: Skill[] = [];
 
@@ -31,7 +31,7 @@ export class InputCriteriaComponent implements OnInit {
   candidateRoles: Observable<Role[]>;
 
   constructor(private skillService: SkillServiceBase, private deliveryUnitService: DeliveryUnitService, fb: FormBuilder) {
-      this.project = {
+      this.projectPositionCriteria = {
       name: 'Example',
       max: 10,
       skillsFilter: [],
@@ -54,7 +54,7 @@ export class InputCriteriaComponent implements OnInit {
     this.candidateRoles = this.deliveryUnitService.getRoles();
 
     this.defaultDeliveryUnit = this.deliveryUnitService.getDefaultDeliveryUnit();
-	// this.project.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
+	// this.projectPositionCriteria.deliveryUnitIdFilter = this.defaultDeliveryUnit.id;
 
     this.skillService.getSkillsSorted()
       .subscribe ( response => {
@@ -67,14 +67,14 @@ export class InputCriteriaComponent implements OnInit {
     if (!skill || !this.expectedScore) {
       return;
     }
-    if (!this.project.skillsFilter.find(s => s.requiredSkillId === skill.id)) {
+    if (!this.projectPositionCriteria.skillsFilter.find(s => s.requiredSkillId === skill.id)) {
         const skillsFilter: SkillsFilter = {
         requiredSkillId: skill.id,
         weight: this.expectedScore,
         minAccepted: null,
         name: skill.name
       };
-        this.project.skillsFilter.push(skillsFilter);
+        this.projectPositionCriteria.skillsFilter.push(skillsFilter);
         this.selectedSkill = undefined;
         this.expectedScore = undefined;
     }
@@ -82,10 +82,10 @@ export class InputCriteriaComponent implements OnInit {
   }
 
   delete(skill: SkillsFilter): void {
-    const index = this.project.skillsFilter.indexOf(skill, 0);
+    const index = this.projectPositionCriteria.skillsFilter.indexOf(skill, 0);
     if (index > -1) {
-      this.project.skillsFilter.splice(index, 1);
-      if (this.project.skillsFilter.length === 0) {
+      this.projectPositionCriteria.skillsFilter.splice(index, 1);
+      if (this.projectPositionCriteria.skillsFilter.length === 0) {
         this.display = false;
         this.showContent = false;
       }

@@ -1,14 +1,6 @@
-import {SkillsFilter} from './skillsFilter';
-
-export interface Project {
-  max: number;
+export class Project {
+  id: number;
+  code: string;
   name: string;
-  skillsFilter: SkillsFilter[];
-  roleIdFilter: number;
-  deliveryUnitIdFilter: number;
-  inBenchFilter: boolean;
-  relationTypeFilter: number;
 }
-
-
 

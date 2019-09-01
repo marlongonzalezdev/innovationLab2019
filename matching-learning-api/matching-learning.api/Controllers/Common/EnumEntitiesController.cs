@@ -99,11 +99,45 @@ namespace matching_learning.api.Controllers.Common
         public ActionResult<List<EnumEntity>> GetSkillRelationTypes()
         {
             var res = from SkillRelationType n in Enum.GetValues(typeof(SkillRelationType))
-                      select new EnumEntity()
-                      {
-                          Id = (int)n,
-                          Name = EnumHelper.GetEnumDescription(n)
-                      };
+                select new EnumEntity()
+                {
+                    Id = (int)n,
+                    Name = EnumHelper.GetEnumDescription(n)
+                };
+
+            return (res.ToList());
+        }
+
+        /// <summary>
+        /// Gets the candidate grades with full description.
+        /// </summary>
+        /// <returns></returns>
+        [Route("CandidateGrades")]
+        public ActionResult<List<EnumEntity>> GetCandidateGradesDescription()
+        {
+            var res = from CandidateGrade n in Enum.GetValues(typeof(CandidateGrade))
+                select new EnumEntity()
+                {
+                    Id = (int)n,
+                    Name = EnumHelper.GetEnumDescription(n)
+                };
+
+            return (res.ToList());
+        }
+
+        /// <summary>
+        /// Gets the candidate grades with short description.
+        /// </summary>
+        /// <returns></returns>
+        [Route("CandidateGradesCodes")]
+        public ActionResult<List<EnumEntity>> GetCandidateGradesShortDescription()
+        {
+            var res = from CandidateGrade n in Enum.GetValues(typeof(CandidateGrade))
+                select new EnumEntity()
+                {
+                    Id = (int)n,
+                    Name = EnumHelper.GetEnumShortDescription(n)
+                };
 
             return (res.ToList());
         }
