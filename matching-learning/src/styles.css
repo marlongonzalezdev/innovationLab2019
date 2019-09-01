@@ -83,7 +83,7 @@ mat-grid-list mat-grid-tile {
   width: 100%;
 }
 
-.row mat-form-field, .row .add-bottom-padding, .row .form-button {
+.row mat-form-field, .row .form-checkbox, .row .form-button {
   min-width: 45%;
   margin-left: 20px;
 }
@@ -95,3 +95,11 @@ mat-grid-list mat-grid-tile {
 .row.header h3 {
   margin-left: 20px;
 }
+
+.padding-top {
+  padding-top: 20px;
+}
+
+/*.cdk-overlay-container {*/
+/*  overflow: scroll;*/
+/*}*/

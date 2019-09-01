@@ -55,9 +55,9 @@
                     </mat-table>
                     <!--                                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>                                -->
                 </div>
-                <div class="button-row">
-                    <button mat-raised-button type="submit" [disabled]="skillservice.form.invalid">Save</button>
-                    <button mat-raised-button (click)="onClear()">Clear</button>
+                <div class="row">
+                    <button class="form-button" mat-raised-button type="submit" [disabled]="skillservice.form.invalid">Save</button>
+                    <button class="form-button" mat-raised-button (click)="onClear()">Clear</button>
                 </div>
             </div>
         </mat-card>
