@@ -16,9 +16,9 @@
                     <mat-error>Project code field is mandatory</mat-error>
                 </mat-form-field>
             </div>
-                <div class="button-row">
-                    <button mat-raised-button type="submit" [disabled]="service.form.invalid">Save</button>
-                    <button mat-raised-button (click)="onClear()">Clear</button>
+                <div class="row">
+                    <button class="form-button" mat-raised-button type="submit" [disabled]="service.form.invalid">Save</button>
+                    <button class="form-button" mat-raised-button (click)="onClear()">Clear</button>
                 </div>
         </mat-card>
     </mat-grid-list>

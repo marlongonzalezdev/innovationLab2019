@@ -11,6 +11,7 @@ import { ProjectsComponent } from './components/projects/projects.component';
 
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
+import {GroupComponent} from './components/group/group.component';
 
 const routes: Routes = [
   // { path: '**', component: PageNotFoundComponent },
@@ -21,7 +22,8 @@ const routes: Routes = [
   {path: 'regions', component: RegionsComponent},
   {path: 'projects', component: ProjectsComponent},
   {path: 'evaluations/:id', component: EvaluationListComponent},
-  {path: 'login', component: LoginComponent}
+  {path: 'login', component: LoginComponent},
+  {path: 'group', component: GroupComponent},
 ];
 
 @NgModule({
