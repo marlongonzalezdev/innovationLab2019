@@ -57,7 +57,7 @@ export class EvaluationService {
   }
 
   addEvaluation(evaluation: Evaluation): Observable<Evaluation> {
-    this.url = 'https://localhost:44374/Evaluations/SaveEvaluation'
+    this.url = 'https://localhost:44374/Evaluations/SaveEvaluation';
     return this.http.post<Evaluation>(this.url, evaluation, httpOptions)
       .pipe(
         catchError(this.handleError)

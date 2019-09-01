@@ -1,1 +1,4 @@
-export interface CandidateGrade {}
+export interface CandidateGrade {
+   id: number;
+   name: string;
+}

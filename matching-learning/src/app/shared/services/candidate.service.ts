@@ -65,6 +65,11 @@ export class CandidateService {
     return this.http.get<Role[]>(this.url, {responseType: 'json'});
   }
 
+  getCandidateById(id): Observable<Candidate> {
+    this.url = `https://localhost:44374/Candidates/Candidate?id=${id}`;
+    return this.http.get<Candidate>(this.url, {responseType: 'json'});
+  }
+
   addCandidate(candidate: Candidate): Observable<Candidate> {
    this.url = environment.dbConfig.baseUrl + environment.dbConfig.AddCandidate;
    return this.http.post<Candidate>(this.url, candidate, httpOptions)
@@ -99,7 +104,7 @@ export class CandidateService {
       relationType: candidate.relationType,
       isActive: candidate.isActive,
       isInBench: candidate.inBench,
-      roleId: candidate.CandidateRoleid
+      roleId: candidate.candidateRoleId
     });
   }
 }

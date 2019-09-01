@@ -407,7 +407,7 @@ namespace matching_learning.common.Repositories
                         "    [RelationType] = @relationType," +
                         "    [FirstName] = @firstName," +
                         "    [LastName] = @lastName," +
-                        "    [CandidateRoleId] = @candidateRoleId" +
+                        "    [CandidateRoleId] = @candidateRoleId," +
                         "    [DocType] = @docType," +
                         "    [DocNumber] = @docNumber," +
                         "    [EmployeeNumber] = @employeeNumber," +
