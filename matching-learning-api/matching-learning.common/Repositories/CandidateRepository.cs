@@ -563,6 +563,11 @@ namespace matching_learning.common.Repositories
         #endregion
 
         #region Picture transformations
+        /// <summary>
+        /// Picture URL is defined with picture root prefix and database picture field.
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
         private string getPictureFromDB(string picture)
         {
             string res;
@@ -583,6 +588,11 @@ namespace matching_learning.common.Repositories
             return (res);
         }
 
+        /// <summary>
+        /// Picture default or rootPath prefix transformations has to be reverted.
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
         private string getPictureToDB(string picture)
         {
             string res;
@@ -590,8 +600,7 @@ namespace matching_learning.common.Repositories
             string picturesRootFolder = Config.GetPicturesRootFolder();
             string defaultPicturePath = picturesRootFolder + Config.GetDefaultPicture();
 
-            if (!string.IsNullOrEmpty(picture)
-            ) // Picture default or rootPath prefix transformations has to be reverted.
+            if (string.IsNullOrEmpty(picture))
             {
                 res = null;
             }
