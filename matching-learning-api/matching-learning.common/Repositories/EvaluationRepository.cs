@@ -174,7 +174,7 @@ namespace matching_learning.common.Repositories
             var res = new List<EvaluationDetail>();
 
             var skillRepository = new SkillRepository();
-            var skills = skillRepository.GetSkills();
+            var skills = skillRepository.GetAllSkills();
 
             var query = "SELECT [ED].[Id], " +
                         "       [ED].[EvaluationId]," +
@@ -256,7 +256,7 @@ namespace matching_learning.common.Repositories
 
             var skillRepository = new SkillRepository();
 
-            var skills = skillRepository.GetSkills();
+            var skills = skillRepository.GetAllSkills();
 
             var query = "SELECT [ED].[Id], " +
                         "       [ED].[EvaluationId]," +
@@ -461,6 +461,8 @@ namespace matching_learning.common.Repositories
                         "    [Notes] = @notes " +
                         "WHERE [Id] = @id";
 
+            var previous = GetEvaluationById(ev.Id);
+
             using (var cmd = new SqlCommand(stmnt, conn))
             {
                 cmd.Transaction = trans;
@@ -472,15 +474,10 @@ namespace matching_learning.common.Repositories
 
                 cmd.ExecuteNonQuery();
             }
+            
+            saveRelatedEntities(ev, conn, trans);
 
-            if (ev.Details != null && ev.Details.Count > 0)
-            {
-                foreach (var detail in ev.Details)
-                {
-                    detail.EvaluationId = ev.Id;
-                    saveEvaluationDetail(detail, conn, trans);
-                }
-            }
+            deleteRemovedRelatedEntities(ev, previous, conn, trans);
 
             return (ev.Id);
         }
@@ -516,6 +513,32 @@ namespace matching_learning.common.Repositories
             else
             {
                 cmd.Parameters["@notes"].Value = DBNull.Value;
+            }
+        }
+
+        private void saveRelatedEntities(Evaluation ev, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ev.Details != null && ev.Details.Count > 0)
+            {
+                foreach (var detail in ev.Details)
+                {
+                    detail.EvaluationId = ev.Id;
+                    saveEvaluationDetail(detail, conn, trans);
+                }
+            }
+        }
+
+        private void deleteRemovedRelatedEntities(Evaluation ev, Evaluation previous, SqlConnection conn, SqlTransaction trans)
+        {
+            if (ev.Details != null && ev.Details.Count > 0)
+            {
+                foreach (var pdetail in previous.Details)
+                {
+                    if (ev.Details == null || !ev.Details.Any(det => det.Id == pdetail.Id))
+                    {
+                        deleteEvaluationDetail(pdetail, conn, trans);
+                    }
+                }
             }
         }
         #endregion
@@ -596,6 +619,22 @@ namespace matching_learning.common.Repositories
             }
 
             return (ed.Id);
+        }
+        
+        private void deleteEvaluationDetail(EvaluationDetail ed, SqlConnection conn, SqlTransaction trans)
+        {
+            var stmnt = "DELETE FROM [dbo].[EvaluationDetail] " +
+                        "WHERE [Id] = @detailId";
+
+            using (var cmd = new SqlCommand(stmnt, conn))
+            {
+                cmd.Transaction = trans;
+
+                cmd.Parameters.Add("@detailId", SqlDbType.Int);
+                cmd.Parameters["@detailId"].Value = ed.Id;
+
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private void setParamsEvaluationDetail(SqlCommand cmd, EvaluationDetail ed)

@@ -18,7 +18,7 @@ namespace matching_learning.common.Repositories
         {
             var res = new List<SkillView>();
 
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             if ((skills == null) || (skills.Count == 0)) { return (res); }
 
@@ -179,6 +179,39 @@ namespace matching_learning.common.Repositories
                         "       [GS].[DefaultExpertise] " +
                         "FROM [dbo].[GlobalSkill] AS [GS] " +
                         "WHERE [GS].[IsActive] = 1";
+
+            using (var conn = new SqlConnection(Config.GetConnectionString()))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+
+                    var dt = new DataTable();
+                    var da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        res.Add(getSkillFromDataRow(dr));
+                    }
+                }
+            }
+
+            return (res);
+        }
+
+        public List<Skill> GetAllSkills()
+        {
+            var res = new List<Skill>();
+
+            var query = "SELECT [GS].[SkillId], " +
+                        "       [GS].[RelatedId]," +
+                        "       [GS].[Category]," +
+                        "       [GS].[Code]," +
+                        "       [GS].[Name]," +
+                        "       [GS].[IsActive]," +
+                        "       [GS].[DefaultExpertise] " +
+                        "FROM [dbo].[GlobalSkill] AS [GS]";
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -953,7 +986,7 @@ namespace matching_learning.common.Repositories
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -1019,7 +1052,7 @@ namespace matching_learning.common.Repositories
 
             var candidateRepository = new CandidateRepository();
             var candidates = candidateRepository.GetCandidates();
-            var skills = GetSkills();
+            var skills = GetAllSkills();
 
             using (var conn = new SqlConnection(Config.GetConnectionString()))
             {
@@ -1716,7 +1749,7 @@ namespace matching_learning.common.Repositories
 
                     saveRelatedEntities(tech, conn, trans);
 
-                    deleteRemovedEntities(tech, previous, conn, trans);
+                    deleteRemovedRelatedEntities(tech, previous, conn, trans);
 
                     trans.Commit();
                 }
@@ -1764,7 +1797,7 @@ namespace matching_learning.common.Repositories
             }
         }
 
-        private void deleteRemovedEntities(Technology tech, Technology previous, SqlConnection conn, SqlTransaction trans)
+        private void deleteRemovedRelatedEntities(Technology tech, Technology previous, SqlConnection conn, SqlTransaction trans)
         {
             if (previous.IsVersioned && previous.Versions != null && previous.Versions.Count > 0)
             {
@@ -1899,7 +1932,7 @@ namespace matching_learning.common.Repositories
         {
             var stmnt = "UPDATE [dbo].[TechnologyVersion] " +
                         "SET [IsActive] = 0 " +
-                        "WHERE [Id] =  @technologyVersionId";
+                        "WHERE [Id] = @technologyVersionId";
 
            using (var cmd = new SqlCommand(stmnt, conn))
             {
@@ -2041,7 +2074,7 @@ namespace matching_learning.common.Repositories
         {
             var stmnt = "UPDATE [dbo].[TechnologyRole] " +
                         "SET [IsActive] = 0 " +
-                        "WHERE [Id] =  @technologyRoleId";
+                        "WHERE [Id] = @technologyRoleId";
             
             using (var cmd = new SqlCommand(stmnt, conn))
             {

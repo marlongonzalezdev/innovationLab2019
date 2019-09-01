@@ -16,6 +16,7 @@ namespace matching_learning.common.Repositories
 
         #region Skill
         List<Skill> GetSkills();
+        List<Skill> GetAllSkills();
 
         Skill GetSkillById(int id);
         Skill GetSkillByCode(string code);
