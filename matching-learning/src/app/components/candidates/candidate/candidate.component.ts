@@ -68,32 +68,6 @@ export class CandidateComponent implements OnInit {
             }
           );
         });
-
-      // const candidate: Candidate = {
-      //   // id: this.candidateService.form.controls.$key.value,
-      //   // deliveryUnitId: this.candidateService.form.controls.du.value,
-      //   // deliveryUnit: null,
-      //   // relationType: this.candidateService.form.controls.relationType.value,
-      //   // firstName: this.candidateService.form.controls.firstName.value,
-      //   // lastName: this.candidateService.form.controls.lastName.value,
-      //   // name: '',
-      //   // candidateRoleId: this.candidateService.form.controls.roleId.value,
-      //   candidateRole: currentRole,
-      //   candidateGrade: 1,
-      //   docType: null,
-      //   docNumber: null,
-      //   employeeNumber: null,
-      //   inBench: this.candidateService.form.controls.isInBench.value,
-      //  // picture: this.candidateService.form.controls.picture.value,
-      //   picture: null,
-      //   isActive: this.candidateService.form.controls.isActive.value,
-      //   gradeDescription: null,
-      //   currentProjectDescription: null,
-      //   currentProjectDuration: null,
-      //   evaluations: null
-      // };
-
-
     }
   }
 
