@@ -41,7 +41,8 @@ export class CandidateService {
     isActive: new FormControl(false),
     isInBench: new FormControl(false),
     project: new FormControl(false),
-    grade: new FormControl(false)
+    grade: new FormControl(false),
+    date: new FormControl(new Date())
   });
 
   InitializeFormGroup() {
@@ -56,7 +57,8 @@ export class CandidateService {
       isActive: true,
       isInBench: false,
       project: 0,
-      grade: 0
+      grade: 0,
+      date: new Date()
     });
   }
 
@@ -111,7 +113,8 @@ export class CandidateService {
       isInBench: candidate.inBench,
       roleId: candidate.candidateRoleId,
       project: candidate.currentProjectId,
-      grade: candidate.grade
+      grade: candidate.grade,
+      date: candidate.currentProjectJoin
     });
   }
 

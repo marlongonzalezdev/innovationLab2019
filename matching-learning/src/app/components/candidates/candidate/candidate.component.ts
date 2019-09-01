@@ -99,6 +99,8 @@ export class CandidateComponent implements OnInit {
           gradeDescription: null,
           currentProjectDescription: null,
           currentProjectDuration: null,
+          CurrentProjectJoin: this.candidateService.form.controls.relationType.value === 1 ?
+            this.candidateService.form.controls.date.value : null,
           evaluations: null
         };
         this.candidateService.addCandidate(newCandidate).subscribe(
@@ -110,7 +112,6 @@ export class CandidateComponent implements OnInit {
           }
         );
       }
-
     }
   }
 

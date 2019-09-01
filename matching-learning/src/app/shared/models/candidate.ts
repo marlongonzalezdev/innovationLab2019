@@ -21,6 +21,7 @@ export interface Candidate {
   employeeNumber: number;
   project: Project;
   currentProjectId: number;
+  CurrentProjectJoin: Date;
 
   picture: string;
   isActive: boolean;
