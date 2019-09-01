@@ -1,3 +1,4 @@
+import { EvaluationService } from './../../../shared/services/evaluation.service';
 import {Component, OnInit} from '@angular/core';
 
 import {Observable} from 'rxjs';
@@ -8,7 +9,7 @@ import {CandidateService} from 'src/app/shared/services/candidate.service';
 import {DeliveryUnitService} from 'src/app/shared/services/delivery-unit.service';
 import {RelationTypeService} from 'src/app/shared/services/relation-type.service';
 import {NotificationService} from 'src/app/shared/services/notification.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef, MatOptionSelectionChange} from '@angular/material';
 import {Role} from '../../../shared/models/role';
 import {ProjectService} from '../../../shared/services/project.service';
 import {Projects} from '@angular/cli/lib/config/schema';
@@ -27,6 +28,8 @@ export class CandidateComponent implements OnInit {
   grades: Observable<CandidateGrade[]>;
   roles: Observable<Role[]>;
   public candidate: Candidate;
+  isInBench: boolean;
+  isEmployee: boolean;
 
   constructor(private candidateService: CandidateService, private deliveryUnitService: DeliveryUnitService,
               private relationTypeService: RelationTypeService, private notificationService: NotificationService,
@@ -39,6 +42,7 @@ export class CandidateComponent implements OnInit {
     this.projects = this.projectService.getProjects();
     this.grades = this.candidateService.getGrades();
     this.roles = this.candidateService.getCandidateRoles();
+    this.isInBench = this.candidateService.form.controls.isInBench.value;
     console.log(this.grades);
   }
 
@@ -84,8 +88,19 @@ export class CandidateComponent implements OnInit {
   }
 
     selected(event) {
-        if (event.checked) {
-            // hide project select
+      this.isInBench = event.checked ? true : false;
+    }
+
+    onSelect(change: MatOptionSelectionChange) {
+      if (change.source.selected) {
+        const relationselected = change.source.viewValue;
+        if (relationselected === 'Employee') {
+          this.isEmployee = true;
+          this.isInBench = this.candidateService.form.controls.isInBench.value;
+        } else {
+          this.isEmployee = false;
+          this.isInBench = this.candidateService.form.controls.isInBench.value;
         }
+      }
     }
 }

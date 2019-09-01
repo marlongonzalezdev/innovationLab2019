@@ -1,89 +1,81 @@
-<mat-card>
-    <div class="row header">
-        <h3>{{candidateService.form.controls['$key'].value === -1 ? "Add Candidate" : "Modify Candidate"}}</h3>
-        <span class="fill-remaining-space"></span>
-        <button color="warn" class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1">
-            <mat-icon>clear</mat-icon>
-        </button>
-    </div>
-    <form [formGroup]="candidateService.form" class="normal-form" (submit)="onSubmit()">
+<mat-toolbar>
+  <span>{{candidateService.form.controls['$key'].value=== -1 ? "Add Candidate":"Modify Candidate"}}</span>
+  <span class="fill-remaining-space"></span>
+  <button color="warn" class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
+</mat-toolbar>
+<form [formGroup]="candidateService.form" class="normal-form" (submit)="onSubmit()">
+  <mat-grid-list cols="2">
+    <mat-grid-tile>
+      <div class="controls-container">
         <input type="hidden" formControlName="$key">
-        <div class="row">
-            <mat-form-field color="warn">
-                <input formControlName="firstName" matInput placeholder="First Name*">
-                <mat-error>The Name field is mandatory</mat-error>
-            </mat-form-field>
-            <mat-form-field color="warn">
-                <input formControlName="lastName" matInput placeholder="Last Name*">
-                <mat-error>The Last Name field is mandatory</mat-error>
-            </mat-form-field>
+        <mat-form-field color="warn">
+          <input formControlName="firstName" matInput placeholder="First Name*">
+          <mat-error>The Name field is mandatory</mat-error>
+        </mat-form-field>
+        <mat-form-field color="warn">
+          <input formControlName="lastName" matInput placeholder="Last Name*">
+          <mat-error>The Last Name field is mandatory</mat-error>
+        </mat-form-field>
+        <div class="add-bottom-padding">
+          <mat-checkbox color="warn" formControlName="isActive">Is Active</mat-checkbox>
         </div>
-        <div class="row">
-            <div class="form-checkbox">
-                <mat-checkbox color="warn" formControlName="isActive">Is Active</mat-checkbox>
-            </div>
-            <div class="form-checkbox">
-                <mat-checkbox color="warn" formControlName="isInBench" (change)="selected($event)">Is in bench
-                </mat-checkbox>
-            </div>
+        <div class="add-bottom-padding" *ngIf="isEmployee">
+          <mat-checkbox color="warn" formControlName="isInBench" (change)="selected($event)">Is in bench</mat-checkbox>
         </div>
-        <div class="row">
-            <mat-form-field color="warn">
-                <mat-select ng-show="false" formControlName="project" placeholder="Project">
-                    <mat-option>None</mat-option>
-                    <ng-container *ngFor="let project of projects | async">
-                        <mat-option [value]="project.id">{{project.name}}</mat-option>
-                    </ng-container>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field>
-                <input matInput [matDatepicker]="picker" placeholder="In project since">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
+        <mat-form-field color="warn" *ngIf="isEmployee && !isInBench">
+          <mat-select ng-show="false" formControlName="project" placeholder="Project">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let project of projects | async">
+              <mat-option [value]="project.id">{{project.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <div *ngIf="isEmployee && !isInBench">
+          <input matInput [matDatepicker]="picker" placeholder="In project since">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
         </div>
-
-        <div class="row">
-            <mat-form-field color="warn">
-                <mat-select formControlName="du" placeholder="Delivery Unit">
-                    <mat-option>None</mat-option>
-                    <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
-                        <mat-option [value]="deliveryUnit.id">{{deliveryUnit.name}}</mat-option>
-                    </ng-container>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field color="warn">
-                <mat-select formControlName="relationType" placeholder="Relation Type">
-                    <mat-option>None</mat-option>
-                    <ng-container *ngFor="let relationType of relationTypes | async">
-                        <mat-option [value]="relationType.id">{{relationType.name}}</mat-option>
-                    </ng-container>
-                </mat-select>
-            </mat-form-field>
+        <div class="button-row">
+          <button mat-raised-button type="submit" [disabled]="candidateService.form.invalid">Submit</button>
+          <button mat-raised-button (click)="onClear()">Clear</button>
         </div>
-        <div class="row">
-            <mat-form-field color="warn">
-                <mat-select formControlName="roleId" placeholder="Role">
-                    <mat-option>None</mat-option>
-                    <ng-container *ngFor="let role of roles | async">
-                        <mat-option [value]="role.id">{{role.name}}</mat-option>
-                    </ng-container>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field color="warn">
-                <mat-select ng-show="false" formControlName="grade" placeholder="Grade">
-                    <mat-option>None</mat-option>
-                    <ng-container *ngFor="let grade of grades | async">
-                        <mat-option [value]="grade.id">{{grade.name}}</mat-option>
-                    </ng-container>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="row">
-            <button class="form-button" mat-raised-button type="submit" [disabled]="candidateService.form.invalid">
-                Submit
-            </button>
-            <button class="form-button" mat-raised-button (click)="onClear()">Clear</button>
-        </div>
-    </form>
-</mat-card>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="controls-container">
+        <mat-form-field color="warn">
+          <mat-select formControlName="du" placeholder="Delivery Unit">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let deliveryUnit of deliveryUnits | async">
+              <mat-option [value]="deliveryUnit.id">{{deliveryUnit.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field color="warn">
+          <mat-select formControlName="relationType" placeholder="Relation Type">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let relationType of relationTypes | async">
+              <mat-option (onSelectionChange)="onSelect($event)" [value]="relationType.id">{{relationType.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field color="warn" *ngIf="isEmployee">
+          <mat-select formControlName="roleId" placeholder="Role">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let role of roles | async">
+              <mat-option [value]="role.id">{{role.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field color="warn" *ngIf="isEmployee">
+          <mat-select ng-show="false" formControlName="grade" placeholder="Grade">
+            <mat-option>None</mat-option>
+            <ng-container *ngFor="let grade of grades | async">
+              <mat-option [value]="grade.id">{{grade.name}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>
