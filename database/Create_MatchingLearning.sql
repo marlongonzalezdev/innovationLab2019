@@ -2253,7 +2253,7 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE [SEE].[CandidateId] = [C].[Id]
                     AND [SEE].[SkillId] = [GS].[SkillId])
 
-
+/*
 UPDATE [dbo].[SkillEstimatedExpertise]
 SET [Expertise] = 0
 WHERE [CandidateId] IN (SELECT [C].[Id]
@@ -2263,7 +2263,7 @@ WHERE [CandidateId] IN (SELECT [C].[Id]
   AND [SkillId] IN (SELECT [Id]
                     FROM [dbo].[Skill] AS [S]
                     WHERE [S].[TechnologyId] IS NOT NULL OR [S].[TechnologyRoleId] IS NOT NULL OR [S].[TechnologyVersionId] IS NOT NULL OR [S].[BusinessAreaId] IS NOT NULL)
-
+*/
 GO
 
 ----------------------------------------------------------------------------------------------------
