@@ -1,5 +1,5 @@
 <mat-toolbar>
-    <span>{{evaluationService.form.controls['$key'].value === -1 ? "Add Evaluation" : "Modify Evaluation"}}</span>
+    <span>{{evaluationService.form.controls['$key'].value === null ? "Add Evaluation" : "Modify Evaluation"}}</span>
     <span class="fill-remaining-space"></span>
     <button color="warn" class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1">
         <mat-icon>clear</mat-icon>
@@ -9,66 +9,70 @@
     <mat-grid-list cols="1" rowHeight="300px">
         <div class="controls-container">
            <input type="hidden" formControlName="$key">
-                <div class="evaluation_type">
+           <div class="row dateContainer">               
+               <mat-label *ngIf="evaluationDisable">Last date evaluation:</mat-label>
+               <mat-label class="date-field" formControlname="evaluationDate"><b>{{evaluationDate | date}}</b></mat-label>
+           </div>
+            <div class="evaluation_type">
+                <mat-form-field color="warn">
+                    <mat-select formControlName="evaluationTypeId" placeholder="Evaluation type" [disabled]="evaluationDisable">
+                        <mat-option>None</mat-option>
+                        <ng-container *ngFor="let evaluationType of evaluationTypes | async">
+                            <mat-option [value]="evaluationType.id">{{evaluationType.name}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="notes">
+                <mat-form-field color="warn">
+                    <input formControlName="notes" placeholder="Notes" matInput>
+                </mat-form-field>
+            </div>
+            <div>
+                <div class="skills_select">
                     <mat-form-field color="warn">
-                        <mat-select formControlName="evaluationTypeId" placeholder="Evaluation type" [disabled]="evaluationDisable">
+                        <mat-select formControlName="skillId" placeholder="Skills" >
                             <mat-option>None</mat-option>
-                            <ng-container *ngFor="let evaluationType of evaluationTypes | async">
-                                <mat-option [value]="evaluationType.id">{{evaluationType.name}}</mat-option>
-                            </ng-container>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="notes">
-                    <mat-form-field color="warn">
-                        <input formControlName="notes" placeholder="Notes" matInput>
-                    </mat-form-field>
-                </div>
-                <div>
-                    <div class="skills_select">
-                        <mat-form-field color="warn">
-                            <mat-select formControlName="skillId" placeholder="Skills" >
-                                <mat-option>None</mat-option>
                                 <ng-container *ngFor="let skill of skillsList">
                                     <mat-option [value]="skill.id" (click)="selected(skill.name)">{{skill.name}}</mat-option>
                                 </ng-container>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="score">
-                        <mat-label class="score_label">Score</mat-label>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="score">
+                    <mat-label class="score_label">Score</mat-label>
                         <mat-slider formControlName="weight" color="warn" class="expected-core" min="0" max="1"
                                     thumbLabel
                                     step="0.1"
                                     tickInterval="0.1"
                                     name="expectedScore">
                         </mat-slider>
-                    </div>
-                    <a mat-mini-fab color="warn" (click)="addSkillEvaluation()">
-                        <mat-icon>post_add</mat-icon>
-                    </a>
                 </div>
-                <div class="matches-container">
-                    <div class="selected-skills__container">
-                        <ul class="list-group skills__selected">
-                            <li class="list-group-item" *ngFor="let skill of skillsWithEvaluation">
-                                <span class="badge">{{skill.skill.name}}</span> --- <span class="badge">{{skill.expertise * 100}}
+                <a mat-mini-fab color="warn" (click)="addSkillEvaluation()">
+                    <mat-icon>post_add</mat-icon>
+                </a>
+            </div>
+            <div class="matches-container">
+                <div class="selected-skills__container">
+                    <ul class="list-group skills__selected">
+                        <li class="list-group-item" *ngFor="let skill of skillsWithEvaluation">
+                            <span class="badge">{{skill.skill.name}}</span> -- <span class="badge">{{skill.expertise * 100}}
                                 %</span>
                                 <button mat-icon-button aria-label="delete" (click)="deleteSkillWithEvaluation(skill)" color="warn">
                                     <mat-icon>delete</mat-icon>
                                 </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="button-row">
-                    <button mat-raised-button type="submit" [disabled]="evaluationService.form.invalid">
-                        Submit
-                    </button>
-                    <button mat-raised-button (click)="onClear()">Clear</button>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+            <div class="button-row">
+                <button mat-raised-button type="submit" [disabled]="evaluationService.form.invalid">
+                    Submit
+                </button>
+                <button mat-raised-button (click)="onClear()">Clear</button>
+            </div>
+        </div>
     </mat-grid-list>
 </form>
 

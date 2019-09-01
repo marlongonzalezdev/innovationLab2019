@@ -21,6 +21,7 @@ export class EvaluationComponent implements OnInit {
     skillName: string;
     skillsWithEvaluation: any = [];
     evaluationDisable: boolean;
+    evaluationDate: Date;
 
     constructor(public evaluationService: EvaluationService, private skillService: SkillService,
                 private notificationService: NotificationService,
@@ -30,6 +31,7 @@ export class EvaluationComponent implements OnInit {
     ngOnInit() {
       this.skillsWithEvaluation = this.evaluationService.form.controls.evaluationDetails.value;
       this.evaluationTypes = this.evaluationService.getEvaluationTypes();
+      this.evaluationDate = this.evaluationService.form.controls.date.value;
       this.skillService.getSkills()
       .subscribe (response => {
           this.skillsList = response;
@@ -40,7 +42,7 @@ export class EvaluationComponent implements OnInit {
     onSubmit() {
         if (this.evaluationService.form.valid) {
             const evaluation: Evaluation = {
-                id: -1,
+                id: this.evaluationService.form.controls.$key.value ? this.evaluationService.form.controls.$key.value : -1,
                 candidateId: this.data.id,
                 date: new Date(),
                 evaluationType: null,
