@@ -100,6 +100,10 @@ mat-grid-list mat-grid-tile {
   padding-top: 20px;
 }
 
+.padding-top10 {
+  padding-top: 10px;
+}
+
 /*.cdk-overlay-container {*/
 /*  overflow: scroll;*/
 /*}*/

@@ -2,9 +2,9 @@ import {Component, OnInit, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 
-import { Match } from 'src/app/shared/models/match';
-import { ProjectPositionCriteria } from 'src/app/shared/models/projectPositionCriteria';
-import { MatchService } from 'src/app/shared/services/match.service';
+import {Match} from 'src/app/shared/models/match';
+import {ProjectPositionCriteria} from 'src/app/shared/models/projectPositionCriteria';
+import {MatchService} from 'src/app/shared/services/match.service';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {UserDetailsComponent} from '../user-details/user-details.component';
 
@@ -16,7 +16,8 @@ import {UserDetailsComponent} from '../user-details/user-details.component';
 })
 export class MatchesComponent implements OnInit {
 
-    displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'grade', 'projectName', 'projectSince', 'matchingScore'];
+    displayedColumns: string[] = ['userName', 'picture', 'deliveryUnit', 'role', 'grade', 'projectName', 'projectSince', 'matchingScore'
+        , 'actions'];
     dataSource: any;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
@@ -30,51 +31,51 @@ export class MatchesComponent implements OnInit {
     showContent = false;
 
     processData() {
-      /*  this.showContent = false;*/
+        /*  this.showContent = false;*/
         this.loading = true;
         this.getUsers(this.projectPositionCriteria);
     }
 
- /*   onSelect(match: Match): void {
-        this.selectedMatch = match;
-    }
-*/
+    /*   onSelect(match: Match): void {
+           this.selectedMatch = match;
+       }
+   */
     constructor(private matchService: MatchService, private dialog: MatDialog) {
     }
 
     ngOnInit() {
     }
 
-  openDialog(match: Match) {
+    openDialog(match: Match) {
 
-    const dialogConfig = new MatDialogConfig();
+        const dialogConfig = new MatDialogConfig();
 
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '50%';
-    dialogConfig.data = {
-      name: match.candidate.name,
-      picture: match.candidate.picture,
-      deliveryUnit: match.candidate.deliveryUnit.name,
-      role: match.candidate.candidateRole.name,
-      relationType: match.candidate.relationType,
-      inBench: match.candidate.inBench,
-      ranking: match.ranking,
-      docType: match.candidate.docType,
-      docNumber: match.candidate.docNumber,
-      employeeNumber: match.candidate.employeeNumber,
-	  gradeDescription: match.candidate.gradeDescription,
-	  currentProjectDescription: match.candidate.currentProjectDescription,
-	  currentProjectDuration: match.candidate.currentProjectDuration,
-      skillExpertisesSummary: match.skillExpertisesSummary
-    };
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '50%';
+        dialogConfig.data = {
+            name: match.candidate.name,
+            picture: match.candidate.picture,
+            deliveryUnit: match.candidate.deliveryUnit.name,
+            role: match.candidate.candidateRole.name,
+            relationType: match.candidate.relationType,
+            inBench: match.candidate.inBench,
+            ranking: match.ranking,
+            docType: match.candidate.docType,
+            docNumber: match.candidate.docNumber,
+            employeeNumber: match.candidate.employeeNumber,
+            gradeDescription: match.candidate.gradeDescription,
+            currentProjectDescription: match.candidate.currentProjectDescription,
+            currentProjectDuration: match.candidate.currentProjectDuration,
+            skillExpertisesSummary: match.skillExpertisesSummary
+        };
 
-    const dialogRef = this.dialog.open(UserDetailsComponent, dialogConfig);
+        const dialogRef = this.dialog.open(UserDetailsComponent, dialogConfig);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-     /* this.animal = result;*/
-    });
-  }
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            /* this.animal = result;*/
+        });
+    }
 
     getUsers(projectPositionCriteria: ProjectPositionCriteria): void {
 
@@ -86,5 +87,14 @@ export class MatchesComponent implements OnInit {
                 this.loading = false;
                 this.showContent = true;
             });
+    }
+
+    add(element) {
+        const storage = localStorage.getItem('group');
+        const group = storage ? JSON.parse(storage) : [];
+        group.push(element);
+        localStorage.setItem('group', JSON.stringify(group));
+        alert('Candidate added to the group');
+
     }
 }

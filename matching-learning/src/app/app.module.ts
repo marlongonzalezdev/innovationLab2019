@@ -46,6 +46,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { LoginComponent } from './components/login/login.component';
 import {MatDatepickerModule, MatNativeDateModule} from '@angular/material';
+import {GroupComponent} from './components/group/group.component';
+import {GroupListComponent} from './components/group/group-list/group-list.component';
 
 
 @NgModule({
@@ -73,7 +75,9 @@ import {MatDatepickerModule, MatNativeDateModule} from '@angular/material';
     ProjectsComponent,
     ProjectListComponent,
     PageNotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    GroupComponent,
+    GroupListComponent
   ],
     imports: [
         BrowserModule,

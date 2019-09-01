@@ -13,17 +13,17 @@
             <a mat-button [routerLink]="'/activities'"> Activities </a>
             <a mat-button [routerLink]="'/create-activity'"> Create Activity </a>-->
         </div>
-<!--        <div class="userContainer">-->
-<!--           <mat-label *ngIf="currentUser">hi {{currentUser.userName}}</mat-label>-->
-<!--        </div>-->
-        <div class="logo-container"><img class="logo" src="../../../assets/logo.png" alt=""></div>
+        <!--        <div class="userContainer">-->
+        <!--           <mat-label *ngIf="currentUser">hi {{currentUser.userName}}</mat-label>-->
+        <!--        </div>-->
+        <div class="logo-container"><a href="/group"><img class="logo" src="../../../assets/logo.png" alt=""></a></div>
     </mat-toolbar-row>
 </mat-toolbar>
 
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
         <mat-nav-list>
-            <a mat-list-item [routerLink]="'/'">
+            <a mat-list-item [routerLink]="'/group'">
                 <mat-icon>home</mat-icon>
                 Home
                 <mat-divider></mat-divider>
