@@ -15,7 +15,7 @@ namespace matching_learning_algorithm
 {
     public class ProjectAnalyzer : IProjectAnalyzer
     {
-        private const int NumberOfClusters = 10;
+        private const int NumberOfClusters = 5;
 
         private readonly ISkillRepository _skillRepository;
 
@@ -41,7 +41,9 @@ namespace matching_learning_algorithm
 
         public Task<RecommendationResponse> GetRecommendationsAsync(ProjectCandidateRequirement candidateRequirement, bool createDataSet)
         {
-            if (createDataSet) GenerateDataset();
+            // if (createDataSet) GenerateDataset();
+
+            TrainModelIfNotExists();
 
             var predictionData = PredictValue(candidateRequirement);
 
@@ -53,6 +55,7 @@ namespace matching_learning_algorithm
         private void GenerateDataset()
         {
             var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
+            estimatedExpertises = estimatedExpertises.Where(exp => exp.Expertise != 0).ToList();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             using (var file = File.CreateText(InputPath))
@@ -84,10 +87,11 @@ namespace matching_learning_algorithm
                 string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
                 if (File.Exists(modelPath))
                 {
-                    Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
-                    return;
+                    File.Delete(modelPath);
+                    //Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
+                    //return;
                 }
-                
+
                 var result = GenerateNames();
                 var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);

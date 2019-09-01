@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\trainedModel.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GenFu" Version="1.5.6" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
