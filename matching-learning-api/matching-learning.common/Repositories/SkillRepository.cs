@@ -1031,7 +1031,7 @@ namespace matching_learning.common.Repositories
 
             if (pcr.RoleIdFilter.HasValue)
             {
-                whereCondition += " AND [CCR].[CandidateRoleId] = @candidateRoleId";
+                whereCondition += " AND [C].[CandidateRoleId] = @candidateRoleId";
             }
 
             if (pcr.RelationTypeFilter != null)
@@ -1046,8 +1046,6 @@ namespace matching_learning.common.Repositories
                         "FROM [dbo].[SkillEstimatedExpertise] AS [SEE] " +
                         "INNER JOIN [dbo].[Candidate] AS [C] ON [C].[Id] = [SEE].[CandidateId]" +
                         "                                   AND [C].[IsActive] = 1 " +
-                        "LEFT JOIN [dbo].[CandidateCandidateRole] AS [CCR] ON [CCR].[CandidateId] = [SEE].[CandidateId]" +
-                        "                                                 AND [CCR].[EndDate] IS NULL " +
                         $"{whereCondition}";
 
             var candidateRepository = new CandidateRepository();

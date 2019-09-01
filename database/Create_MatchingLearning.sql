@@ -2136,7 +2136,7 @@ DECLARE @skillId INT
 
 DECLARE @rndSeeExpertice FLOAT
 DECLARE @rndSeeImpact FLOAT
-DECLARE @limitSeeImpact FLOAT = 0.2
+DECLARE @limitSeeImpact FLOAT = 0.75
 
 DECLARE @evalForCandidate BIT
 DECLARE @rndDetailExpertice FLOAT
@@ -2255,7 +2255,7 @@ WHERE NOT EXISTS (SELECT 1
 
 UPDATE [dbo].[SkillEstimatedExpertise]
 SET [Expertise] = 0
-WHERE [CandidateId] IN (SELECT [CandidateId]
+WHERE [CandidateId] IN (SELECT [C].[Id]
                         FROM [dbo].[Candidate] AS [C]
                         INNER JOIN [dbo].[CandidateRole] AS [CR] ON [CR].[Id] = [C].[CandidateRoleId]
                         WHERE [CR].[Code] IN ('ADMIN'))
