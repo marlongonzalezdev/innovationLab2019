@@ -1,3 +1,4 @@
+import { EvaluationDetails } from './evaluation-details';
 import {EvaluationType} from './evaluation-type';
 import {Skill} from './skill';
 
@@ -8,6 +9,6 @@ export interface Evaluation {
    evaluationType: EvaluationType;
    evaluationTypeId: number;
    date: Date;
-   skills: Skill[];
+   details: EvaluationDetails[];
    notes: string;
 }

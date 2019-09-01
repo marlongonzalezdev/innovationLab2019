@@ -2,7 +2,8 @@ import {Skill} from './skill';
 
 export interface EvaluationDetails {
   id: number;
+  evaluationId: number;
   skillId: number;
-  skill: Skill;
   expertise: number;
+  skill: Skill;
 }

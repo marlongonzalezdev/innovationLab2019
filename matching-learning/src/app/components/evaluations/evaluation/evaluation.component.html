@@ -7,12 +7,11 @@
 </mat-toolbar>
 <form [formGroup]="evaluationService.form" class="normal-form" (submit)="onSubmit()">
     <mat-grid-list cols="1" rowHeight="300px">
-        <mat-grid-tile>
-            <div class="controls-container">
-                <input type="hidden" formControlName="$key">
+        <div class="controls-container">
+           <input type="hidden" formControlName="$key">
                 <div class="evaluation_type">
                     <mat-form-field color="warn">
-                        <mat-select formControlName="evaluationTypeId" placeholder="Evaluation type">
+                        <mat-select formControlName="evaluationTypeId" placeholder="Evaluation type" [disabled]="evaluationDisable">
                             <mat-option>None</mat-option>
                             <ng-container *ngFor="let evaluationType of evaluationTypes | async">
                                 <mat-option [value]="evaluationType.id">{{evaluationType.name}}</mat-option>
@@ -30,7 +29,7 @@
                         <mat-form-field color="warn">
                             <mat-select formControlName="skillId" placeholder="Skills" >
                                 <mat-option>None</mat-option>
-                                <ng-container *ngFor="let skill of skillsList | async">
+                                <ng-container *ngFor="let skill of skillsList">
                                     <mat-option [value]="skill.id" (click)="selected(skill.name)">{{skill.name}}</mat-option>
                                 </ng-container>
                             </mat-select>
@@ -53,7 +52,7 @@
                     <div class="selected-skills__container">
                         <ul class="list-group skills__selected">
                             <li class="list-group-item" *ngFor="let skill of skillsWithEvaluation">
-                                <span class="badge">{{skill.name}}</span> --- <span class="badge">{{skill.defaultExpertise * 100}}
+                                <span class="badge">{{skill.skill.name}}</span> --- <span class="badge">{{skill.expertise * 100}}
                                 %</span>
                                 <button mat-icon-button aria-label="delete" (click)="deleteSkillWithEvaluation(skill)" color="warn">
                                     <mat-icon>delete</mat-icon>
@@ -70,7 +69,6 @@
                     <button mat-raised-button (click)="onClear()">Clear</button>
                 </div>
             </div>
-        </mat-grid-tile>
     </mat-grid-list>
 </form>
 

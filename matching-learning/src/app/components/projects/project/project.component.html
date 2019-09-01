@@ -1,0 +1,25 @@
+<mat-toolbar>
+    <span>{{service.form.controls['$key'].value=== -1 ? "Add Project":"Modify Project"}}</span>
+    <span class="fill-remaining-space"></span>
+    <button color="warn" class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>clear</mat-icon></button>
+</mat-toolbar>
+<form [formGroup]="service.form" class="normal-form" (submit)="onSubmit()">
+    <mat-grid-list cols="2" rowHeight="300px">
+        <mat-card class=".mat-elevation-z0">
+            <div class="controls-container">
+                <mat-form-field color="warn" class="input-field skill_name">
+                    <input formControlName="name" matInput placeholder="Project Name">
+                    <mat-error>Project name field is mandatory</mat-error>
+                </mat-form-field>
+                <mat-form-field color="warn" class="input-field skill_name">
+                    <input formControlName="code" matInput placeholder="Project Code">
+                    <mat-error>Project code field is mandatory</mat-error>
+                </mat-form-field>
+            </div>
+                <div class="button-row">
+                    <button mat-raised-button type="submit" [disabled]="service.form.invalid">Save</button>
+                    <button mat-raised-button (click)="onClear()">Clear</button>
+                </div>
+        </mat-card>
+    </mat-grid-list>
+</form>
