@@ -1,0 +1,13 @@
+.form-container{
+    padding: 5%;
+    max-width: 500px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.input-field button {
+    margin-left: 20px;
+}

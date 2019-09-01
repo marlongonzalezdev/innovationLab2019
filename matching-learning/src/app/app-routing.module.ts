@@ -7,6 +7,7 @@ import { CandidatesComponent } from './components/candidates/candidates.componen
 import { InputCriteriaComponent } from './components/input-criteria/input-criteria.component';
 import { DeliveryUnitsComponent } from './components/delivery-units/delivery-units.component';
 import { RegionsComponent } from './components/regions/regions.component';
+import { ProjectsComponent } from './components/projects/projects.component';
 
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {EvaluationListComponent} from './components/evaluations/evaluation-list/evaluation-list.component';
@@ -18,8 +19,9 @@ const routes: Routes = [
   {path: 'build', component: InputCriteriaComponent, canActivate: [AuthGuard]},
   {path: 'dus', component: DeliveryUnitsComponent},
   {path: 'regions', component: RegionsComponent},
+  {path: 'projects', component: ProjectsComponent},
   {path: 'evaluations/:id', component: EvaluationListComponent},
-  { path: 'login', component: LoginComponent }
+  {path: 'login', component: LoginComponent}
 ];
 
 @NgModule({
