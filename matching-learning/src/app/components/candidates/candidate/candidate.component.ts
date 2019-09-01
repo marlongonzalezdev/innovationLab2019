@@ -22,7 +22,7 @@ export class CandidateComponent implements OnInit {
   deliveryUnits: Observable<DeliveryUnit[]>;
   relationTypes: Observable<RelationType[]>;
   roles: Observable<Role[]>;
-  private candidate: Candidate;
+  public candidate: Candidate;
 
   constructor(private candidateService: CandidateService, private deliveryUnitService: DeliveryUnitService,
               private relationTypeService: RelationTypeService, private notificationService: NotificationService,
@@ -53,12 +53,20 @@ export class CandidateComponent implements OnInit {
         .subscribe(response => {
           this.candidate = response;
           this.candidate.deliveryUnitId = this.candidateService.form.controls.du.value;
-          this.candidate.relationType =  this.candidateService.form.controls.relationType.value;
-          this.candidate.firstName =  this.candidateService.form.controls.firstName.value;
-          this.candidate.lastName =  this.candidateService.form.controls.lastName.value;
-          this.candidate.candidateRoleId =  this.candidateService.form.controls.roleId.value;
-          this.candidate.inBench =  this.candidateService.form.controls.isInBench.value;
-          this.candidate.isActive =  this.candidateService.form.controls.isActive.value;
+          this.candidate.relationType = this.candidateService.form.controls.relationType.value;
+          this.candidate.firstName = this.candidateService.form.controls.firstName.value;
+          this.candidate.lastName = this.candidateService.form.controls.lastName.value;
+          this.candidate.candidateRoleId = this.candidateService.form.controls.roleId.value;
+          this.candidate.inBench = this.candidateService.form.controls.isInBench.value;
+          this.candidate.isActive = this.candidateService.form.controls.isActive.value;
+          this.candidateService.addCandidate(this.candidate).subscribe(
+            elem => {
+              this.notificationService.sucess('Candidate saved successfully.');
+              this.onClear();
+              console.log(elem);
+              this.onClose();
+            }
+          );
         });
 
       // const candidate: Candidate = {
@@ -86,14 +94,6 @@ export class CandidateComponent implements OnInit {
       // };
 
 
-      this.candidateService.addCandidate(this.candidate).subscribe(
-        elem => {
-          this.notificationService.sucess('Candidate saved successfully.');
-          this.onClear();
-          console.log(elem);
-          this.onClose();
-        }
-      );
     }
   }
 
