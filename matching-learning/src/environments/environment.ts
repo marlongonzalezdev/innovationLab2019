@@ -13,6 +13,7 @@ export const environment = {
     GetRelationTypes: '/EnumEntities/CandidateRelationTypes',
     GetMatches: '/Projects/GetProjectCandidates',
     GetCandiRoles: '/Candidates/CandidateRoles',
+    GetCandiGrades: '/EnumEntities/CandidateGrades',
     GetRegions: '/Regions/Regions',
     AddRegion: '/Regions/SaveRegion',
     GetProjects: '/Projects/Projects',
