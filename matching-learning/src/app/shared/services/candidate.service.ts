@@ -56,8 +56,8 @@ export class CandidateService {
       roleId: 0,
       isActive: true,
       isInBench: false,
-      project: 0,
-      grade: 0,
+      project: null,
+      grade: null,
       date: new Date()
     });
   }
