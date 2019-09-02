@@ -116,31 +116,31 @@ AS
  BEGIN
   DECLARE @res INT
 
-  IF (@rnd < 0.65)
+  IF (@rnd < 0.50)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DEV')
    END
-  ELSE IF (@rnd < 0.75)
+  ELSE IF (@rnd < 0.60)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'TST')
    END
-  ELSE IF (@rnd < 0.8)
+  ELSE IF (@rnd < 0.70)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'BA')
    END
-  ELSE IF (@rnd < 0.85)
+  ELSE IF (@rnd < 0.80)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'PM')
    END
-  ELSE IF (@rnd < 0.9)
+  ELSE IF (@rnd < 0.85)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'DBA')
    END
-  ELSE IF (@rnd < 0.93)
+  ELSE IF (@rnd < 0.90)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'UX')
    END
-  ELSE IF (@rnd < 0.96)
+  ELSE IF (@rnd < 0.95)
    BEGIN
     SET @res = (SELECT [Id] FROM [dbo].[CandidateRole] WHERE [Code] = 'OPS')
    END
@@ -2074,7 +2074,7 @@ INSERT INTO [dbo].[Candidate] ([DeliveryUnitId], [RelationType], [FirstName], [L
 
 ----------------------------------------------------------------------------------------------------
 
-DECLARE @candidateLimit INT = 500
+DECLARE @candidateLimit INT = 1000
 DECLARE @candidateIdx INT = 1
 
 DECLARE @candidateRoleId INT
