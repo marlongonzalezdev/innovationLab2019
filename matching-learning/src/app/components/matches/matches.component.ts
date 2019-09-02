@@ -91,10 +91,20 @@ export class MatchesComponent implements OnInit {
 
     add(element) {
         const storage = localStorage.getItem('group');
-        const group = storage ? JSON.parse(storage) : [];
-        group.push(element);
+        let group = storage ? JSON.parse(storage) : [];
+        if (this.inCart(element)) {
+            group = group.filter((e) => {
+                return element.candidate.id !== e.candidate.id;
+            });
+        } else {
+            group.push(element);
+        }
         localStorage.setItem('group', JSON.stringify(group));
-        alert('Candidate added to the group');
+    }
 
+    inCart(element) {
+        const storage = localStorage.getItem('group');
+        const group = storage ? JSON.parse(storage) : [];
+        return group.some(g => g.candidate.id === element.candidate.id);
     }
 }

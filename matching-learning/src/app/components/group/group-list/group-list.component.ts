@@ -42,13 +42,10 @@ export class GroupListComponent implements OnInit {
   delete(element) {
     const storage = localStorage.getItem('group');
     let group = storage ? JSON.parse(storage) : [];
-    console.log(group);
     group = group.filter((e) => {
       return element.candidate.id !== e.candidate.id;
     });
-    console.log(group);
     this.dataSource = group;
     localStorage.setItem('group', JSON.stringify(group));
   }
-
 }
