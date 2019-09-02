@@ -107,3 +107,8 @@ mat-grid-list mat-grid-tile {
 /*.cdk-overlay-container {*/
 /*  overflow: scroll;*/
 /*}*/
+
+button:focus {
+  border: 0;
+  outline: none;
+}
