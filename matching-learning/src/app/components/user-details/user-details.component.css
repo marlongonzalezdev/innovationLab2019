@@ -1,22 +1,8 @@
-mat-grid-tile.photo_card {
-    width: 40%;
-}
-
 .mat-card-image {
     max-width: 200px;
 }
 
-/*.user-card {*/
-/*    width: 100%;*/
-/*}*/
-
-/*.photo_card {*/
-/*    margin-left: -5%;*/
-/*}*/
-
-/*.user_card {*/
-/*    !*border: black solid 1px;*!*/
-/*    width: 120%;*/
-/*    margin-left: -10%;*/
-/*}*/
-
+table {
+    width: 320px;
+    margin-left: -40px;
+}
