@@ -82,7 +82,7 @@ namespace matching_learning.api
             {
                 var logger = sp.GetRequiredService<ILogger<ProjectAnalyzer>>();
                 var analyzer = new ProjectAnalyzer(logger, new SkillRepository());
-                //analyzer.TrainModelIfNotExists();
+                analyzer.TrainModelIfNotExists();
 
                 return analyzer;
             });

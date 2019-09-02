@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using matching_learning.common.Domain.BusinessLogic;
@@ -136,10 +137,11 @@ namespace matching_learning.api.Controllers.Common
                 query = query.Take(pcr.Max);
             }
 
+
             var result = query.Select(candidate => new ProjectCandidate
             {
                 Candidate = candidate,
-                Ranking = 1m - ((decimal)analysisResult.Matches[candidate.Id]) / 100.0M,
+                Ranking = candidateExpertises.Where(c => c.Candidate.Id == candidate.Id).Select(c => c.Expertise).Sum() / candidateExpertises.Where(c => c.Candidate.Id == candidate.Id).Count(),
                 SkillExpertises = candidateExpertises
                     .Where(exp => exp.Candidate.Id == candidate.Id)
                     .Select(exp => new ProjectCandidateSkill()

@@ -15,7 +15,7 @@ namespace matching_learning_algorithm
 {
     public class ProjectAnalyzer : IProjectAnalyzer
     {
-        private const int NumberOfClusters = 5;
+        private const int NumberOfClusters = 3;
 
         private readonly ISkillRepository _skillRepository;
 
@@ -30,7 +30,7 @@ namespace matching_learning_algorithm
         private List<string> CsvHeaders { get; set; }
         public ProjectAnalyzer(ILogger logger, ISkillRepository skillRepository)
         {
-            MLContext = new MLContext();
+            MLContext = new MLContext(seed: 1);
             Logger = logger;
             _skillRepository = skillRepository ?? new SkillRepository();
             CsvHeaders = new List<string>();
@@ -43,8 +43,6 @@ namespace matching_learning_algorithm
         {
             // if (createDataSet) GenerateDataset();
 
-            TrainModelIfNotExists();
-
             var predictionData = PredictValue(candidateRequirement);
 
             return Task.FromResult(new RecommendationResponse
@@ -55,7 +53,8 @@ namespace matching_learning_algorithm
         private void GenerateDataset()
         {
             var estimatedExpertises = _skillRepository.GetSkillEstimatedExpertise();
-            estimatedExpertises = estimatedExpertises.Where(exp => exp.Expertise != 0).ToList();
+            // todo: feature engineering
+            //estimatedExpertises = estimatedExpertises.Where(exp => exp.Expertise != 0).ToList();
             CsvHeaders.Add("candidateId");
             CsvHeaders.AddRange(estimatedExpertises.Select(exp => exp.Skill.Name).Distinct().ToList());
             if (File.Exists(InputPath)) {
@@ -77,11 +76,8 @@ namespace matching_learning_algorithm
                                 : "0"
                             );
                     }
-                    //if (row.Count(r => r == "0") <= 100)
-                    //{
-                    //    file.WriteLine(string.Join(',', row));
-                    //}
-                    
+                    file.WriteLine(string.Join(',', row));
+
                 }
             }
         }
@@ -94,15 +90,14 @@ namespace matching_learning_algorithm
                 string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "trainedModel.zip");
                 if (File.Exists(modelPath))
                 {
-                    File.Delete(modelPath);
-                    //Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
-                    //return;
+                    Logger.LogInformation($"Trained model found at {InputPath}. Skipping training.");
+                    return;
                 }
 
                 var result = GenerateNames();
                 var textLoader = MLContext.Data.CreateTextLoader(result.Item1, hasHeader: true, separatorChar: ',');
                 var data = textLoader.Load(InputPath);
-                DataOperationsCatalog.TrainTestData trainTestData = MLContext.Data.TrainTestSplit(data, testFraction: 0.2);
+                DataOperationsCatalog.TrainTestData trainTestData = MLContext.Data.TrainTestSplit(data);
                 var trainingDataView = trainTestData.TrainSet;
                 var testingDataView = trainTestData.TestSet;
 
@@ -119,7 +114,7 @@ namespace matching_learning_algorithm
                     .Transforms
                     .Concatenate("Features", result.Item2)
                     .Append(MLContext.Clustering.Trainers.KMeans(options));
-                var trainedModel = dataProcessPipeline.Fit(trainingDataView);
+                var trainedModel = dataProcessPipeline.Fit(data);
 
                 IDataView predictions = trainedModel.Transform(testingDataView);
                 var metrics = MLContext.Clustering.Evaluate(predictions, scoreColumnName: "Score", featureColumnName: "Features");
