@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {CandidateService} from 'src/app/shared/services/candidate.service';
-import {Candidate} from 'src/app/shared/models/candidate';
-import {MatDialog, MatDialogConfig, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatPaginator, MatSort} from '@angular/material';
+import {Match} from '../../../shared/models/match';
+import {UserDetailsComponent} from '../../user-details/user-details.component';
 
 @Component({
   selector: 'app-group-list',
@@ -16,7 +16,7 @@ export class GroupListComponent implements OnInit {
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
   }
 
   onSearchClear() {
@@ -35,7 +35,6 @@ export class GroupListComponent implements OnInit {
   fillDataSource() {
     const storage = localStorage.getItem('group');
     const group = storage ? JSON.parse(storage) : [];
-    console.log(group);
     this.dataSource = group;
   }
 
@@ -48,4 +47,36 @@ export class GroupListComponent implements OnInit {
     this.dataSource = group;
     localStorage.setItem('group', JSON.stringify(group));
   }
+
+  openDialog(match: Match) {
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '50%';
+    dialogConfig.data = {
+      name: match.candidate.name,
+      picture: match.candidate.picture,
+      deliveryUnit: match.candidate.deliveryUnit.name,
+      role: match.candidate.candidateRole.name,
+      relationType: match.candidate.relationType,
+      inBench: match.candidate.inBench,
+      ranking: match.ranking,
+      docType: match.candidate.docType,
+      docNumber: match.candidate.docNumber,
+      employeeNumber: match.candidate.employeeNumber,
+      gradeDescription: match.candidate.gradeDescription,
+      currentProjectDescription: match.candidate.currentProjectDescription,
+      currentProjectDuration: match.candidate.currentProjectDuration,
+      skillExpertisesSummary: match.skillExpertisesSummary
+    };
+
+    const dialogRef = this.dialog.open(UserDetailsComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      /* this.animal = result;*/
+    });
+  }
+
 }
