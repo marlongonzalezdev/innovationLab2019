@@ -1,7 +1,7 @@
 ﻿using matching_learning.api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace matching_learning.api.Controllers
+namespace matching_learning.api.Controllers.Old
 {
     /// <summary>
     /// The controller for the user photos.

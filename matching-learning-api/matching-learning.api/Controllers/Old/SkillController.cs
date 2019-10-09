@@ -3,7 +3,7 @@ using matching_learning.api.Repositories;
 using matching_learning.common.Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace matching_learning.api.Controllers
+namespace matching_learning.api.Controllers.Old
 {
     /// <summary>
     /// The controller for the skills.

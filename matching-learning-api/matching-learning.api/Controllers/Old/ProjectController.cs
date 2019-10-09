@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace matching_learning.api.Controllers
+namespace matching_learning.api.Controllers.Old
 {
     /// <summary>
     /// A controller for the projects

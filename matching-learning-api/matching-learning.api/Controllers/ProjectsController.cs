@@ -8,7 +8,7 @@ using matching_learning.common.Repositories;
 using matching_learning_algorithm;
 using Microsoft.AspNetCore.Mvc;
 
-namespace matching_learning.api.Controllers.Common
+namespace matching_learning.api.Controllers
 {
     /// <summary>
     /// Controller for best project candidates searching.
